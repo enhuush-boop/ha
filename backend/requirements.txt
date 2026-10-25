@@ -1,0 +1,24 @@
+# TAYO backend — Python 3.12 recommended
+# CPU wheels for torch are installed separately by scripts/setup_backend.sh.
+fastapi==0.161.1
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
+python-dotenv==1.2.4
+httpx==0.28.1
+Pillow==13.0.0
+cryptography==50.0.2
+transformers==5.20.2
+sentence-transformers[image]==6.2.0
+safetensors==0.8.0
+huggingface-hub==2.3.0
+numpy==2.5.4
+scikit-learn==1.9.1
+imageio-ffmpeg==0.6.0
+tldextract==5.4.0
+rapidfuzz==3.14.6
+# Install the matched CPU pair before this file:
+#   uv pip install --index-url https://download.pytorch.org/whl/cpu \
+#       torch==2.14.1 torchvision==0.29.1
+# PyPI's torchvision wheel is CUDA-built and crashes with CPU-only torch.
+torch==2.14.1
+torchvision==0.29.1
