@@ -1,0 +1,324 @@
+{
+  "generated_at": "2026-10-23T17:23:04+00:00",
+  "dataset": {
+    "count": 10,
+    "ai": 5,
+    "real": 5,
+    "note": "Smoke-test set; not a scientific benchmark.",
+    "sources": {
+      "real": "picsum.photos (Unsplash photos), 512x512 crops",
+      "ai": "huggingface/documentation-images diffusers generated examples"
+    }
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.15",
+    "torch": "2.14.1+cpu",
+    "transformers": "5.20.2",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.42"
+  },
+  "models": [
+    {
+      "model_id": "Ateeqq/ai-vs-human-image-detector",
+      "info": {
+        "architecture": "SigLIP for image classification",
+        "parameters": "~93M",
+        "download_size": "~371 MB",
+        "license": "Apache-2.0",
+        "training_data": "~120k AI/real images (per model card)",
+        "reported_accuracy": "99.2% on the author's test split",
+        "role": "Primary model in TAYO; enabled by default.",
+        "caveat": "Hub users report overfitting; it is not a forensic detector."
+      },
+      "labels": {
+        "0": "ai",
+        "1": "hum"
+      },
+      "parameters": 92885762,
+      "load_seconds": 31.33,
+      "metrics": {
+        "n": 10,
+        "accuracy": 0.9,
+        "balanced_accuracy": 0.9,
+        "ai_recall": 0.8,
+        "real_recall": 1.0,
+        "ai_precision": 1.0,
+        "ai_f1": 0.8889,
+        "roc_auc": 0.88,
+        "confusion": {
+          "tp": 4,
+          "tn": 5,
+          "fp": 0,
+          "fn": 1
+        },
+        "mean_ai_probability_real": 0.0033,
+        "mean_ai_probability_ai": 0.8001,
+        "mean_latency_ms": 143.5,
+        "p95_latency_ms": 192.4
+      },
+      "predictions": [
+        {
+          "ai_probability": 0.000897,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.000897,
+            "hum": 0.999103
+          },
+          "latency_ms": 192.4,
+          "name": "real_01_picsum_10.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.011605,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.011605,
+            "hum": 0.988395
+          },
+          "latency_ms": 136.6,
+          "name": "real_02_picsum_20.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.00066,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.00066,
+            "hum": 0.99934
+          },
+          "latency_ms": 143.1,
+          "name": "real_03_picsum_30.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.000272,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.000272,
+            "hum": 0.999728
+          },
+          "latency_ms": 134.6,
+          "name": "real_04_picsum_40.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.003006,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.003006,
+            "hum": 0.996994
+          },
+          "latency_ms": 132.6,
+          "name": "real_05_picsum_50.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.999996,
+          "predicted_label": "ai",
+          "scores": {
+            "ai": 0.999996,
+            "hum": 4e-06
+          },
+          "latency_ms": 143.3,
+          "name": "ai_01_flux_statue.jpg",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.999997,
+          "predicted_label": "ai",
+          "scores": {
+            "ai": 0.999997,
+            "hum": 3e-06
+          },
+          "latency_ms": 136.2,
+          "name": "ai_02_sdxl_squirrel.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.999995,
+          "predicted_label": "ai",
+          "scores": {
+            "ai": 0.999995,
+            "hum": 5e-06
+          },
+          "latency_ms": 140.7,
+          "name": "ai_03_sdxl_astronaut.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.999691,
+          "predicted_label": "ai",
+          "scores": {
+            "ai": 0.999691,
+            "hum": 0.00031
+          },
+          "latency_ms": 139.7,
+          "name": "ai_04_sdxl_emoji.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.000864,
+          "predicted_label": "hum",
+          "scores": {
+            "ai": 0.000864,
+            "hum": 0.999136
+          },
+          "latency_ms": 135.6,
+          "name": "ai_05_sd_oil_astronaut.png",
+          "truth": "ai"
+        }
+      ]
+    },
+    {
+      "model_id": "umm-maybe/AI-image-detector",
+      "info": {
+        "architecture": "Swin-B for image classification",
+        "parameters": "~87M",
+        "download_size": "~347 MB",
+        "license": "Hub metadata: CC-BY-4.0; model card: CC BY-ND 4.0 (treat as no-derivatives)",
+        "training_data": "AI art vs. real images, published October 2022 (per model card)",
+        "reported_accuracy": "94.2% on the author's validation split",
+        "role": "Secondary model; disabled by default. Evaluation only.",
+        "caveat": "Trained before modern generators; explicitly not a deepfake detector."
+      },
+      "labels": {
+        "0": "artificial",
+        "1": "human"
+      },
+      "parameters": 86745274,
+      "load_seconds": 66.2,
+      "metrics": {
+        "n": 10,
+        "accuracy": 0.7,
+        "balanced_accuracy": 0.7,
+        "ai_recall": 0.4,
+        "real_recall": 1.0,
+        "ai_precision": 1.0,
+        "ai_f1": 0.5714,
+        "roc_auc": 0.96,
+        "confusion": {
+          "tp": 2,
+          "tn": 5,
+          "fp": 0,
+          "fn": 3
+        },
+        "mean_ai_probability_real": 0.0339,
+        "mean_ai_probability_ai": 0.4681,
+        "mean_latency_ms": 158.0,
+        "p95_latency_ms": 167.1
+      },
+      "predictions": [
+        {
+          "ai_probability": 0.020545,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.020545,
+            "human": 0.979455
+          },
+          "latency_ms": 157.8,
+          "name": "real_01_picsum_10.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.022018,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.022018,
+            "human": 0.977982
+          },
+          "latency_ms": 152.1,
+          "name": "real_02_picsum_20.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.010054,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.010054,
+            "human": 0.989946
+          },
+          "latency_ms": 167.1,
+          "name": "real_03_picsum_30.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.10042,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.10042,
+            "human": 0.89958
+          },
+          "latency_ms": 156.0,
+          "name": "real_04_picsum_40.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.01639,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.01639,
+            "human": 0.98361
+          },
+          "latency_ms": 150.7,
+          "name": "real_05_picsum_50.jpg",
+          "truth": "real"
+        },
+        {
+          "ai_probability": 0.708875,
+          "predicted_label": "artificial",
+          "scores": {
+            "artificial": 0.708875,
+            "human": 0.291125
+          },
+          "latency_ms": 164.4,
+          "name": "ai_01_flux_statue.jpg",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.986336,
+          "predicted_label": "artificial",
+          "scores": {
+            "artificial": 0.986336,
+            "human": 0.013664
+          },
+          "latency_ms": 162.3,
+          "name": "ai_02_sdxl_squirrel.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.385917,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.385917,
+            "human": 0.614083
+          },
+          "latency_ms": 154.4,
+          "name": "ai_03_sdxl_astronaut.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.084212,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.084212,
+            "human": 0.915788
+          },
+          "latency_ms": 162.0,
+          "name": "ai_04_sdxl_emoji.png",
+          "truth": "ai"
+        },
+        {
+          "ai_probability": 0.175388,
+          "predicted_label": "human",
+          "scores": {
+            "artificial": 0.175388,
+            "human": 0.824612
+          },
+          "latency_ms": 153.3,
+          "name": "ai_05_sd_oil_astronaut.png",
+          "truth": "ai"
+        }
+      ]
+    }
+  ]
+}

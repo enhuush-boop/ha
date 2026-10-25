@@ -1,0 +1,7283 @@
+{
+  "generated_at": "2026-10-25T13:24:17+00:00",
+  "dataset": {
+    "count": 300,
+    "sources": {
+      "nano_banana": 100,
+      "imagen4": 100,
+      "picsum": 100
+    },
+    "note": "Google-focused smoke evaluation; not a universal benchmark."
+  },
+  "environment": {
+    "device": "cpu",
+    "python": "3.12.15",
+    "torch": "2.14.1+cpu",
+    "transformers": "5.20.2",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.42"
+  },
+  "models": [
+    {
+      "model_id": "Ateeqq/ai-vs-human-image-detector",
+      "info": {
+        "architecture": "SigLIP image classifier (~93M)",
+        "license": "Apache-2.0",
+        "note": "Current TAYO model. Trained on 120k AI/real images."
+      },
+      "device": "cpu",
+      "crops": null,
+      "load_seconds": 0.89,
+      "parameters": 92885762,
+      "elapsed_seconds": 42.96,
+      "mean_latency_ms": 143.2,
+      "n": 300,
+      "summary_at_0.5": {
+        "threshold": 0.5,
+        "accuracy": 0.9067,
+        "balanced_accuracy": 0.9025,
+        "ai_recall": 0.915,
+        "real_recall": 0.89,
+        "false_positive_rate": 0.11,
+        "ai_precision": 0.9433,
+        "ai_f1": 0.9289,
+        "confusion": {
+          "tp": 183,
+          "tn": 89,
+          "fp": 11,
+          "fn": 17
+        },
+        "roc_auc": 0.93807,
+        "brier": 0.0906,
+        "tpr_at_5pct_fpr": 0.7,
+        "mean_ai_probability_real": 0.1113,
+        "mean_ai_probability_ai": 0.9146,
+        "median_ai_probability_real": 0.0008,
+        "median_ai_probability_ai": 0.9999,
+        "p95_ai_probability_real": 0.9987,
+        "p5_ai_probability_ai": 0.0024
+      },
+      "best_threshold": 0.53,
+      "summary_at_best_threshold": {
+        "threshold": 0.53,
+        "accuracy": 0.91,
+        "balanced_accuracy": 0.9075,
+        "ai_recall": 0.915,
+        "real_recall": 0.9,
+        "false_positive_rate": 0.1,
+        "ai_precision": 0.9482,
+        "ai_f1": 0.9313,
+        "confusion": {
+          "tp": 183,
+          "tn": 90,
+          "fp": 10,
+          "fn": 17
+        },
+        "roc_auc": 0.93807,
+        "brier": 0.0906,
+        "tpr_at_5pct_fpr": 0.7,
+        "mean_ai_probability_real": 0.1113,
+        "mean_ai_probability_ai": 0.9146,
+        "median_ai_probability_real": 0.0008,
+        "median_ai_probability_ai": 0.9999,
+        "p95_ai_probability_real": 0.9987,
+        "p5_ai_probability_ai": 0.0024
+      },
+      "cross_validated_threshold": {
+        "folds": [
+          {
+            "threshold": 0.53,
+            "accuracy": 0.95,
+            "balanced_accuracy": 0.9375,
+            "ai_recall": 0.975,
+            "real_recall": 0.9,
+            "false_positive_rate": 0.1,
+            "ai_precision": 0.9512,
+            "ai_f1": 0.963,
+            "confusion": {
+              "tp": 39,
+              "tn": 18,
+              "fp": 2,
+              "fn": 1
+            }
+          },
+          {
+            "threshold": 0.53,
+            "accuracy": 0.85,
+            "balanced_accuracy": 0.85,
+            "ai_recall": 0.85,
+            "real_recall": 0.85,
+            "false_positive_rate": 0.15,
+            "ai_precision": 0.9189,
+            "ai_f1": 0.8831,
+            "confusion": {
+              "tp": 34,
+              "tn": 17,
+              "fp": 3,
+              "fn": 6
+            }
+          },
+          {
+            "threshold": 0.53,
+            "accuracy": 0.95,
+            "balanced_accuracy": 0.95,
+            "ai_recall": 0.95,
+            "real_recall": 0.95,
+            "false_positive_rate": 0.05,
+            "ai_precision": 0.9744,
+            "ai_f1": 0.962,
+            "confusion": {
+              "tp": 38,
+              "tn": 19,
+              "fp": 1,
+              "fn": 2
+            }
+          },
+          {
+            "threshold": 0.5,
+            "accuracy": 0.9167,
+            "balanced_accuracy": 0.9125,
+            "ai_recall": 0.925,
+            "real_recall": 0.9,
+            "false_positive_rate": 0.1,
+            "ai_precision": 0.9487,
+            "ai_f1": 0.9367,
+            "confusion": {
+              "tp": 37,
+              "tn": 18,
+              "fp": 2,
+              "fn": 3
+            }
+          },
+          {
+            "threshold": 0.53,
+            "accuracy": 0.8667,
+            "balanced_accuracy": 0.8625,
+            "ai_recall": 0.875,
+            "real_recall": 0.85,
+            "false_positive_rate": 0.15,
+            "ai_precision": 0.9211,
+            "ai_f1": 0.8974,
+            "confusion": {
+              "tp": 35,
+              "tn": 17,
+              "fp": 3,
+              "fn": 5
+            }
+          }
+        ],
+        "mean_accuracy": 0.9067,
+        "mean_balanced_accuracy": 0.9025,
+        "mean_ai_recall": 0.915,
+        "mean_real_recall": 0.89
+      },
+      "per_source_at_0.5": {
+        "imagen4": {
+          "n": 100,
+          "truth": "ai",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "ai_recall": 1.0,
+            "real_recall": 0.0,
+            "false_positive_rate": null,
+            "ai_precision": 1.0,
+            "ai_f1": 1.0,
+            "confusion": {
+              "tp": 100,
+              "tn": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "roc_auc": null,
+            "brier": 0.0,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": null,
+            "mean_ai_probability_ai": 0.9986,
+            "median_ai_probability_real": null,
+            "median_ai_probability_ai": 0.9999,
+            "p95_ai_probability_real": 0.0,
+            "p5_ai_probability_ai": 0.9948
+          }
+        },
+        "nano_banana": {
+          "n": 100,
+          "truth": "ai",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 0.83,
+            "balanced_accuracy": 0.415,
+            "ai_recall": 0.83,
+            "real_recall": 0.0,
+            "false_positive_rate": null,
+            "ai_precision": 1.0,
+            "ai_f1": 0.9071,
+            "confusion": {
+              "tp": 83,
+              "tn": 0,
+              "fp": 0,
+              "fn": 17
+            },
+            "roc_auc": null,
+            "brier": 0.1682,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": null,
+            "mean_ai_probability_ai": 0.8306,
+            "median_ai_probability_real": null,
+            "median_ai_probability_ai": 0.9999,
+            "p95_ai_probability_real": 0.0,
+            "p5_ai_probability_ai": 0.0005
+          }
+        },
+        "picsum": {
+          "n": 100,
+          "truth": "real",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 0.89,
+            "balanced_accuracy": 0.445,
+            "ai_recall": 0.0,
+            "real_recall": 0.89,
+            "false_positive_rate": 0.11,
+            "ai_precision": 0.0,
+            "ai_f1": 0.0,
+            "confusion": {
+              "tp": 0,
+              "tn": 89,
+              "fp": 11,
+              "fn": 0
+            },
+            "roc_auc": null,
+            "brier": 0.1037,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": 0.1113,
+            "mean_ai_probability_ai": null,
+            "median_ai_probability_real": 0.0008,
+            "median_ai_probability_ai": null,
+            "p95_ai_probability_real": 0.9987,
+            "p5_ai_probability_ai": 0.0
+          }
+        }
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.01,
+          "accuracy": 0.8867,
+          "balanced_accuracy": 0.87,
+          "ai_recall": 0.92,
+          "real_recall": 0.82,
+          "false_positive_rate": 0.18,
+          "ai_precision": 0.9109,
+          "ai_f1": 0.9154,
+          "confusion": {
+            "tp": 184,
+            "tn": 82,
+            "fp": 18,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.02,
+          "accuracy": 0.89,
+          "balanced_accuracy": 0.875,
+          "ai_recall": 0.92,
+          "real_recall": 0.83,
+          "false_positive_rate": 0.17,
+          "ai_precision": 0.9154,
+          "ai_f1": 0.9177,
+          "confusion": {
+            "tp": 184,
+            "tn": 83,
+            "fp": 17,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.03,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.895,
+          "ai_recall": 0.92,
+          "real_recall": 0.87,
+          "false_positive_rate": 0.13,
+          "ai_precision": 0.934,
+          "ai_f1": 0.927,
+          "confusion": {
+            "tp": 184,
+            "tn": 87,
+            "fp": 13,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.04,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.895,
+          "ai_recall": 0.92,
+          "real_recall": 0.87,
+          "false_positive_rate": 0.13,
+          "ai_precision": 0.934,
+          "ai_f1": 0.927,
+          "confusion": {
+            "tp": 184,
+            "tn": 87,
+            "fp": 13,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.05,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9,
+          "ai_recall": 0.92,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9388,
+          "ai_f1": 0.9293,
+          "confusion": {
+            "tp": 184,
+            "tn": 88,
+            "fp": 12,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.06,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9,
+          "ai_recall": 0.92,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9388,
+          "ai_f1": 0.9293,
+          "confusion": {
+            "tp": 184,
+            "tn": 88,
+            "fp": 12,
+            "fn": 16
+          }
+        },
+        {
+          "threshold": 0.07,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.08,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.09,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.1,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.11,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.12,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.13,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.14,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.15,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.16,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.17,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.18,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.19,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.2,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.21,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.22,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.23,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.24,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.25,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.26,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.27,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.28,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.29,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.3,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.31,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.32,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.33,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.34,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.35,
+          "accuracy": 0.9033,
+          "balanced_accuracy": 0.8975,
+          "ai_recall": 0.915,
+          "real_recall": 0.88,
+          "false_positive_rate": 0.12,
+          "ai_precision": 0.9385,
+          "ai_f1": 0.9266,
+          "confusion": {
+            "tp": 183,
+            "tn": 88,
+            "fp": 12,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.36,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.37,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.38,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.39,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.4,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.41,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.42,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.43,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.44,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.45,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.46,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.47,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.48,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.49,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.5,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.51,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.52,
+          "accuracy": 0.9067,
+          "balanced_accuracy": 0.9025,
+          "ai_recall": 0.915,
+          "real_recall": 0.89,
+          "false_positive_rate": 0.11,
+          "ai_precision": 0.9433,
+          "ai_f1": 0.9289,
+          "confusion": {
+            "tp": 183,
+            "tn": 89,
+            "fp": 11,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.53,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.54,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.55,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.56,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.57,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.58,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.59,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.6,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.61,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.62,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.63,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.64,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.65,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.66,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.67,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.68,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.69,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.7,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.71,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.72,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.73,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.74,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.75,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.76,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.77,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.78,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.79,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.8,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.81,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.82,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.83,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.84,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.85,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.86,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.87,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.88,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.89,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.9,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.91,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.92,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.93,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.94,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.95,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.96,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.97,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.98,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        },
+        {
+          "threshold": 0.99,
+          "accuracy": 0.91,
+          "balanced_accuracy": 0.9075,
+          "ai_recall": 0.915,
+          "real_recall": 0.9,
+          "false_positive_rate": 0.1,
+          "ai_precision": 0.9482,
+          "ai_f1": 0.9313,
+          "confusion": {
+            "tp": 183,
+            "tn": 90,
+            "fp": 10,
+            "fn": 17
+          }
+        }
+      ],
+      "predictions": [
+        {
+          "name": "nano_000.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_001.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999718
+        },
+        {
+          "name": "nano_002.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_003.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999674
+        },
+        {
+          "name": "nano_004.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999862
+        },
+        {
+          "name": "nano_005.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999989
+        },
+        {
+          "name": "nano_006.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999912
+        },
+        {
+          "name": "nano_007.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000478
+        },
+        {
+          "name": "nano_008.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.007365
+        },
+        {
+          "name": "nano_009.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999816
+        },
+        {
+          "name": "nano_010.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999698
+        },
+        {
+          "name": "nano_011.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_012.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000511
+        },
+        {
+          "name": "nano_013.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.994776
+        },
+        {
+          "name": "nano_014.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999999
+        },
+        {
+          "name": "nano_015.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999709
+        },
+        {
+          "name": "nano_016.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999989
+        },
+        {
+          "name": "nano_017.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99097
+        },
+        {
+          "name": "nano_018.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999992
+        },
+        {
+          "name": "nano_019.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.998538
+        },
+        {
+          "name": "nano_020.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999994
+        },
+        {
+          "name": "nano_021.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999996
+        },
+        {
+          "name": "nano_022.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999768
+        },
+        {
+          "name": "nano_023.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "nano_024.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.002985
+        },
+        {
+          "name": "nano_025.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.001491
+        },
+        {
+          "name": "nano_026.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99999
+        },
+        {
+          "name": "nano_027.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_028.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999993
+        },
+        {
+          "name": "nano_029.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.003041
+        },
+        {
+          "name": "nano_030.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_031.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99993
+        },
+        {
+          "name": "nano_032.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99999
+        },
+        {
+          "name": "nano_033.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99853
+        },
+        {
+          "name": "nano_034.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.002364
+        },
+        {
+          "name": "nano_035.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_036.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000495
+        },
+        {
+          "name": "nano_037.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.996929
+        },
+        {
+          "name": "nano_038.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_039.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000349
+        },
+        {
+          "name": "nano_040.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000368
+        },
+        {
+          "name": "nano_041.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999995
+        },
+        {
+          "name": "nano_042.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99911
+        },
+        {
+          "name": "nano_043.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.004988
+        },
+        {
+          "name": "nano_044.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.998665
+        },
+        {
+          "name": "nano_045.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.001294
+        },
+        {
+          "name": "nano_046.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999996
+        },
+        {
+          "name": "nano_047.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_048.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999666
+        },
+        {
+          "name": "nano_049.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999999
+        },
+        {
+          "name": "nano_050.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_051.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999909
+        },
+        {
+          "name": "nano_052.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999999
+        },
+        {
+          "name": "nano_053.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999996
+        },
+        {
+          "name": "nano_054.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999836
+        },
+        {
+          "name": "nano_055.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999219
+        },
+        {
+          "name": "nano_056.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999986
+        },
+        {
+          "name": "nano_057.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_058.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999983
+        },
+        {
+          "name": "nano_059.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000447
+        },
+        {
+          "name": "nano_060.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999863
+        },
+        {
+          "name": "nano_061.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_062.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_063.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999995
+        },
+        {
+          "name": "nano_064.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_065.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999982
+        },
+        {
+          "name": "nano_066.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999913
+        },
+        {
+          "name": "nano_067.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_068.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999994
+        },
+        {
+          "name": "nano_069.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999965
+        },
+        {
+          "name": "nano_070.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.060268
+        },
+        {
+          "name": "nano_071.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999983
+        },
+        {
+          "name": "nano_072.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999996
+        },
+        {
+          "name": "nano_073.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.996521
+        },
+        {
+          "name": "nano_074.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999999
+        },
+        {
+          "name": "nano_075.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_076.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.997327
+        },
+        {
+          "name": "nano_077.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999937
+        },
+        {
+          "name": "nano_078.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999998
+        },
+        {
+          "name": "nano_079.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.001586
+        },
+        {
+          "name": "nano_080.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999986
+        },
+        {
+          "name": "nano_081.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999995
+        },
+        {
+          "name": "nano_082.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.000894
+        },
+        {
+          "name": "nano_083.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.003564
+        },
+        {
+          "name": "nano_084.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999557
+        },
+        {
+          "name": "nano_085.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999357
+        },
+        {
+          "name": "nano_086.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999997
+        },
+        {
+          "name": "nano_087.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999218
+        },
+        {
+          "name": "nano_088.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999833
+        },
+        {
+          "name": "nano_089.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999981
+        },
+        {
+          "name": "nano_090.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99997
+        },
+        {
+          "name": "nano_091.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999952
+        },
+        {
+          "name": "nano_092.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999622
+        },
+        {
+          "name": "nano_093.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999996
+        },
+        {
+          "name": "nano_094.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99994
+        },
+        {
+          "name": "nano_095.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "nano_096.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999986
+        },
+        {
+          "name": "nano_097.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999989
+        },
+        {
+          "name": "nano_098.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999586
+        },
+        {
+          "name": "nano_099.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999989
+        },
+        {
+          "name": "imagen4_000.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_001.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_002.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_003.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_004.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_005.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_006.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_007.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_008.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_009.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_010.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_011.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_012.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_013.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_014.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_015.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_016.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_017.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_018.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_019.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_020.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_021.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_022.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_023.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_024.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_025.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_026.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_027.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_028.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_029.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_030.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_031.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_032.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_033.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_034.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_035.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_036.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_037.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_038.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_039.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_040.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "imagen4_041.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_042.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_043.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_044.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_045.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_046.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999969
+        },
+        {
+          "name": "imagen4_047.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999914
+        },
+        {
+          "name": "imagen4_048.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_049.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_050.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999991
+        },
+        {
+          "name": "imagen4_051.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_052.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_053.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_054.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_055.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_056.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_057.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_058.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_059.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_060.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_061.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_062.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_063.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_064.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_065.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_066.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_067.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_068.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_069.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_070.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_071.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_072.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_073.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_074.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_075.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_076.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_077.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_078.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_079.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_080.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_081.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_082.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_083.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_084.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_085.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_086.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_087.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_088.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_089.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_090.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_091.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999554
+        },
+        {
+          "name": "imagen4_092.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_093.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "imagen4_094.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_095.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_096.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_097.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.996069
+        },
+        {
+          "name": "imagen4_098.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.994789
+        },
+        {
+          "name": "imagen4_099.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.998229
+        },
+        {
+          "name": "real_000.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000962
+        },
+        {
+          "name": "real_001.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000818
+        },
+        {
+          "name": "real_002.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.005151
+        },
+        {
+          "name": "real_003.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001486
+        },
+        {
+          "name": "real_004.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.998843
+        },
+        {
+          "name": "real_005.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000716
+        },
+        {
+          "name": "real_006.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.026855
+        },
+        {
+          "name": "real_007.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000327
+        },
+        {
+          "name": "real_008.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.006182
+        },
+        {
+          "name": "real_009.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.005004
+        },
+        {
+          "name": "real_010.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000351
+        },
+        {
+          "name": "real_011.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001582
+        },
+        {
+          "name": "real_012.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 6.5e-05
+        },
+        {
+          "name": "real_013.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.049983
+        },
+        {
+          "name": "real_014.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002171
+        },
+        {
+          "name": "real_015.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.999825
+        },
+        {
+          "name": "real_016.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00022
+        },
+        {
+          "name": "real_017.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.003041
+        },
+        {
+          "name": "real_018.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000991
+        },
+        {
+          "name": "real_019.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000942
+        },
+        {
+          "name": "real_020.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001293
+        },
+        {
+          "name": "real_021.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000136
+        },
+        {
+          "name": "real_022.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001902
+        },
+        {
+          "name": "real_023.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000181
+        },
+        {
+          "name": "real_024.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00108
+        },
+        {
+          "name": "real_025.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000174
+        },
+        {
+          "name": "real_026.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001189
+        },
+        {
+          "name": "real_027.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00011
+        },
+        {
+          "name": "real_028.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001039
+        },
+        {
+          "name": "real_029.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.0002
+        },
+        {
+          "name": "real_030.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001513
+        },
+        {
+          "name": "real_031.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002414
+        },
+        {
+          "name": "real_032.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000602
+        },
+        {
+          "name": "real_033.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000103
+        },
+        {
+          "name": "real_034.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000532
+        },
+        {
+          "name": "real_035.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000146
+        },
+        {
+          "name": "real_036.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.021871
+        },
+        {
+          "name": "real_037.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000158
+        },
+        {
+          "name": "real_038.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.005679
+        },
+        {
+          "name": "real_039.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.998738
+        },
+        {
+          "name": "real_040.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.991593
+        },
+        {
+          "name": "real_041.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001741
+        },
+        {
+          "name": "real_042.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.003904
+        },
+        {
+          "name": "real_043.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000658
+        },
+        {
+          "name": "real_044.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000187
+        },
+        {
+          "name": "real_045.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.998713
+        },
+        {
+          "name": "real_046.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.027077
+        },
+        {
+          "name": "real_047.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000129
+        },
+        {
+          "name": "real_048.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000279
+        },
+        {
+          "name": "real_049.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.003051
+        },
+        {
+          "name": "real_050.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.003317
+        },
+        {
+          "name": "real_051.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000217
+        },
+        {
+          "name": "real_052.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.998344
+        },
+        {
+          "name": "real_053.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 8.1e-05
+        },
+        {
+          "name": "real_054.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 5.5e-05
+        },
+        {
+          "name": "real_055.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00808
+        },
+        {
+          "name": "real_056.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 1.3e-05
+        },
+        {
+          "name": "real_057.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000198
+        },
+        {
+          "name": "real_058.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 3.9e-05
+        },
+        {
+          "name": "real_059.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.351945
+        },
+        {
+          "name": "real_060.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000427
+        },
+        {
+          "name": "real_061.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000338
+        },
+        {
+          "name": "real_062.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.003614
+        },
+        {
+          "name": "real_063.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.999588
+        },
+        {
+          "name": "real_064.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.999943
+        },
+        {
+          "name": "real_065.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000664
+        },
+        {
+          "name": "real_066.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000637
+        },
+        {
+          "name": "real_067.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.004643
+        },
+        {
+          "name": "real_068.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 3.8e-05
+        },
+        {
+          "name": "real_069.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00073
+        },
+        {
+          "name": "real_070.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000681
+        },
+        {
+          "name": "real_071.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.022498
+        },
+        {
+          "name": "real_072.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001003
+        },
+        {
+          "name": "real_073.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.999825
+        },
+        {
+          "name": "real_074.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000412
+        },
+        {
+          "name": "real_075.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.523445
+        },
+        {
+          "name": "real_076.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.997886
+        },
+        {
+          "name": "real_077.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 7.2e-05
+        },
+        {
+          "name": "real_078.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000148
+        },
+        {
+          "name": "real_079.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000378
+        },
+        {
+          "name": "real_080.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 5e-06
+        },
+        {
+          "name": "real_081.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00097
+        },
+        {
+          "name": "real_082.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000473
+        },
+        {
+          "name": "real_083.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000622
+        },
+        {
+          "name": "real_084.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000183
+        },
+        {
+          "name": "real_085.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00768
+        },
+        {
+          "name": "real_086.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002594
+        },
+        {
+          "name": "real_087.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.018673
+        },
+        {
+          "name": "real_088.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002986
+        },
+        {
+          "name": "real_089.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000121
+        },
+        {
+          "name": "real_090.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000268
+        },
+        {
+          "name": "real_091.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000752
+        },
+        {
+          "name": "real_092.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002455
+        },
+        {
+          "name": "real_093.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000464
+        },
+        {
+          "name": "real_094.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000565
+        },
+        {
+          "name": "real_095.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000441
+        },
+        {
+          "name": "real_096.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 6.3e-05
+        },
+        {
+          "name": "real_097.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000804
+        },
+        {
+          "name": "real_098.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000147
+        },
+        {
+          "name": "real_099.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000343
+        }
+      ]
+    },
+    {
+      "model_id": "abacusai/Smaug-AI-Image-Detector",
+      "info": {
+        "architecture": "EmbeddingGemma-2 vision encoder + linear head (~439M)",
+        "license": "Apache-2.0",
+        "note": "2026 detector; model card claims Nano Banana Pro, Imagen, GPT-Image 2 coverage."
+      },
+      "device": "cpu",
+      "crops": 1,
+      "load_seconds": 2.77,
+      "parameters": 439000000,
+      "elapsed_seconds": 576.87,
+      "mean_latency_ms": 1922.9,
+      "n": 300,
+      "summary_at_0.5": {
+        "threshold": 0.5,
+        "accuracy": 0.99,
+        "balanced_accuracy": 0.9925,
+        "ai_recall": 0.985,
+        "real_recall": 1.0,
+        "false_positive_rate": 0.0,
+        "ai_precision": 1.0,
+        "ai_f1": 0.9924,
+        "confusion": {
+          "tp": 197,
+          "tn": 100,
+          "fp": 0,
+          "fn": 3
+        },
+        "roc_auc": 0.99995,
+        "brier": 0.0082,
+        "tpr_at_5pct_fpr": 1.0,
+        "mean_ai_probability_real": 0.0026,
+        "mean_ai_probability_ai": 0.9847,
+        "median_ai_probability_real": 0.0004,
+        "median_ai_probability_ai": 0.9999,
+        "p95_ai_probability_real": 0.008,
+        "p5_ai_probability_ai": 0.9674
+      },
+      "best_threshold": 0.08,
+      "summary_at_best_threshold": {
+        "threshold": 0.08,
+        "accuracy": 0.9967,
+        "balanced_accuracy": 0.9975,
+        "ai_recall": 0.995,
+        "real_recall": 1.0,
+        "false_positive_rate": 0.0,
+        "ai_precision": 1.0,
+        "ai_f1": 0.9975,
+        "confusion": {
+          "tp": 199,
+          "tn": 100,
+          "fp": 0,
+          "fn": 1
+        },
+        "roc_auc": 0.99995,
+        "brier": 0.0082,
+        "tpr_at_5pct_fpr": 1.0,
+        "mean_ai_probability_real": 0.0026,
+        "mean_ai_probability_ai": 0.9847,
+        "median_ai_probability_real": 0.0004,
+        "median_ai_probability_ai": 0.9999,
+        "p95_ai_probability_real": 0.008,
+        "p5_ai_probability_ai": 0.9674
+      },
+      "cross_validated_threshold": {
+        "folds": [
+          {
+            "threshold": 0.08,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ai_recall": 1.0,
+            "real_recall": 1.0,
+            "false_positive_rate": 0.0,
+            "ai_precision": 1.0,
+            "ai_f1": 1.0,
+            "confusion": {
+              "tp": 40,
+              "tn": 20,
+              "fp": 0,
+              "fn": 0
+            }
+          },
+          {
+            "threshold": 0.08,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ai_recall": 1.0,
+            "real_recall": 1.0,
+            "false_positive_rate": 0.0,
+            "ai_precision": 1.0,
+            "ai_f1": 1.0,
+            "confusion": {
+              "tp": 40,
+              "tn": 20,
+              "fp": 0,
+              "fn": 0
+            }
+          },
+          {
+            "threshold": 0.08,
+            "accuracy": 1.0,
+            "balanced_accuracy": 1.0,
+            "ai_recall": 1.0,
+            "real_recall": 1.0,
+            "false_positive_rate": 0.0,
+            "ai_precision": 1.0,
+            "ai_f1": 1.0,
+            "confusion": {
+              "tp": 40,
+              "tn": 20,
+              "fp": 0,
+              "fn": 0
+            }
+          },
+          {
+            "threshold": 0.16,
+            "accuracy": 0.9667,
+            "balanced_accuracy": 0.975,
+            "ai_recall": 0.95,
+            "real_recall": 1.0,
+            "false_positive_rate": 0.0,
+            "ai_precision": 1.0,
+            "ai_f1": 0.9744,
+            "confusion": {
+              "tp": 38,
+              "tn": 20,
+              "fp": 0,
+              "fn": 2
+            }
+          },
+          {
+            "threshold": 0.05,
+            "accuracy": 0.9833,
+            "balanced_accuracy": 0.975,
+            "ai_recall": 1.0,
+            "real_recall": 0.95,
+            "false_positive_rate": 0.05,
+            "ai_precision": 0.9756,
+            "ai_f1": 0.9877,
+            "confusion": {
+              "tp": 40,
+              "tn": 19,
+              "fp": 1,
+              "fn": 0
+            }
+          }
+        ],
+        "mean_accuracy": 0.99,
+        "mean_balanced_accuracy": 0.99,
+        "mean_ai_recall": 0.99,
+        "mean_real_recall": 0.99
+      },
+      "per_source_at_0.5": {
+        "imagen4": {
+          "n": 100,
+          "truth": "ai",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "ai_recall": 1.0,
+            "real_recall": 0.0,
+            "false_positive_rate": null,
+            "ai_precision": 1.0,
+            "ai_f1": 1.0,
+            "confusion": {
+              "tp": 100,
+              "tn": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "roc_auc": null,
+            "brier": 0.0001,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": null,
+            "mean_ai_probability_ai": 0.9967,
+            "median_ai_probability_real": null,
+            "median_ai_probability_ai": 0.9999,
+            "p95_ai_probability_real": 0.0,
+            "p5_ai_probability_ai": 0.9674
+          }
+        },
+        "nano_banana": {
+          "n": 100,
+          "truth": "ai",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 0.97,
+            "balanced_accuracy": 0.485,
+            "ai_recall": 0.97,
+            "real_recall": 0.0,
+            "false_positive_rate": null,
+            "ai_precision": 1.0,
+            "ai_f1": 0.9848,
+            "confusion": {
+              "tp": 97,
+              "tn": 0,
+              "fp": 0,
+              "fn": 3
+            },
+            "roc_auc": null,
+            "brier": 0.0245,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": null,
+            "mean_ai_probability_ai": 0.9727,
+            "median_ai_probability_real": null,
+            "median_ai_probability_ai": 1.0,
+            "p95_ai_probability_real": 0.0,
+            "p5_ai_probability_ai": 0.9992
+          }
+        },
+        "picsum": {
+          "n": 100,
+          "truth": "real",
+          "summary_at_0.5": {
+            "threshold": 0.5,
+            "accuracy": 1.0,
+            "balanced_accuracy": 0.5,
+            "ai_recall": 0.0,
+            "real_recall": 1.0,
+            "false_positive_rate": 0.0,
+            "ai_precision": 0.0,
+            "ai_f1": 0.0,
+            "confusion": {
+              "tp": 0,
+              "tn": 100,
+              "fp": 0,
+              "fn": 0
+            },
+            "roc_auc": null,
+            "brier": 0.0001,
+            "tpr_at_5pct_fpr": 0.0,
+            "mean_ai_probability_real": 0.0026,
+            "mean_ai_probability_ai": null,
+            "median_ai_probability_real": 0.0004,
+            "median_ai_probability_ai": null,
+            "p95_ai_probability_real": 0.008,
+            "p5_ai_probability_ai": 0.0
+          }
+        }
+      },
+      "threshold_sweep": [
+        {
+          "threshold": 0.01,
+          "accuracy": 0.9833,
+          "balanced_accuracy": 0.975,
+          "ai_recall": 1.0,
+          "real_recall": 0.95,
+          "false_positive_rate": 0.05,
+          "ai_precision": 0.9756,
+          "ai_f1": 0.9877,
+          "confusion": {
+            "tp": 200,
+            "tn": 95,
+            "fp": 5,
+            "fn": 0
+          }
+        },
+        {
+          "threshold": 0.02,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.99,
+          "ai_recall": 1.0,
+          "real_recall": 0.98,
+          "false_positive_rate": 0.02,
+          "ai_precision": 0.9901,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 200,
+            "tn": 98,
+            "fp": 2,
+            "fn": 0
+          }
+        },
+        {
+          "threshold": 0.03,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.99,
+          "ai_recall": 1.0,
+          "real_recall": 0.98,
+          "false_positive_rate": 0.02,
+          "ai_precision": 0.9901,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 200,
+            "tn": 98,
+            "fp": 2,
+            "fn": 0
+          }
+        },
+        {
+          "threshold": 0.04,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.99,
+          "ai_recall": 1.0,
+          "real_recall": 0.98,
+          "false_positive_rate": 0.02,
+          "ai_precision": 0.9901,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 200,
+            "tn": 98,
+            "fp": 2,
+            "fn": 0
+          }
+        },
+        {
+          "threshold": 0.05,
+          "accuracy": 0.9967,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 1.0,
+          "real_recall": 0.99,
+          "false_positive_rate": 0.01,
+          "ai_precision": 0.995,
+          "ai_f1": 0.9975,
+          "confusion": {
+            "tp": 200,
+            "tn": 99,
+            "fp": 1,
+            "fn": 0
+          }
+        },
+        {
+          "threshold": 0.06,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.995,
+          "real_recall": 0.99,
+          "false_positive_rate": 0.01,
+          "ai_precision": 0.995,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 199,
+            "tn": 99,
+            "fp": 1,
+            "fn": 1
+          }
+        },
+        {
+          "threshold": 0.07,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.995,
+          "real_recall": 0.99,
+          "false_positive_rate": 0.01,
+          "ai_precision": 0.995,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 199,
+            "tn": 99,
+            "fp": 1,
+            "fn": 1
+          }
+        },
+        {
+          "threshold": 0.08,
+          "accuracy": 0.9967,
+          "balanced_accuracy": 0.9975,
+          "ai_recall": 0.995,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9975,
+          "confusion": {
+            "tp": 199,
+            "tn": 100,
+            "fp": 0,
+            "fn": 1
+          }
+        },
+        {
+          "threshold": 0.09,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.1,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.11,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.12,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.13,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.14,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.15,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.16,
+          "accuracy": 0.9933,
+          "balanced_accuracy": 0.995,
+          "ai_recall": 0.99,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.995,
+          "confusion": {
+            "tp": 198,
+            "tn": 100,
+            "fp": 0,
+            "fn": 2
+          }
+        },
+        {
+          "threshold": 0.17,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.18,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.19,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.2,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.21,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.22,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.23,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.24,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.25,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.26,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.27,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.28,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.29,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.3,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.31,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.32,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.33,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.34,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.35,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.36,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.37,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.38,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.39,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.4,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.41,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.42,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.43,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.44,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.45,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.46,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.47,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.48,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.49,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.5,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.51,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.52,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.53,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.54,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.55,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.56,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.57,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.58,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.59,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.6,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.61,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.62,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.63,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.64,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.65,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.66,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.67,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.68,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.69,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.7,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.71,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.72,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.73,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.74,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.75,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.76,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.77,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.78,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.79,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.8,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.81,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.82,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.83,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.84,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.85,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.86,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.87,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.88,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.89,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.9,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.91,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.92,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.93,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.94,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.95,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.96,
+          "accuracy": 0.99,
+          "balanced_accuracy": 0.9925,
+          "ai_recall": 0.985,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9924,
+          "confusion": {
+            "tp": 197,
+            "tn": 100,
+            "fp": 0,
+            "fn": 3
+          }
+        },
+        {
+          "threshold": 0.97,
+          "accuracy": 0.96,
+          "balanced_accuracy": 0.97,
+          "ai_recall": 0.94,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9691,
+          "confusion": {
+            "tp": 188,
+            "tn": 100,
+            "fp": 0,
+            "fn": 12
+          }
+        },
+        {
+          "threshold": 0.98,
+          "accuracy": 0.96,
+          "balanced_accuracy": 0.97,
+          "ai_recall": 0.94,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9691,
+          "confusion": {
+            "tp": 188,
+            "tn": 100,
+            "fp": 0,
+            "fn": 12
+          }
+        },
+        {
+          "threshold": 0.99,
+          "accuracy": 0.96,
+          "balanced_accuracy": 0.97,
+          "ai_recall": 0.94,
+          "real_recall": 1.0,
+          "false_positive_rate": 0.0,
+          "ai_precision": 1.0,
+          "ai_f1": 0.9691,
+          "confusion": {
+            "tp": 188,
+            "tn": 100,
+            "fp": 0,
+            "fn": 12
+          }
+        }
+      ],
+      "predictions": [
+        {
+          "name": "nano_000.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_001.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_002.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_003.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_004.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999668
+        },
+        {
+          "name": "nano_005.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_006.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_007.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.990334
+        },
+        {
+          "name": "nano_008.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999798
+        },
+        {
+          "name": "nano_009.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_010.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999687
+        },
+        {
+          "name": "nano_011.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_012.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999949
+        },
+        {
+          "name": "nano_013.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999852
+        },
+        {
+          "name": "nano_014.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_015.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999919
+        },
+        {
+          "name": "nano_016.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_017.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999912
+        },
+        {
+          "name": "nano_018.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_019.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999915
+        },
+        {
+          "name": "nano_020.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_021.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999937
+        },
+        {
+          "name": "nano_022.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.051121
+        },
+        {
+          "name": "nano_023.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_024.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999768
+        },
+        {
+          "name": "nano_025.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.160739
+        },
+        {
+          "name": "nano_026.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999952
+        },
+        {
+          "name": "nano_027.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999962
+        },
+        {
+          "name": "nano_028.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999953
+        },
+        {
+          "name": "nano_029.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.998742
+        },
+        {
+          "name": "nano_030.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_031.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_032.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999964
+        },
+        {
+          "name": "nano_033.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999687
+        },
+        {
+          "name": "nano_034.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999335
+        },
+        {
+          "name": "nano_035.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999953
+        },
+        {
+          "name": "nano_036.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.082397
+        },
+        {
+          "name": "nano_037.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_038.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_039.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999949
+        },
+        {
+          "name": "nano_040.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999929
+        },
+        {
+          "name": "nano_041.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999962
+        },
+        {
+          "name": "nano_042.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999952
+        },
+        {
+          "name": "nano_043.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999463
+        },
+        {
+          "name": "nano_044.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99994
+        },
+        {
+          "name": "nano_045.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99979
+        },
+        {
+          "name": "nano_046.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_047.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_048.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999954
+        },
+        {
+          "name": "nano_049.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999963
+        },
+        {
+          "name": "nano_050.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_051.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999924
+        },
+        {
+          "name": "nano_052.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999963
+        },
+        {
+          "name": "nano_053.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_054.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_055.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999712
+        },
+        {
+          "name": "nano_056.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_057.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_058.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99994
+        },
+        {
+          "name": "nano_059.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999884
+        },
+        {
+          "name": "nano_060.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999778
+        },
+        {
+          "name": "nano_061.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_062.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_063.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_064.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999962
+        },
+        {
+          "name": "nano_065.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_066.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.9999
+        },
+        {
+          "name": "nano_067.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999956
+        },
+        {
+          "name": "nano_068.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_069.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999926
+        },
+        {
+          "name": "nano_070.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_071.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_072.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_073.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999704
+        },
+        {
+          "name": "nano_074.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_075.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999963
+        },
+        {
+          "name": "nano_076.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999962
+        },
+        {
+          "name": "nano_077.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999333
+        },
+        {
+          "name": "nano_078.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999954
+        },
+        {
+          "name": "nano_079.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999763
+        },
+        {
+          "name": "nano_080.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999958
+        },
+        {
+          "name": "nano_081.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999959
+        },
+        {
+          "name": "nano_082.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999236
+        },
+        {
+          "name": "nano_083.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999945
+        },
+        {
+          "name": "nano_084.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_085.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999963
+        },
+        {
+          "name": "nano_086.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_087.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999949
+        },
+        {
+          "name": "nano_088.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_089.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.99996
+        },
+        {
+          "name": "nano_090.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999953
+        },
+        {
+          "name": "nano_091.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999949
+        },
+        {
+          "name": "nano_092.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999745
+        },
+        {
+          "name": "nano_093.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999962
+        },
+        {
+          "name": "nano_094.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999951
+        },
+        {
+          "name": "nano_095.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999963
+        },
+        {
+          "name": "nano_096.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999957
+        },
+        {
+          "name": "nano_097.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999961
+        },
+        {
+          "name": "nano_098.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999711
+        },
+        {
+          "name": "nano_099.jpg",
+          "source": "nano_banana",
+          "truth": "ai",
+          "ai_probability": 0.999948
+        },
+        {
+          "name": "imagen4_000.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_001.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_002.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_003.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_004.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_005.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_006.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_007.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_008.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_009.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_010.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_011.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_012.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_013.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_014.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_015.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_016.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_017.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_018.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_019.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_020.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_021.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_022.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_023.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_024.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_025.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_026.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_027.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_028.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_029.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_030.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_031.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_032.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_033.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_034.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_035.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_036.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_037.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_038.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_039.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_040.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999967
+        },
+        {
+          "name": "imagen4_041.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_042.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_043.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_044.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_045.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_046.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_047.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999936
+        },
+        {
+          "name": "imagen4_048.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_049.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_050.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999966
+        },
+        {
+          "name": "imagen4_051.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_052.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_053.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_054.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_055.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_056.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_057.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_058.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_059.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_060.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_061.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_062.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_063.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_064.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_065.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_066.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_067.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_068.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_069.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_070.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_071.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_072.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_073.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_074.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_075.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_076.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_077.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_078.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_079.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_080.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_081.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_082.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_083.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_084.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_085.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_086.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_087.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_088.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_089.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_090.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_091.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999272
+        },
+        {
+          "name": "imagen4_092.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_093.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "imagen4_094.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_095.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_096.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_097.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.967392
+        },
+        {
+          "name": "imagen4_098.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.99851
+        },
+        {
+          "name": "imagen4_099.jpg",
+          "source": "imagen4",
+          "truth": "ai",
+          "ai_probability": 0.999536
+        },
+        {
+          "name": "real_000.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000126
+        },
+        {
+          "name": "real_001.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000784
+        },
+        {
+          "name": "real_002.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000969
+        },
+        {
+          "name": "real_003.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000253
+        },
+        {
+          "name": "real_004.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000581
+        },
+        {
+          "name": "real_005.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001158
+        },
+        {
+          "name": "real_006.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001173
+        },
+        {
+          "name": "real_007.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000115
+        },
+        {
+          "name": "real_008.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000299
+        },
+        {
+          "name": "real_009.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001801
+        },
+        {
+          "name": "real_010.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000291
+        },
+        {
+          "name": "real_011.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000143
+        },
+        {
+          "name": "real_012.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000122
+        },
+        {
+          "name": "real_013.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000525
+        },
+        {
+          "name": "real_014.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.01173
+        },
+        {
+          "name": "real_015.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001354
+        },
+        {
+          "name": "real_016.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000317
+        },
+        {
+          "name": "real_017.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002148
+        },
+        {
+          "name": "real_018.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000388
+        },
+        {
+          "name": "real_019.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000207
+        },
+        {
+          "name": "real_020.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000435
+        },
+        {
+          "name": "real_021.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001923
+        },
+        {
+          "name": "real_022.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00479
+        },
+        {
+          "name": "real_023.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000144
+        },
+        {
+          "name": "real_024.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000361
+        },
+        {
+          "name": "real_025.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 7.7e-05
+        },
+        {
+          "name": "real_026.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000198
+        },
+        {
+          "name": "real_027.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000395
+        },
+        {
+          "name": "real_028.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000261
+        },
+        {
+          "name": "real_029.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.049529
+        },
+        {
+          "name": "real_030.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000201
+        },
+        {
+          "name": "real_031.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000547
+        },
+        {
+          "name": "real_032.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001433
+        },
+        {
+          "name": "real_033.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00027
+        },
+        {
+          "name": "real_034.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00141
+        },
+        {
+          "name": "real_035.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 7.1e-05
+        },
+        {
+          "name": "real_036.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.007157
+        },
+        {
+          "name": "real_037.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000869
+        },
+        {
+          "name": "real_038.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000334
+        },
+        {
+          "name": "real_039.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000338
+        },
+        {
+          "name": "real_040.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000277
+        },
+        {
+          "name": "real_041.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002232
+        },
+        {
+          "name": "real_042.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000565
+        },
+        {
+          "name": "real_043.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000466
+        },
+        {
+          "name": "real_044.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000205
+        },
+        {
+          "name": "real_045.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.006001
+        },
+        {
+          "name": "real_046.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.004521
+        },
+        {
+          "name": "real_047.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000168
+        },
+        {
+          "name": "real_048.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00019
+        },
+        {
+          "name": "real_049.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001289
+        },
+        {
+          "name": "real_050.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000229
+        },
+        {
+          "name": "real_051.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000507
+        },
+        {
+          "name": "real_052.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000184
+        },
+        {
+          "name": "real_053.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000134
+        },
+        {
+          "name": "real_054.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 9.8e-05
+        },
+        {
+          "name": "real_055.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000384
+        },
+        {
+          "name": "real_056.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.008004
+        },
+        {
+          "name": "real_057.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.004897
+        },
+        {
+          "name": "real_058.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000155
+        },
+        {
+          "name": "real_059.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.01999
+        },
+        {
+          "name": "real_060.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000312
+        },
+        {
+          "name": "real_061.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001004
+        },
+        {
+          "name": "real_062.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000199
+        },
+        {
+          "name": "real_063.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000245
+        },
+        {
+          "name": "real_064.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.073158
+        },
+        {
+          "name": "real_065.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 7.7e-05
+        },
+        {
+          "name": "real_066.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000372
+        },
+        {
+          "name": "real_067.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.017913
+        },
+        {
+          "name": "real_068.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001648
+        },
+        {
+          "name": "real_069.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000716
+        },
+        {
+          "name": "real_070.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000205
+        },
+        {
+          "name": "real_071.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002128
+        },
+        {
+          "name": "real_072.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000165
+        },
+        {
+          "name": "real_073.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001354
+        },
+        {
+          "name": "real_074.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.00048
+        },
+        {
+          "name": "real_075.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000207
+        },
+        {
+          "name": "real_076.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000664
+        },
+        {
+          "name": "real_077.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000152
+        },
+        {
+          "name": "real_078.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001154
+        },
+        {
+          "name": "real_079.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000102
+        },
+        {
+          "name": "real_080.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000167
+        },
+        {
+          "name": "real_081.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000962
+        },
+        {
+          "name": "real_082.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000238
+        },
+        {
+          "name": "real_083.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000172
+        },
+        {
+          "name": "real_084.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000192
+        },
+        {
+          "name": "real_085.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000374
+        },
+        {
+          "name": "real_086.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000632
+        },
+        {
+          "name": "real_087.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000486
+        },
+        {
+          "name": "real_088.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.002286
+        },
+        {
+          "name": "real_089.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000307
+        },
+        {
+          "name": "real_090.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000641
+        },
+        {
+          "name": "real_091.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000197
+        },
+        {
+          "name": "real_092.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000115
+        },
+        {
+          "name": "real_093.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000997
+        },
+        {
+          "name": "real_094.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000288
+        },
+        {
+          "name": "real_095.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000908
+        },
+        {
+          "name": "real_096.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000169
+        },
+        {
+          "name": "real_097.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000357
+        },
+        {
+          "name": "real_098.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.001177
+        },
+        {
+          "name": "real_099.jpg",
+          "source": "picsum",
+          "truth": "real",
+          "ai_probability": 0.000166
+        }
+      ]
+    }
+  ]
+}
