@@ -1,0 +1,162 @@
+{
+  "notice": "Sources a reader may reasonably start from, with what is known about each. Being listed here is not a guarantee that a particular article is correct, and a source's absence is not a mark against it. Every domain below was checked to resolve and answer over HTTPS on 2026-10-26; the feed URLs marked verified returned XML on that date.",
+  "tiers": {
+    "fact_check": "Publishes verdicts on specific claims as its primary work.",
+    "official": "Primary record holder: the body that produces the figure or the document.",
+    "news": "General reporting. Useful for what was said and when, weaker as a verdict.",
+    "international": "Non-Mongolian reference used when a claim travels across languages."
+  },
+  "sources": [
+    {
+      "id": "factcheck-mn",
+      "name": "FACTCHECK.mn",
+      "domain": "factcheck.mn",
+      "tier": "fact_check",
+      "language": "mn",
+      "feeds": ["https://factcheck.mn/feed"],
+      "feed_verified": true,
+      "note": "Describes itself as Mongolia's first independent, professional, non-profit fact-checking newsroom. Its posts frequently check claims that circulated on Facebook, which is the case this project is built for.",
+      "verdict_markers": {
+        "ТӨӨРӨГДҮҮЛСЭН": "Misleading",
+        "ТӨӨРӨГДҮҮЛЖ": "Misleading",
+        "ТӨӨРӨГДҮҮЛЭВ": "Misleading",
+        "ХУДАЛ": "False",
+        "ХУУРАМЧ": "Fabricated",
+        "ҮНЭН": "True",
+        "ЗӨВ": "True",
+        "БҮРЭН БИШ": "Partly true",
+        "НОТЛОГДООГҮЙ": "Unproven"
+      }
+    },
+    {
+      "id": "nso-mn",
+      "name": "Үндэсний статистикийн хороо (National Statistics Office)",
+      "domain": "nso.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "The body that publishes Mongolia's official statistics. Use it for any claim about a national figure rather than a news restatement of one."
+    },
+    {
+      "id": "1212-mn",
+      "name": "1212.mn statistical database",
+      "domain": "1212.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "NSO's statistics database. DNS resolves but an HTTPS request from this machine timed out on 2026-10-26, so treat reachability as unconfirmed."
+    },
+    {
+      "id": "legalinfo-mn",
+      "name": "Legalinfo.mn",
+      "domain": "legalinfo.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Official text of Mongolian legislation. Settles claims about what a law actually says."
+    },
+    {
+      "id": "montsame",
+      "name": "MONTSAME",
+      "domain": "montsame.mn",
+      "tier": "news",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "State-owned news agency, founded 1921. Reporters Without Borders describes its coverage as pro-government, so it is a record of the official position rather than an independent check of it. Returned HTTP 403 to a plain request on 2026-10-26."
+    },
+    {
+      "id": "ikon-mn",
+      "name": "iKon.mn",
+      "domain": "ikon.mn",
+      "tier": "news",
+      "language": "mn",
+      "feeds": ["https://ikon.mn/rss"],
+      "feed_verified": true,
+      "note": "General Mongolian news. Useful for establishing what was reported and when."
+    },
+    {
+      "id": "news-mn",
+      "name": "News.mn",
+      "domain": "news.mn",
+      "tier": "news",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "General Mongolian news. /feed answered 200 but not with XML on 2026-10-26."
+    },
+    {
+      "id": "gogo-mn",
+      "name": "Gogo.mn",
+      "domain": "gogo.mn",
+      "tier": "news",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "General Mongolian news. No RSS feed found at the usual paths on 2026-10-26."
+    },
+    {
+      "id": "unuudur-mn",
+      "name": "Өнөөдөр",
+      "domain": "unuudur.mn",
+      "tier": "news",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Daily newspaper."
+    },
+    {
+      "id": "who",
+      "name": "World Health Organization",
+      "domain": "who.int",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Primary source for health claims that cross languages, such as the vaccine claims that recur on Mongolian Facebook."
+    },
+    {
+      "id": "reuters-factcheck",
+      "name": "Reuters Fact Check",
+      "domain": "reuters.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International wire fact-checks. Often covers a claim before it is translated into Mongolian."
+    },
+    {
+      "id": "afp-factcheck",
+      "name": "AFP Fact Check",
+      "domain": "factcheck.afp.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Covers Asia-Pacific claims, including at least one widely shared claim about a Mongolian official."
+    },
+    {
+      "id": "snopes",
+      "name": "Snopes",
+      "domain": "snopes.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Long-running English-language fact-checker."
+    },
+    {
+      "id": "fullfact",
+      "name": "Full Fact",
+      "domain": "fullfact.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UK fact-checking charity."
+    }
+  ]
+}
