@@ -256,6 +256,13 @@ limit; see [`TRAINING_AND_MODELS.md`](TRAINING_AND_MODELS.md).
 
 ### Threat-intel keys (all optional)
 
+The simplest VirusTotal setup is built into the extension: open **Settings**,
+open the linked VirusTotal API-key page, paste the key, then select **Connect**.
+The extension verifies the key and remembers it in extension-private browser
+storage. No `.env` editing is required.
+
+Administrators can still configure keys centrally in `backend/.env`:
+
 ```dotenv
 GOOGLE_SAFE_BROWSING_API_KEY=...
 VIRUSTOTAL_API_KEY=...
@@ -263,8 +270,10 @@ URLHAUS_AUTH_KEY=...
 ```
 
 - **Safe Browsing:** sends the URL for a threat match. No key → check skipped.
-- **VirusTotal:** looks up an existing report by URL ID. The demo does not
-  auto-submit new URLs. No key → skipped.
+- **VirusTotal:** submits the URL for a fresh scan, waits briefly for completion,
+  and returns the engine totals. Submissions enter VirusTotal's dataset and may
+  be community-visible; never submit secrets, personal data, or private tokens.
+  No key → skipped.
 - **URLhaus:** queries abuse.ch for known malware URLs. No key → skipped.
 
 Without keys, the scanner still performs offline heuristics, DNS, TLS, and

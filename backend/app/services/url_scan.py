@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import base64
 import ipaddress
 import re
 import socket
@@ -103,7 +102,8 @@ PATH_KEYWORDS = (
 )
 
 URL_LIMITATIONS = [
-    "These are passive checks. The backend does not fetch the page body, execute JavaScript, or submit forms by default.",
+    "The local backend does not fetch the page body, execute JavaScript, or submit forms. When VirusTotal is configured, however, the URL is submitted to VirusTotal for scanning and may be fetched by its scanners.",
+    "VirusTotal submissions are added to its dataset and can become accessible to its community. Do not scan URLs containing secrets, personal information, or private tokens.",
     "DNSSEC proves that DNS answers were signed by the domain owner; it does not prove the site is honest or legitimate.",
     "A valid TLS certificate (especially DV) only proves control of the domain, not that the site is trustworthy. Phishing sites routinely get valid certificates.",
     "New domain age, typosquatting, and threat-intel matches are risk indicators, not proof of phishing.",
@@ -512,33 +512,111 @@ async def _safe_browsing(url: str, client: httpx.AsyncClient) -> dict:
         return {"enabled": True, "error": str(exc)}
 
 
-async def _virustotal(url: str, client: httpx.AsyncClient) -> dict:
-    key = settings.virustotal_api_key
-    if not key:
-        return {"enabled": False, "note": "No VIRUSTOTAL_API_KEY configured."}
-    url_id = base64.urlsafe_b64encode(url.encode()).decode().rstrip("=")
+async def validate_virustotal_key(api_key: str) -> dict:
+    """Validate a user-supplied key without returning or persisting it."""
+    key = api_key.strip()
+    if len(key) < 16 or len(key) > 256 or any(char.isspace() for char in key):
+        return {"valid": False, "message": "That does not look like a VirusTotal API key."}
     try:
-        response = await client.get(
-            f"https://www.virustotal.com/api/v3/urls/{url_id}",
-            headers={"x-apikey": key},
-        )
-        if response.status_code == 404:
+        async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
+            response = await client.get(
+                "https://www.virustotal.com/api/v3/metadata",
+                headers={"accept": "application/json", "x-apikey": key},
+            )
+        if response.status_code in {401, 403}:
+            return {"valid": False, "message": "VirusTotal rejected this API key."}
+        if response.status_code == 429:
             return {
-                "enabled": True,
-                "found": False,
-                "note": "URL has not been analyzed by VirusTotal; the demo does not auto-submit it.",
+                "valid": True,
+                "message": "Key accepted, but its VirusTotal request quota is currently exhausted.",
+                "quota_exhausted": True,
             }
         response.raise_for_status()
-        attributes = response.json().get("data", {}).get("attributes", {})
+        return {"valid": True, "message": "VirusTotal connected successfully."}
+    except httpx.HTTPError:
         return {
-            "enabled": True,
-            "found": True,
-            "stats": attributes.get("last_analysis_stats", {}),
-            "reputation": attributes.get("reputation"),
-            "categories": attributes.get("categories", {}),
+            "valid": False,
+            "message": "Could not verify the key with VirusTotal. Check your connection and try again.",
         }
+
+
+async def _virustotal(
+    url: str,
+    client: httpx.AsyncClient,
+    api_key: str | None = None,
+) -> dict:
+    key = (api_key or settings.virustotal_api_key).strip()
+    if not key:
+        return {"enabled": False, "note": "No VIRUSTOTAL_API_KEY configured."}
+
+    headers = {"accept": "application/json", "x-apikey": key}
+    submitted = False
+    try:
+        # POSTing starts a fresh analysis and returns its ID. VirusTotal warns
+        # that submitted URLs enter its community-visible dataset, which is why
+        # the UI and documentation explicitly call this out.
+        response = await client.post(
+            "https://www.virustotal.com/api/v3/urls",
+            headers=headers,
+            data={"url": url},
+        )
+        response.raise_for_status()
+        submitted = True
+        analysis_id = response.json().get("data", {}).get("id")
+        if not analysis_id:
+            return {
+                "enabled": True,
+                "submitted": True,
+                "status": "unknown",
+                "error": "VirusTotal accepted the URL but returned no analysis ID.",
+            }
+
+        # A public key is commonly limited to four requests per minute. Keep
+        # this to the submission plus at most two status requests, leaving room
+        # for the one-time key validation during guided setup.
+        attributes: dict[str, Any] = {}
+        for attempt in range(2):
+            if attempt:
+                await asyncio.sleep(2)
+            analysis = await client.get(
+                f"https://www.virustotal.com/api/v3/analyses/{analysis_id}",
+                headers=headers,
+            )
+            analysis.raise_for_status()
+            attributes = analysis.json().get("data", {}).get("attributes", {})
+            if attributes.get("status") == "completed":
+                break
+
+        status = attributes.get("status", "queued")
+        stats = attributes.get("stats", {})
+        results = attributes.get("results", {})
+        detections = [
+            {
+                "engine": value.get("engine_name") or name,
+                "category": value.get("category"),
+                "result": value.get("result"),
+            }
+            for name, value in results.items()
+            if isinstance(value, dict)
+            and value.get("category") in {"malicious", "suspicious"}
+        ]
+        result = {
+            "enabled": True,
+            "submitted": True,
+            "found": status == "completed",
+            "status": status,
+            "analysis_id": analysis_id,
+            "stats": stats,
+            "detections": detections,
+        }
+        if status != "completed":
+            result["note"] = (
+                "VirusTotal accepted the URL, but its analysis is still queued. "
+                "Scan the link again shortly to retrieve a new result."
+            )
+        return result
     except Exception as exc:
-        return {"enabled": True, "error": str(exc)}
+        return {"enabled": True, "submitted": submitted, "error": str(exc)}
 
 
 async def _urlhaus(url: str, client: httpx.AsyncClient) -> dict:
@@ -574,7 +652,7 @@ def _risk_level(score: int, dns_ok: bool, tls_connected: bool) -> str:
     return "Low risk"
 
 
-async def scan_url(raw_url: str) -> dict:
+async def scan_url(raw_url: str, virustotal_api_key: str | None = None) -> dict:
     parsed = parse_http_url(raw_url)
     host = (parsed.hostname or "").lower()
 
@@ -627,7 +705,7 @@ async def scan_url(raw_url: str) -> dict:
     async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
         threat_data = await asyncio.gather(
             _safe_browsing(str(parsed.geturl()), client),
-            _virustotal(str(parsed.geturl()), client),
+            _virustotal(str(parsed.geturl()), client, virustotal_api_key),
             _urlhaus(str(parsed.geturl()), client),
         )
     safe_browsing, virustotal, urlhaus = threat_data
