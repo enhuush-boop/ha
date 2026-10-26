@@ -195,7 +195,7 @@
       <section id="panel-url" class="panel" role="tabpanel" aria-labelledby="tab-url">
         <div class="panel-intro">
           <h2>Scan a suspicious link</h2>
-          <p>Passive DNS, TLS certificate, domain age, and threat-intel checks. The backend never fetches the page body or runs its JavaScript.</p>
+          <p>DNS, TLS certificate, domain age, and threat-intel checks. With a VirusTotal key configured, the URL is submitted for a fresh scan.</p>
         </div>
         <form id="url-form" class="card form">
           <label for="url-input">URL to inspect</label>
@@ -213,7 +213,8 @@
           </div>
         </form>
         <div class="notice">
-          <strong>Safety first.</strong> Never enter credentials into a link you do not trust. This scan is evidence, not a guarantee.
+          <strong>Safety first.</strong> Never enter credentials into a link you do not trust. VirusTotal submissions may become visible to its community, so do not scan URLs containing secrets, personal data, or private tokens.
+          <button id="url-connect-virustotal" class="button secondary notice-action" type="button">Connect VirusTotal</button>
         </div>
         <div id="url-output" class="result" aria-live="polite"></div>
       </section>
@@ -310,6 +311,32 @@
           the host or port, update <code>host_permissions</code> in <code>manifest.json</code>
           and reload the extension.
         </p>
+        <div class="settings-divider"></div>
+        <h3>VirusTotal</h3>
+        <p class="settings-note">
+          1. Create or sign in to your free VirusTotal account.<br />
+          2. Copy the key from
+          <a href="https://www.virustotal.com/gui/my-apikey" target="_blank" rel="noreferrer noopener">your API key page</a>.<br />
+          3. Paste it below and select Connect.
+        </p>
+        <label for="virustotal-api-key">VirusTotal API key</label>
+        <div class="secret-input-row">
+          <input
+            id="virustotal-api-key"
+            name="virusTotalApiKey"
+            type="password"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Paste API key"
+          />
+          <button id="connect-virustotal" class="button secondary" type="button">Connect</button>
+        </div>
+        <p class="settings-note">Saved only in this extension's private browser storage. The key is sent through your local backend directly to VirusTotal.</p>
+        <div class="connection-row">
+          <span id="virustotal-status" class="settings-status">Not connected</span>
+          <button id="disconnect-virustotal" class="link-button" type="button" hidden>Disconnect</button>
+        </div>
+        <div class="settings-divider"></div>
         <div class="settings-status" id="settings-status"></div>
         <div class="dialog-actions">
           <button id="clear-data" class="button ghost" type="button">Clear extension settings</button>

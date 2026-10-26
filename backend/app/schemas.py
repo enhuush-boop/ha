@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 InputLanguage = Literal["auto", "mn_cyrl", "mn_latn", "en"]
 
@@ -19,6 +19,11 @@ class TextRequest(BaseModel):
 
 class UrlRequest(BaseModel):
     url: str = Field(min_length=4, max_length=4_000)
+    virustotal_api_key: SecretStr | None = None
+
+
+class VirusTotalKeyRequest(BaseModel):
+    api_key: SecretStr
 
 
 class ImageUrlRequest(BaseModel):

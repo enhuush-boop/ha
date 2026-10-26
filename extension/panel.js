@@ -9,6 +9,7 @@ const MAX_TIMEOUT = 1000 * 60 * 10;
 
 const state = {
   backendUrl: DEFAULT_BACKEND,
+  virusTotalApiKey: "",
   activeTab: "factcheck",
   imageFile: null,
   imageObjectUrl: null,
@@ -259,16 +260,26 @@ async function checkHealth(announce = false) {
 async function loadSettings() {
   let stored = {};
   if (hasExtensionApi && extensionApi.storage.local) {
-    stored = await extensionApi.storage.local.get({ backendUrl: DEFAULT_BACKEND });
+    stored = await extensionApi.storage.local.get({
+      backendUrl: DEFAULT_BACKEND,
+      virusTotalApiKey: "",
+    });
   } else {
     try {
-      stored = { backendUrl: localStorage.getItem("tayoBackend") || DEFAULT_BACKEND };
+      stored = {
+        backendUrl: localStorage.getItem("tayoBackend") || DEFAULT_BACKEND,
+        virusTotalApiKey: localStorage.getItem("tayoVirusTotalApiKey") || "",
+      };
     } catch {
       stored = { backendUrl: DEFAULT_BACKEND };
     }
   }
   state.backendUrl = (stored.backendUrl || DEFAULT_BACKEND).replace(/\/+$/, "");
+  state.virusTotalApiKey = stored.virusTotalApiKey || "";
   document.getElementById("backend-url").value = state.backendUrl;
+  document.getElementById("url-connect-virustotal").hidden = Boolean(
+    state.virusTotalApiKey,
+  );
 }
 
 async function saveSettings(url) {
@@ -278,6 +289,25 @@ async function saveSettings(url) {
   } else {
     try {
       localStorage.setItem("tayoBackend", state.backendUrl);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+async function saveVirusTotalKey(apiKey) {
+  state.virusTotalApiKey = apiKey;
+  document.getElementById("url-connect-virustotal").hidden = Boolean(apiKey);
+  if (hasExtensionApi && extensionApi.storage.local) {
+    if (apiKey) {
+      await extensionApi.storage.local.set({ virusTotalApiKey: apiKey });
+    } else {
+      await extensionApi.storage.local.remove("virusTotalApiKey");
+    }
+  } else {
+    try {
+      if (apiKey) localStorage.setItem("tayoVirusTotalApiKey", apiKey);
+      else localStorage.removeItem("tayoVirusTotalApiKey");
     } catch {
       /* ignore */
     }
@@ -916,12 +946,34 @@ function renderUrl(container, data) {
   }
 
   const intel = checks.threat_intel || {};
+  const vt = intel.virustotal || {};
+  const vtStats = vt.stats || {};
+  const vtResult = vt.error
+    ? `error: ${vt.error}`
+    : !vt.enabled
+      ? vt.note
+      : vt.status === "completed"
+        ? `${vtStats.malicious || 0} malicious / ${vtStats.suspicious || 0} suspicious / ${vtStats.harmless || 0} harmless`
+        : vt.note || vt.status || "submitted";
   const intelCard = resultCard("Threat intelligence");
   addKeyValues(intelCard, [
     ["Google Safe Browsing", intel.safe_browsing?.matched ? "MATCH" : intel.safe_browsing?.enabled ? "no match" : intel.safe_browsing?.note],
-    ["VirusTotal", intel.virustotal?.found === false ? intel.virustotal?.note : intel.virustotal?.stats ? `${intel.virustotal.stats.malicious || 0} malicious / ${intel.virustotal.stats.suspicious || 0} suspicious` : intel.virustotal?.note],
+    ["VirusTotal", vtResult],
+    ["VirusTotal submission", vt.submitted ? "submitted for a fresh scan" : undefined],
+    ["VirusTotal status", vt.status],
     ["URLhaus", intel.urlhaus?.query_status || intel.urlhaus?.note],
   ]);
+  if (Array.isArray(vt.detections) && vt.detections.length) {
+    const detections = el("ul");
+    vt.detections.forEach((item) => {
+      detections.append(
+        el("li", null, `${item.engine || "Unknown engine"}: ${item.result || item.category}`),
+      );
+    });
+    intelCard.append(
+      makeDetails("VirusTotal malicious/suspicious detections", detailsBody(detections), true),
+    );
+  }
   const intelRaw = el("pre", null, JSON.stringify(intel, null, 2));
   intelCard.append(makeDetails("Raw threat-intel output", detailsBody(intelRaw)));
   container.append(intelCard);
@@ -1425,8 +1477,18 @@ function wireUrl() {
     await runAnalysis({
       containerId: "url-output",
       button,
-      loadingText: "Running passive DNS, TLS, RDAP and threat-intel checks…",
-      task: () => api("/api/scan/url", { method: "POST", body: { url }, timeout: 120000 }),
+      loadingText: "Running DNS, TLS and RDAP checks and waiting for threat-intel results…",
+      task: () =>
+        api("/api/scan/url", {
+          method: "POST",
+          body: {
+            url,
+            ...(state.virusTotalApiKey
+              ? { virustotal_api_key: state.virusTotalApiKey }
+              : {}),
+          },
+          timeout: 120000,
+        }),
       render: renderUrl,
     });
   });
@@ -1507,11 +1569,69 @@ function wireSettings() {
   const form = document.getElementById("settings-form");
   const urlInput = document.getElementById("backend-url");
   const status = document.getElementById("settings-status");
+  const virusTotalInput = document.getElementById("virustotal-api-key");
+  const virusTotalStatus = document.getElementById("virustotal-status");
+  const connectVirusTotal = document.getElementById("connect-virustotal");
+  const disconnectVirusTotal = document.getElementById("disconnect-virustotal");
+
+  const showVirusTotalStatus = (message, connected = false) => {
+    virusTotalStatus.textContent = message;
+    virusTotalStatus.classList.toggle("is-connected", connected);
+    disconnectVirusTotal.hidden = !connected;
+    virusTotalInput.value = "";
+    virusTotalInput.placeholder = connected ? "Saved key ••••••••" : "Paste API key";
+  };
 
   button.addEventListener("click", () => {
     urlInput.value = state.backendUrl;
     status.textContent = "";
+    showVirusTotalStatus(
+      state.virusTotalApiKey ? "Connected to VirusTotal" : "Not connected",
+      Boolean(state.virusTotalApiKey),
+    );
     dialog.showModal();
+  });
+
+  connectVirusTotal.addEventListener("click", async () => {
+    const apiKey = virusTotalInput.value.trim();
+    if (!apiKey) {
+      virusTotalStatus.textContent = state.virusTotalApiKey
+        ? "Already connected. Paste a new key to replace it."
+        : "Paste your VirusTotal API key first.";
+      virusTotalInput.focus();
+      return;
+    }
+    connectVirusTotal.disabled = true;
+    virusTotalStatus.textContent = "Checking key with VirusTotal…";
+    try {
+      const result = await api("/api/virustotal/validate", {
+        method: "POST",
+        body: { api_key: apiKey },
+        timeout: 30000,
+      });
+      if (!result.valid) {
+        virusTotalStatus.textContent = result.message || "VirusTotal rejected this key.";
+        return;
+      }
+      await saveVirusTotalKey(apiKey);
+      showVirusTotalStatus(result.message || "VirusTotal connected successfully.", true);
+    } catch (error) {
+      virusTotalStatus.textContent = error.message;
+    } finally {
+      connectVirusTotal.disabled = false;
+    }
+  });
+
+  virusTotalInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      connectVirusTotal.click();
+    }
+  });
+
+  disconnectVirusTotal.addEventListener("click", async () => {
+    await saveVirusTotalKey("");
+    showVirusTotalStatus("Disconnected. Saved key removed.", false);
   });
 
   dialog.querySelectorAll("[data-close-dialog]").forEach((node) => {
@@ -1541,16 +1661,23 @@ function wireSettings() {
     }
     try {
       localStorage.removeItem("tayoBackend");
+      localStorage.removeItem("tayoVirusTotalApiKey");
     } catch {
       /* ignore */
     }
     state.backendUrl = DEFAULT_BACKEND;
+    state.virusTotalApiKey = "";
     urlInput.value = DEFAULT_BACKEND;
-    status.textContent = "Extension settings cleared. Editorial database was kept.";
+    showVirusTotalStatus("Disconnected. Saved key removed.", false);
+    status.textContent = "Settings reset. The editorial database was kept.";
     checkHealth();
   });
 
   document.getElementById("retry-health").addEventListener("click", () => checkHealth(true));
+  document.getElementById("url-connect-virustotal").addEventListener("click", () => {
+    button.click();
+    setTimeout(() => virusTotalInput.focus(), 0);
+  });
 }
 
 /* ---------------- Init ---------------- */

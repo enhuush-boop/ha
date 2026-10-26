@@ -25,7 +25,7 @@ More screenshots: [text detection](docs/screenshots/text-check.png) ·
 | **AI text check** | English ModernBERT classifier + style statistics. Mongolian text gets script recognition and Unicode-aware statistics, without an unvalidated AI score. |
 | **AI image check** | Smaug classifier (Nano Banana/Imagen-era coverage), EXIF/XMP inspection, generator-name hints, C2PA/JUMBF presence, and SHA-256. |
 | **Video check** | Right-click a video or supply a direct URL for ffmpeg frame sampling. Blob/stream players get a clearly marked check of the visible frame only. |
-| **Suspicious link** | Passive DNS/DNSSEC, TLS certificate, RDAP domain age, typosquatting heuristics, and optional threat intel. **The page body is never fetched.** |
+| **Suspicious link** | DNS/DNSSEC, TLS certificate, RDAP domain age, typosquatting heuristics, and optional threat intel. With a key, URLs are submitted to VirusTotal for a fresh scan. **The local backend never fetches the page body.** |
 
 The extension is a thin UI. Heavy models, ffmpeg, DNS/TLS/RDAP lookups, and the
 optional local LLM live in the backend, bound to `127.0.0.1` by default.
@@ -444,6 +444,11 @@ see [`docs/TRAINING_AND_MODELS.md`](docs/TRAINING_AND_MODELS.md).
 Copy `backend/.env.example` to `backend/.env` (the setup script does this) and
 edit as needed. Everything is optional; defaults work offline.
 
+For the easiest VirusTotal setup, open the extension's **Settings**, follow the
+link to the VirusTotal API-key page, paste the key, and select **Connect**. The
+extension validates it once and saves it in Chrome's extension-private local
+storage. Setting `VIRUSTOTAL_API_KEY` below remains available for administrators.
+
 | Variable | Default | Notes |
 |---|---|---|
 | `DEVICE` | `auto` | `cpu`, `cuda`, or `auto`. |
@@ -460,7 +465,7 @@ edit as needed. Everything is optional; defaults work offline.
 | `ENABLE_TEXT_MODEL` | `1` | Disable to use only the heuristic. |
 | `GOOGLE_FACTCHECK_API_KEY` | empty | Enables published fact-check search. |
 | `GOOGLE_SAFE_BROWSING_API_KEY` | empty | URL threat match. |
-| `VIRUSTOTAL_API_KEY` | empty | URL reputation (no auto-submit). |
+| `VIRUSTOTAL_API_KEY` | empty | Submit URLs for scanning and retrieve the analysis result. |
 | `URLHAUS_AUTH_KEY` | empty | Malware URL lookup. |
 | `OLLAMA_URL` / `OLLAMA_MODEL` | empty / `qwen3:4b` | Optional summary rewriting only. |
 | `MAX_UPLOAD_MB` | `100` | Image/video upload cap. |
@@ -480,7 +485,12 @@ without authentication, request limits, and a restricted CORS policy.
 - Claims are sent only to the local backend unless you configure Google Fact
   Check Tools or Ollama (Ollama is also local).
 - URL scanning sends the hostname to Google DNS-over-HTTPS and RDAP, and the URL
-  to threat-intel providers only if you configure their keys.
+  to threat-intel providers only if you configure their keys. VirusTotal scans
+  are added to its dataset and may be visible to its community, so never submit
+  URLs containing secrets, personal information, or private tokens.
+- A VirusTotal key connected through the guided setup is stored in the
+  extension's private local storage and sent only to the local backend, which
+  forwards it to VirusTotal over HTTPS. It is never included in scan results.
 - Image-URL analysis makes the **backend** fetch the image; private, loopback,
   link-local, and reserved addresses are blocked. Redirects are revalidated and
   image size is capped. This is basic SSRF protection, not a production-grade
