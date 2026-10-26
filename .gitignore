@@ -13,6 +13,10 @@ __pycache__/
 benchmark/data/
 benchmark/samples/
 
+# Cached headlines pulled from the registered feeds; rebuilt by
+# scripts/refresh_evidence.py, and other people's text besides.
+backend/.evidence_cache/
+
 # OS / editor noise.
 .DS_Store
 Thumbs.db

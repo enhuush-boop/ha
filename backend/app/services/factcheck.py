@@ -9,6 +9,7 @@ import httpx
 from rapidfuzz import fuzz
 
 from ..config import settings
+from .evidence_index import search as evidence_search
 from .mongolian import detect_language, has_negation, match_key
 
 
@@ -132,32 +133,110 @@ def _search_evidence(claim: str) -> list[dict]:
     ]
 
 
+# Above this similarity, a fact-checker's own headline verdict is worth putting
+# in front of the reader. It is still reported as theirs, not adopted as ours:
+# matching wording is not the same claim, and only a human can judge that.
+#
+# Calibrated against the live factcheck.mn feed: six posts that genuinely
+# restated an indexed claim scored 0.46 to 0.81, three unrelated posts scored
+# 0.00, and the best wrong-article candidate for an ambiguous post reached
+# 0.54. 0.60 clears that distractor while still surfacing the clear cases. It
+# is nine examples, so treat it as a starting point, not a tuned parameter.
+REPORTED_VERDICT_MIN = 0.60
+
+
 def _no_match(claim: str, reason: str | None = None, language: str | None = None) -> dict:
     language = language or detect_language(claim)
     mongolian = language in {"mn_cyrl", "mn_latn"}
-    return {
-        "claim": claim,
-        "language": language,
-        "verdict": "Not Sure",
-        "confidence": 0.15,
-        "summary": (
+
+    indexed = evidence_search(claim)
+    found = indexed.get("results") or []
+
+    reported = next(
+        (
+            r
+            for r in found
+            if r.get("published_verdict")
+            and r.get("tier") == "fact_check"
+            and r.get("match_score", 0) >= REPORTED_VERDICT_MIN
+        ),
+        None,
+    )
+
+    if reported:
+        summary = (
+            f"Бидний корпуст таарах бичлэг алга. Гэвч {reported['source']} үүнтэй "
+            f"{reported['match_score']:.0%} төстэй мэдэгдлийг шалгаад "
+            f"«{reported['published_verdict']}» гэж дүгнэжээ. Энэ бол тэдний дүгнэлт, "
+            "манайх биш — ижил үг хэллэг нь ижил мэдэгдэл гэсэн баталгаа биш тул "
+            "нийтлэлийг нь уншиж тулгана уу."
+            if mongolian else
+            f"No entry in our corpus matches. {reported['source']} did publish "
+            f"«{reported['published_verdict']}» on a claim worded "
+            f"{reported['match_score']:.0%} like this one. That verdict is theirs, "
+            "not ours: similar wording is not the same claim, so read their piece."
+        )
+    elif found:
+        summary = (
+            f"Корпуст таарах бичлэг алга. Батлагаат эх сурвалжаас үүнтэй холбоотой "
+            f"{len(found)} нийтлэл олдлоо — доороос уншина уу."
+            if mongolian else
+            f"No corpus entry matches. {len(found)} related piece(s) from registered "
+            "sources are listed below."
+        )
+    else:
+        summary = (
             "Энэ мэдэгдэлтэй баттай таарах баримт шалгалт олдсонгүй. "
             "Энэ нь үнэн эсвэл худал гэсэн дүгнэлт биш. Доорх эх сурвалжаас үргэлжлүүлэн шалгана уу."
             if mongolian else
             "I could not find a confident match in the local demo corpus. "
             "This does not mean the claim is true or false. Use the search links below "
             "or connect a fact-check API key."
-        ) + (f" ({reason})" if reason else ""),
-        "evidence": _search_evidence(claim),
+        )
+
+    limitations = [
+        "The curated corpus is intentionally small and is not a complete fact-check database.",
+        "A 'Not Sure' result means the system lacks evidence, not that the claim is balanced or undecided in the scientific literature.",
+    ]
+    if indexed.get("available"):
+        limitations.append(
+            "Indexed evidence is matched by text similarity over recent feed items only; "
+            "an older fact-check on the same claim will be missed."
+        )
+    else:
+        limitations.append(
+            "The trusted-source index is empty — run scripts/refresh_evidence.py for broader coverage."
+        )
+
+    return {
+        "claim": claim,
+        "language": language,
+        "verdict": "Not Sure",
+        "confidence": 0.15,
+        "summary": summary + (f" ({reason})" if reason else ""),
+        "evidence": found + _search_evidence(claim),
+        "reported_verdict": (
+            {
+                "verdict": reported["published_verdict"],
+                "source": reported["source"],
+                "url": reported["url"],
+                "match_score": reported["match_score"],
+                "note": "Published by that source about a similarly worded claim; not this tool's verdict.",
+            }
+            if reported
+            else None
+        ),
+        "index_status": {
+            "available": indexed.get("available", False),
+            "fetched_at": indexed.get("fetched_at"),
+            "indexed_items": indexed.get("indexed_items", 0),
+            "hits": len(found),
+        },
         "matched_claim": None,
         "match_score": 0.0,
-        "method": "no_match",
+        "method": "indexed_evidence" if found else "no_match",
         "summary_source": "template",
-        "limitations": [
-            "The curated corpus is intentionally small and is not a complete fact-check database.",
-            "No unrestricted web search is performed by default. A trusted-source retrieval layer is required for broad coverage.",
-            "A 'Not Sure' result means the system lacks evidence, not that the claim is balanced or undecided in the scientific literature.",
-        ],
+        "limitations": limitations,
     }
 
 
