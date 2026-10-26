@@ -1,7 +1,9 @@
 # The three paths the README says a fresh clone rebuilds rather than carries.
-.venv/
+# No trailing slash: in a git worktree these are often symlinks to the main
+# checkout's copies, and a directory-only pattern would not match a symlink.
+.venv
 backend/.env
-backend/.model_cache/
+backend/.model_cache
 
 # Python bytecode.
 __pycache__/
