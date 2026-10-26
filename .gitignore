@@ -5,6 +5,9 @@
 backend/.env
 backend/.model_cache
 
+# Local agent worktrees are separate checkouts, not project source files.
+.claude/worktrees/
+
 # Python bytecode.
 __pycache__/
 *.py[cod]

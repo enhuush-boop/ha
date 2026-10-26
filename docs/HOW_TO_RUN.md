@@ -156,8 +156,25 @@ If it says offline, start the backend and press **Retry**.
 ### Context-menu features
 
 - **Selected text → Fact-check selected text**
+- **Selected text → Analyze selected text for AI generation**
+- **Page → Analyze page text with TAYO**
 - **Link → Scan link for phishing risk**
 - **Image → Analyze image for AI generation**
+- **Video → Inspect video with TAYO**
+- **Page with a video → Inspect visible video with TAYO**
+
+Direct public video files are downloaded by the local backend and sampled with
+ffmpeg. A `blob:`/stream player has no directly downloadable file, so TAYO
+captures one visible frame and labels the result as a frame check. DRM,
+restricted iframes, and authenticated video hosts may require the original
+file for full-video analysis; failed direct downloads use the captured frame
+when available.
+
+Public image URLs use the original file. Blob images or failed downloads use a
+screenshot of the displayed image; the result clearly notes that original
+metadata and full resolution are unavailable. The page-text action reads the
+largest article, then `<main>`, then the page body. Select a specific passage
+when the page contains unrelated text.
 
 The user gesture is required by Chrome. The service worker stores the request
 in session storage and asks the side panel to open. If Chrome refuses to open
@@ -353,8 +370,9 @@ import; fix torchvision before debugging transformers.
 ### Image URL fails but upload works
 
 Hotlink protection, signed URLs, cookies, and `403` responses are common. The
-backend has no browser session. Download the image and upload it, or use a
-direct public image URL. Private/loopback hosts are intentionally blocked.
+backend has no browser session. Right-click the image to use the screenshot
+fallback, or upload the original file to retain metadata and full resolution.
+Private/loopback hosts are intentionally blocked.
 
 ### Fact-check always says “Not Sure”
 

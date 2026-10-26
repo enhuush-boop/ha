@@ -619,7 +619,7 @@ function renderVideo(container, data) {
       row.append(el("span", null, `Frame ${frame.index + 1} · ${fmtDuration(frame.timestamp_seconds)}`));
       row.append(el("span", "signal-weight", pct(frame.ai_probability)));
       item.append(row);
-      frames.append(item);
+      list.append(item);
     });
     frames.append(list);
     container.append(frames);
@@ -932,15 +932,7 @@ function wireImage() {
     event.preventDefault();
     const url = urlInput.value.trim();
     if (!url) return;
-    const button = urlForm.querySelector("button[type=submit]");
-    await runAnalysis({
-      containerId: "image-output",
-      button,
-      loadingText: "Fetching and inspecting the image…",
-      task: () =>
-        api("/api/analyze/image-url", { method: "POST", body: { url }, timeout: 180000 }),
-      render: renderImage,
-    });
+    await analyzeImageUrl(url);
   });
 
   form.addEventListener("submit", async (event) => {
@@ -959,12 +951,80 @@ function wireImage() {
   });
 }
 
+async function analyzeImageUrl(url, fallbackFrame = null) {
+  await runAnalysis({
+    containerId: "image-output",
+    button: document.querySelector("#image-url-form button[type=submit]"),
+    loadingText: "Fetching and inspecting the image…",
+    task: async () => {
+      try {
+        return await api("/api/analyze/image-url", {
+          method: "POST", body: { url }, timeout: 180000,
+        });
+      } catch (error) {
+        if (!fallbackFrame) throw error;
+        const data = await scoreVisibleImageFrame(fallbackFrame);
+        data.image_fetch_error = error.message;
+        return data;
+      }
+    },
+    render: (container, data) => data.capture_scope === "visible_image_screenshot"
+      ? renderVisibleImageFrame(container, data)
+      : renderImage(container, data),
+  });
+}
+
+async function scoreVisibleImageFrame(request) {
+  const blob = await cropVisibleMediaFrame(request);
+  const form = new FormData();
+  form.append("file", blob, "visible-image.jpg");
+  const data = await api("/api/analyze/image", {
+    method: "POST", form, timeout: 600000,
+  });
+  data.capture_scope = "visible_image_screenshot";
+  data.limitations = [
+    "This is a screenshot of the displayed image. Original EXIF and C2PA metadata are unavailable.",
+    ...(data.limitations || []),
+  ];
+  return data;
+}
+
+function renderVisibleImageFrame(container, data) {
+  renderImage(container, data);
+  const notice = el("div", "notice");
+  notice.append(el("strong", null, "Displayed image only. "));
+  notice.append(el("span", null,
+    data.image_fetch_error ? `Original image download failed: ${data.image_fetch_error} ` : ""));
+  notice.append(el("span", null,
+    "TAYO inspected a screenshot. Original image metadata and full resolution were not available."));
+  container.prepend(notice);
+}
+
+async function analyzeVisibleImageFrame(request) {
+  await runAnalysis({
+    containerId: "image-output",
+    button: document.getElementById("image-submit"),
+    loadingText: "Inspecting the displayed image…",
+    task: () => scoreVisibleImageFrame(request),
+    render: renderVisibleImageFrame,
+  });
+}
+
 function wireVideo() {
   const form = document.getElementById("video-form");
+  const urlForm = document.getElementById("video-url-form");
+  const urlInput = document.getElementById("video-url-input");
   const fileInput = document.getElementById("video-file");
   const dropzone = document.getElementById("video-dropzone");
   const fileName = document.getElementById("video-file-name");
   const submit = document.getElementById("video-submit");
+
+  urlForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const url = urlInput.value.trim();
+    if (!url) return;
+    await analyzeVideoUrl(url);
+  });
 
   setupDropzone(dropzone, fileInput, (file) => {
     if (!file.type.startsWith("video/")) return;
@@ -986,6 +1046,104 @@ function wireVideo() {
       task: () => api("/api/analyze/video", { method: "POST", form: formData, timeout: 900000 }),
       render: renderVideo,
     });
+  });
+}
+
+async function analyzeVideoUrl(url, fallbackFrame = null) {
+  await runAnalysis({
+    containerId: "video-output",
+    button: document.querySelector("#video-url-form button[type=submit]"),
+    loadingText: "Fetching the public video and sampling its frames…",
+    task: async () => {
+      try {
+        return await api("/api/analyze/video-url", {
+          method: "POST", body: { url }, timeout: 600000,
+        });
+      } catch (error) {
+        if (!fallbackFrame) throw error;
+        const data = await scoreVisibleVideoFrame(fallbackFrame);
+        data.video_fetch_error = error.message;
+        return data;
+      }
+    },
+    render: (container, data) => {
+      if (data.capture_scope === "single_visible_video_frame") {
+        renderVisibleVideoFrame(container, data);
+      } else {
+        renderVideo(container, data);
+      }
+    },
+  });
+}
+
+async function cropVisibleMediaFrame(request) {
+  const image = new Image();
+  image.src = request.screenshot;
+  await image.decode();
+  const rect = request.rect;
+  const left = Math.max(0, rect.left);
+  const top = Math.max(0, rect.top);
+  const right = Math.min(rect.viewportWidth, rect.left + rect.width);
+  const bottom = Math.min(rect.viewportHeight, rect.top + rect.height);
+  if (right - left < 32 || bottom - top < 32) {
+    throw new Error("The media is not visible enough to inspect.");
+  }
+  const scaleX = image.naturalWidth / rect.viewportWidth;
+  const scaleY = image.naturalHeight / rect.viewportHeight;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round((right - left) * scaleX);
+  canvas.height = Math.round((bottom - top) * scaleY);
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Could not prepare the captured media.");
+  context.drawImage(
+    image,
+    left * scaleX, top * scaleY,
+    (right - left) * scaleX, (bottom - top) * scaleY,
+    0, 0, canvas.width, canvas.height,
+  );
+  return await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => blob ? resolve(blob) : reject(new Error("Could not encode the captured media.")),
+      "image/jpeg", 0.88,
+    );
+  });
+}
+
+async function scoreVisibleVideoFrame(request) {
+  const blob = await cropVisibleMediaFrame(request);
+  const form = new FormData();
+  form.append("file", blob, "visible-video-frame.jpg");
+  const data = await api("/api/analyze/image", {
+    method: "POST", form, timeout: 600000,
+  });
+  data.capture_scope = "single_visible_video_frame";
+  data.limitations = [
+    "Only one visible frame was inspected. This is not a video-wide result.",
+    ...(data.limitations || []),
+  ];
+  return data;
+}
+
+function renderVisibleVideoFrame(container, data) {
+  renderImage(container, data);
+  const notice = el("div", "notice");
+  notice.append(el("strong", null, "Current frame only. "));
+  notice.append(el("span", null,
+    data.video_fetch_error
+      ? `Full video download failed: ${data.video_fetch_error} `
+      : "This player has no direct video file URL. "));
+  notice.append(el("span", null,
+    "TAYO inspected one visible frame, not the full video. Upload the original file for multi-frame analysis."));
+  container.prepend(notice);
+}
+
+async function analyzeVisibleVideoFrame(request) {
+  await runAnalysis({
+    containerId: "video-output",
+    button: document.getElementById("video-submit"),
+    loadingText: "Inspecting the visible video frame…",
+    task: () => scoreVisibleVideoFrame(request),
+    render: renderVisibleVideoFrame,
   });
 }
 
@@ -1027,7 +1185,37 @@ async function handleExternalRequest(request) {
   } else if (request.type === "image") {
     switchTab("image");
     document.getElementById("image-url-input").value = request.value || "";
-    document.getElementById("image-url-form").requestSubmit();
+    await analyzeImageUrl(request.value || "", request.frame);
+  } else if (request.type === "image-frame") {
+    switchTab("image");
+    await analyzeVisibleImageFrame(request);
+  } else if (request.type === "image-error") {
+    switchTab("image");
+    renderError(document.getElementById("image-output"), new Error(request.message));
+  } else if (request.type === "text") {
+    switchTab("text");
+    const input = document.getElementById("text-input");
+    input.value = request.value || "";
+    input.dispatchEvent(new Event("input"));
+    if (input.value.trim().length >= 20) {
+      document.getElementById("text-form").requestSubmit();
+    } else {
+      renderError(document.getElementById("text-output"),
+        new Error("Select at least 20 characters to analyze writing."));
+    }
+  } else if (request.type === "text-error") {
+    switchTab("text");
+    renderError(document.getElementById("text-output"), new Error(request.message));
+  } else if (request.type === "video") {
+    switchTab("video");
+    document.getElementById("video-url-input").value = request.value || "";
+    await analyzeVideoUrl(request.value || "", request.frame);
+  } else if (request.type === "video-frame") {
+    switchTab("video");
+    await analyzeVisibleVideoFrame(request);
+  } else if (request.type === "video-error") {
+    switchTab("video");
+    renderError(document.getElementById("video-output"), new Error(request.message));
   }
 }
 
