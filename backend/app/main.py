@@ -12,14 +12,21 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
-from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest, VideoUrlRequest
+from .schemas import (
+    FactCheckRequest,
+    ImageUrlRequest,
+    TextRequest,
+    UrlRequest,
+    VideoUrlRequest,
+    VirusTotalKeyRequest,
+)
 from .services.factcheck import factcheck_claim
 from .services.image_analysis import analyze_image, analyze_image_url
 from .services.model_registry import model_status
 from .services.mongolian import detect_language
 from .services.net_utils import UnsafeUrlError
 from .services.text_analysis import analyze_text
-from .services.url_scan import scan_url
+from .services.url_scan import scan_url, validate_virustotal_key
 from .services.video_analysis import analyze_video
 from .services.video_url_fetch import VideoFetchError, fetch_video_url
 
@@ -134,7 +141,7 @@ async def config() -> dict:
         "limitations": [
             "AI detectors are probabilistic and can be fooled or produce false positives.",
             "The curated fact-check corpus is small; connect the Google Fact Check Tools API for broader coverage.",
-            "URL scanning is passive and never fetches the page body or runs JavaScript.",
+            "The local URL scanner does not fetch page bodies or run JavaScript; configured VirusTotal scanning submits the URL to that service.",
             "This is a demonstration, not a forensic or editorial decision system.",
         ],
     }
@@ -279,7 +286,12 @@ async def api_analyze_video_url(payload: VideoUrlRequest) -> dict:
 @app.post("/api/scan/url")
 async def api_scan_url(payload: UrlRequest) -> dict:
     try:
-        return await scan_url(payload.url)
+        api_key = (
+            payload.virustotal_api_key.get_secret_value()
+            if payload.virustotal_api_key
+            else None
+        )
+        return await scan_url(payload.url, api_key)
     except UnsafeUrlError:
         raise
     except ValueError as exc:
@@ -287,6 +299,12 @@ async def api_scan_url(payload: UrlRequest) -> dict:
     except Exception as exc:
         logger.exception("URL scan failed")
         raise HTTPException(status_code=502, detail=f"URL scan failed: {exc}") from exc
+
+
+@app.post("/api/virustotal/validate")
+async def api_validate_virustotal_key(payload: VirusTotalKeyRequest) -> dict:
+    """Check a key supplied by the extension; never return or persist it."""
+    return await validate_virustotal_key(payload.api_key.get_secret_value())
 
 
 @app.middleware("http")

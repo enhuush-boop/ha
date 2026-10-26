@@ -213,7 +213,9 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
         ◀── {risk_score, risk_level, reasons, checks, limitations} ──
 ```
 
-- **No page body is fetched, no JavaScript runs, no forms are submitted.**
+- **The local backend does not fetch the page body or run JavaScript.** With a
+  configured key it submits the URL to VirusTotal, whose scanners may fetch it.
+  The submitted URL enters VirusTotal's dataset and may be community-visible.
 - Risk weights are additive and capped at 100. Examples: threat-intel match +60,
   invalid TLS +30, domain <30 days +25, brand lookalike +28, raw IP +25.
 - The score is an explainable triage heuristic, not a probability.
@@ -304,7 +306,7 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 | Path traversal via filename | Server-generated temp names; only a short sanitized suffix is reused. |
 | XSS via claim/evidence | Safe DOM APIs; links allow only http(s). |
 | Extension fetches arbitrary origins | Static host permissions limited to localhost; backend URL must be allowed by manifest. |
-| Secret leakage to extension | API keys live only in backend `.env`; `/api/config` exposes booleans, not values. |
+| Secret leakage | Centrally managed keys remain in backend `.env`. A user-connected VirusTotal key is stored in extension-private local storage, sent only to the localhost backend, represented as a Pydantic secret, and never returned in responses. |
 | Model pickle risk | Prefer safetensors checkpoints; production should pin revisions and verify hashes. |
 
 ### Network behavior
@@ -318,7 +320,7 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 | Image screenshot | localhost only | User right-clicks a blob image or its direct download fails. |
 | Video URL | Target public host (fetched by backend, no browser cookies) | User enters a video URL or right-clicks a video. |
 | Video frame | localhost only | User right-clicks a blob/stream player or direct download fails. |
-| URL scan | Google DoH (host), RDAP (domain), TLS target; threat intel only with keys | User submits URL. |
+| URL scan | Google DoH (host), RDAP (domain), TLS target; threat intel only with keys | User submits URL. VirusTotal receives and scans the full URL when configured. |
 | Ollama summary | localhost Ollama | Fact-check with `OLLAMA_URL` set. |
 
 No analytics, crash reporting, accounts, or cloud model calls are built in.
