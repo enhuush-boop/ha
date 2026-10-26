@@ -6,7 +6,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
+# Per-user local settings (backend/.env, gitignored) take priority. A committed
+# backend/.env.shared then fills in anything the local file leaves unset — for
+# this private repo that is the shared Google Fact Check key, so the few
+# collaborators clone and run without each provisioning their own. load_dotenv
+# does not override already-set vars, so load order is the precedence: .env
+# wins, .env.shared is the fallback.
 load_dotenv(BACKEND_DIR / ".env")
+load_dotenv(BACKEND_DIR / ".env.shared")
 
 # Pinned model IDs and revisions. A fresh clone therefore downloads exactly the
 # weights used for the published evaluation, not whatever is on `main` later.
