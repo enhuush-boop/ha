@@ -20,14 +20,31 @@ More screenshots: [text detection](docs/screenshots/text-check.png) ·
 
 | Tool | What you get |
 |---|---|
-| **Claim check** | `True` / `False` / `Not Sure`, a short explanation, and clickable evidence from trusted sources. |
-| **AI text check** | ModernBERT classifier + transparent style statistics, with explicit warnings about false positives. |
+| **Claim check** | English and Mongolian Cyrillic / informal Latin galig matched to a small sourced corpus; `True` / `False` / `Not Sure` with evidence links. |
+| **AI text check** | English ModernBERT classifier + style statistics. Mongolian text gets script recognition and Unicode-aware statistics, without an unvalidated AI score. |
 | **AI image check** | Smaug classifier (Nano Banana/Imagen-era coverage), EXIF/XMP inspection, generator-name hints, C2PA/JUMBF presence, and SHA-256. |
-| **Video check** | ffmpeg frame sampling scored frame-by-frame. Flags uncertainty instead of pretending it is a deepfake detector. |
+| **Video check** | Right-click a video or supply a direct URL for ffmpeg frame sampling. Blob/stream players get a clearly marked check of the visible frame only. |
 | **Suspicious link** | Passive DNS/DNSSEC, TLS certificate, RDAP domain age, typosquatting heuristics, and optional threat intel. **The page body is never fetched.** |
 
 The extension is a thin UI. Heavy models, ffmpeg, DNS/TLS/RDAP lookups, and the
 optional local LLM live in the backend, bound to `127.0.0.1` by default.
+
+### Mongolian input
+
+The **Claim** tab accepts both `Дэлхий хавтгай.` and `Delhii havtgai`, or
+`Вакцин аутизм үүсгэдэг.` and `Vaksin autizm uusgedeg`. These are matched
+against the same curated claims. A negated variant such as `үүсгэдэггүй` does
+not inherit the opposite verdict. Unmatched claims return **Not Sure** with
+search links. Informal galig has many spellings, so some variants will not
+match; this is not general translation or fact-checking of arbitrary claims.
+
+The **Text** tab recognizes Mongolian Cyrillic and common informal Latin galig,
+counts its words, and shows style statistics. The bundled AI-text model was
+trained for English; no Mongolian AI-authorship percentage is displayed.
+Both text forms have an **Input language** selector. Leave it on Auto for
+ordinary input, or choose Монгол латин галиг when an unusual spelling is not
+recognized automatically.
+Image, video, and URL checks are language-independent.
 
 ---
 
@@ -150,7 +167,9 @@ reachable. If it is offline, start `./scripts/run_backend.sh` and press
 
 | Try | Where |
 |---|---|
-| `Vaccines cause autism.` | **Claim** tab → expect **False** with CDC/WHO/PubMed links. |
+| `Vaccines cause autism.` | **Claim** tab → expect **False** with a WHO link. |
+| `Дэлхий хавтгай.` / `Delhii havtgai` | **Claim** tab → both return **False** with a NASA link. |
+| A Mongolian Cyrillic or galig paragraph | **Text** tab → script and style statistics, with no AI-authorship score. |
 | `The moon is made of a very specific type of cheese.` | **Claim** tab → expect **Not Sure** plus trusted search links. |
 | Any long AI-sounding paragraph | **Text** tab → classifier score and style stats. |
 | `benchmark/data/ai/ai_03_sdxl_astronaut.png` | **Image** tab → upload; metadata + classifier. |
@@ -160,11 +179,33 @@ reachable. If it is offline, start `./scripts/run_backend.sh` and press
 Right-click shortcuts also work:
 
 - Select text on a page → **Fact-check selected text**
+- Select text on a page → **Analyze selected text for AI generation**
+- Right-click the page → **Analyze page text with TAYO**
 - Right-click a link → **Scan link for phishing risk**
 - Right-click an image → **Analyze image for AI generation**
+- Right-click a video → **Inspect video with TAYO**
+- Right-click the page → **Inspect visible video with TAYO** (for players with an overlay)
 
 The selected content is placed in the side panel and the relevant analysis
 starts automatically.
+
+The image shortcut uses the original public image URL when available. For a
+`blob:` image or a URL the backend cannot download, it inspects a screenshot of
+the displayed image when the image is visible in the main page frame. The
+result marks that original metadata and resolution are lost.
+The page-text shortcut reads the largest article, then `<main>`, then the page
+body, capped at 100,000 characters. Text analysis of Mongolian Cyrillic and
+Latin galig remains statistics-only until a validated model is added.
+
+For a public `http(s)` video file, the backend downloads up to 100 MB and
+samples multiple frames. A `blob:` or Media Source player has no standalone
+file URL, so the extension captures the visible player and analyzes one frame.
+If a direct URL requires browser credentials and the download fails, it falls
+back to that captured frame.
+
+That frame result does **not** describe the entire video. Authenticated video
+URLs, HLS/DASH playlists, DRM, and players inside restricted frames may need
+the original file for full-video analysis.
 
 ---
 
@@ -176,7 +217,7 @@ icons:
 ```text
 extension/
 ├── manifest.json    # MV3 declaration, permissions, side panel, icons
-├── background.js    # service worker: context menus + pending request handoff
+├── background.js    # service worker: context menus + video frame capture
 ├── panel.html       # side-panel markup: Claim / Text / Image / Video / Link
 ├── panel.css        # design system, light/dark, responsive
 ├── panel.js         # API client, form handling, safe DOM rendering
@@ -188,14 +229,16 @@ Key points:
 - **`side_panel`** in `manifest.json` points at `panel.html`. The service worker
   calls `chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true})` so
   the toolbar icon opens the panel.
-- **`contextMenus`** creates right-click actions. A click stores a small pending
+- **`contextMenus`** creates right-click actions. A click stores a pending
   request in `chrome.storage.session` and opens the side panel. The panel reads
   it on load or via `chrome.storage.onChanged`.
 - **`host_permissions`** allows the extension to call
   `http://127.0.0.1:8000/*` without CORS problems. CORS is also enabled on the
   backend for development.
-- **No content scripts** are used. The extension never reads or modifies the
-  page DOM. Text and image URLs come only from explicit user actions.
+- **`activeTab` + `scripting`** run only after a page-text, image, or video
+  context-menu click. They read page text or locate visible media for a
+  screenshot fallback. There is no persistent content script or broad website
+  host permission.
 - **Safe rendering:** all backend strings are inserted with `textContent`, never
   with `innerHTML`, so a malicious claim cannot inject markup into the panel.
 - **Backend URL** is stored in `chrome.storage.local` and can be changed in the
@@ -223,11 +266,12 @@ Base URL: `http://127.0.0.1:8000`. Interactive OpenAPI docs: `/docs`.
 |---|---|---|
 | `GET` | `/api/health` | Status, device, loaded models, cache dir. |
 | `GET` | `/api/config` | Safe runtime config, enabled features, limits. |
-| `POST` | `/api/factcheck` | `{"claim": "..."}` → verdict + evidence. |
-| `POST` | `/api/analyze/text` | `{"text": "..."}` → classifier + stats. |
+| `POST` | `/api/factcheck` | `{"claim": "...", "language": "auto"}` → verdict + evidence. |
+| `POST` | `/api/analyze/text` | `{"text": "...", "language": "auto"}` → English classifier + stats, or Mongolian stats with `ai_probability: null`. |
 | `POST` | `/api/analyze/image` | multipart `file` → metadata + classifier. |
 | `POST` | `/api/analyze/image-url` | `{"url": "..."}` → backend fetches and analyzes. |
 | `POST` | `/api/analyze/video` | multipart `file` → sampled frame scores. |
+| `POST` | `/api/analyze/video-url` | `{"url": "https://.../clip.mp4"}` → download a public video file and sample frames. |
 | `POST` | `/api/scan/url` | `{"url": "..."}` → passive risk report. |
 
 Examples:
@@ -248,6 +292,7 @@ curl -s -X POST http://127.0.0.1:8000/api/scan/url \
 Errors: `400` for blocked/unsafe URLs or bad input, `413` for oversized
 uploads, `415` for unsupported media types, `422` for schema validation, `5xx`
 for model/server failures. Upload limit defaults to 100 MB (`MAX_UPLOAD_MB`).
+The optional `language` field accepts `auto`, `mn_cyrl`, `mn_latn`, or `en`.
 
 ### Smoke test
 
@@ -427,6 +472,10 @@ without authentication, request limits, and a restricted CORS policy.
   link-local, and reserved addresses are blocked. Redirects are revalidated and
   image size is capped. This is basic SSRF protection, not a production-grade
   egress proxy (DNS rebinding remains possible).
+- Video-URL analysis also runs in the backend. It validates each redirect,
+  connects to a checked public IP, caps the download at `MAX_UPLOAD_MB`, and
+  never forwards browser cookies. Captured blob-player frames are sent only to
+  the local backend and removed from session storage after use.
 - The URL scanner never requests the page body, runs JavaScript, or submits
   forms.
 - `ALLOWED_ORIGINS=*` is for local development only.
@@ -442,6 +491,9 @@ production hardening checklist.
   translation, editing, compression, screenshots, and mixed human/AI text.
   False positives disproportionately affect formal writing and non-native
   English speakers. Never accuse someone based on a score.
+- **Mongolian AI-text detection is unavailable.** The app recognizes Cyrillic
+  and common galig inputs but has no model validated for AI authorship in either.
+  Ambiguous Latin galig may not be recognized. A missing score is intentional.
 - **Image classifiers are not provenance.** Smaug is much better on current
   Google models, but it still missed 3/100 Nano Banana images in our test and
   can fail on compression, screenshots, crops, and edits. Metadata can be edited
@@ -449,7 +501,7 @@ production hardening checklist.
   verified.
 - **Video analysis is frame sampling.** It can miss short manipulations, audio
   deepfakes, and temporal artifacts. There is no dedicated video model here.
-- **Fact-check coverage is intentionally small.** The demo corpus has four
+- **Fact-check coverage is intentionally small.** The demo corpus has two
   claims. "Not Sure" means the system lacks evidence, not that the claim is
   genuinely undecided. Configure Google Fact Check Tools for broader coverage,
   and still verify the linked fact-check's date and exact claim.
@@ -474,6 +526,7 @@ backend/
       image_analysis.py     # metadata + classifier + image URL fetch
       text_analysis.py      # ModernBERT + stylometry
       video_analysis.py     # frame sampling
+      video_url_fetch.py    # guarded public video download
       url_scan.py           # passive DNS/TLS/RDAP/threat intel
       metadata.py           # EXIF/XMP/C2PA hints, ffmpeg helpers
       model_registry.py     # lazy loading, device selection, Smaug adapter

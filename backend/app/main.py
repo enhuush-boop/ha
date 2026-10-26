@@ -12,14 +12,16 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
-from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest
+from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest, VideoUrlRequest
 from .services.factcheck import factcheck_claim
 from .services.image_analysis import analyze_image, analyze_image_url
 from .services.model_registry import model_status
+from .services.mongolian import detect_language
 from .services.net_utils import UnsafeUrlError
 from .services.text_analysis import analyze_text
 from .services.url_scan import scan_url
 from .services.video_analysis import analyze_video
+from .services.video_url_fetch import VideoFetchError, fetch_video_url
 
 logging.basicConfig(
     level=logging.INFO,
@@ -141,7 +143,7 @@ async def config() -> dict:
 @app.post("/api/factcheck")
 async def api_factcheck(payload: FactCheckRequest) -> dict:
     try:
-        return await factcheck_claim(payload.claim)
+        return await factcheck_claim(payload.claim, payload.language)
     except Exception as exc:  # pragma: no cover - defensive
         logger.exception("factcheck failed")
         raise HTTPException(status_code=500, detail=f"Fact-check failed: {exc}") from exc
@@ -150,7 +152,14 @@ async def api_factcheck(payload: FactCheckRequest) -> dict:
 @app.post("/api/analyze/text")
 async def api_analyze_text(payload: TextRequest) -> dict:
     try:
-        result = await run_in_threadpool(analyze_text, payload.text)
+        # Mongolian returns lightweight statistics without loading a model.
+        language = (
+            detect_language(payload.text)
+            if payload.language == "auto" else payload.language
+        )
+        if language in {"mn_cyrl", "mn_latn"}:
+            return analyze_text(payload.text, payload.language)
+        result = await run_in_threadpool(analyze_text, payload.text, payload.language)
         return result
     except Exception as exc:
         logger.exception("text analysis failed")
@@ -188,7 +197,10 @@ async def _save_upload(upload: UploadFile, max_mb: int) -> tuple[Path, str, int]
 
 
 @app.post("/api/analyze/image")
-async def api_analyze_image(file: UploadFile = File(...)) -> dict:
+async def api_analyze_image(
+    file: UploadFile = File(...),
+    tiles: bool = False,
+) -> dict:
     content_type = (file.content_type or "").split(";")[0].lower()
     if content_type and content_type not in IMAGE_CONTENT_TYPES:
         raise HTTPException(
@@ -197,7 +209,7 @@ async def api_analyze_image(file: UploadFile = File(...)) -> dict:
         )
     path, name, _ = await _save_upload(file, settings.max_upload_mb)
     try:
-        result = await run_in_threadpool(analyze_image, path, name)
+        result = await run_in_threadpool(analyze_image, path, name, None, tiles)
         return result
     except Exception as exc:
         logger.exception("image analysis failed")
@@ -209,7 +221,7 @@ async def api_analyze_image(file: UploadFile = File(...)) -> dict:
 @app.post("/api/analyze/image-url")
 async def api_analyze_image_url(payload: ImageUrlRequest) -> dict:
     try:
-        return await analyze_image_url(payload.url)
+        return await analyze_image_url(payload.url, tiles=payload.tiles)
     except UnsafeUrlError:
         raise
     except ValueError as exc:
@@ -241,6 +253,27 @@ async def api_analyze_video(file: UploadFile = File(...)) -> dict:
         raise HTTPException(status_code=500, detail=f"Video analysis failed: {exc}") from exc
     finally:
         path.unlink(missing_ok=True)
+
+
+@app.post("/api/analyze/video-url")
+async def api_analyze_video_url(payload: VideoUrlRequest) -> dict:
+    try:
+        with tempfile.TemporaryDirectory(prefix="tayo_video_url_") as workdir:
+            path, final_url, filename = await run_in_threadpool(
+                fetch_video_url, payload.url, Path(workdir)
+            )
+            result = await run_in_threadpool(analyze_video, path, filename)
+            result["source_url"] = final_url
+            return result
+    except UnsafeUrlError:
+        raise
+    except VideoFetchError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("video URL analysis failed")
+        raise HTTPException(status_code=502, detail=f"Could not analyze video URL: {exc}") from exc
 
 
 @app.post("/api/scan/url")

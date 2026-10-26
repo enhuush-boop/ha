@@ -82,6 +82,12 @@ accuracy on a matched dataset does not transfer to edited, paraphrased,
 translated, or out-of-domain text. Use it as a conversation starter, never as
 evidence of misconduct.
 
+ModernBERT is used for English text only. For detected Mongolian Cyrillic or
+informal Latin galig, TAYO returns Unicode-aware style statistics and an
+uncertain result without an AI probability. Adding an AI-authorship verdict
+requires a detector trained and evaluated on independently collected Mongolian
+human and AI texts in both writing forms.
+
 ---
 
 ## 2. Reading the 300-image Google-focused evaluation

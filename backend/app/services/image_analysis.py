@@ -11,9 +11,11 @@ import httpx
 from PIL import Image
 
 from ..config import settings
+from .generator_id import identify_generator
 from .metadata import extract_image_metadata
 from .model_registry import get_image_models
 from .net_utils import parse_http_url, resolve_public_host
+from .tile_analysis import analyze_tiles
 
 IMAGE_LIMITATIONS = [
     "AI-image classifiers are probabilistic signals, not proof. They are trained on specific generators and can fail on new models, compression, screenshots, crops, and edits.",
@@ -58,9 +60,22 @@ def _confidence(ai_probability: float | None, model_results: list[dict]) -> floa
     return round(max(0.05, min(0.95, base)), 3)
 
 
-def analyze_image(path: Path, filename: str | None = None, source_url: str | None = None) -> dict:
+def analyze_image(
+    path: Path,
+    filename: str | None = None,
+    source_url: str | None = None,
+    tiles: bool = False,
+) -> dict:
     filename = filename or path.name
     metadata = extract_image_metadata(path)
+    # C2PA lives in a container box that PIL does not surface, so the generator
+    # check gets a slice of the raw file as well as the parsed metadata.
+    try:
+        with path.open("rb") as handle:
+            raw_head = handle.read(2_000_000)
+    except Exception:
+        raw_head = b""
+    generator = identify_generator(metadata, raw_head)
     try:
         with Image.open(path) as image:
             image.load()
@@ -90,6 +105,13 @@ def analyze_image(path: Path, filename: str | None = None, source_url: str | Non
             model_results
         )
         ai_probability = round(ai_probability, 6)
+
+    # Opt-in: one inference per tile, so this multiplies the cost of a request.
+    tile_report = (
+        analyze_tiles(rgb, models, whole_score=ai_probability)
+        if tiles
+        else {"available": False, "reason": "Not requested. Pass tiles=true to scan regions."}
+    )
 
     signals: list[dict[str, Any]] = []
     for result in model_results:
@@ -138,6 +160,30 @@ def analyze_image(path: Path, filename: str | None = None, source_url: str | Non
             }
         )
 
+    if generator.get("generator"):
+        signals.append(
+            {
+                "name": "provenance:generator_metadata",
+                "value": generator["generator"],
+                "direction": "AI-like",
+                "weight": "metadata",
+                "explanation": (
+                    f"{generator['evidence']}. Confidence: {generator['confidence']}. "
+                    "Read from the file, not inferred from pixels."
+                ),
+            }
+        )
+    if tile_report.get("available") and tile_report["pattern"] == "localized":
+        signals.append(
+            {
+                "name": "tiles:localized_ai",
+                "value": tile_report["ai_like_share"],
+                "direction": "AI-like",
+                "weight": "model",
+                "explanation": tile_report["summary"],
+            }
+        )
+
     label = _label_for(ai_probability, metadata)
     confidence = _confidence(ai_probability, model_results)
 
@@ -155,6 +201,15 @@ def analyze_image(path: Path, filename: str | None = None, source_url: str | Non
             "No image classifier could be loaded, so this result is metadata-only. "
             "Install the backend models or check the server logs. "
         )
+    if generator.get("generator"):
+        named = generator.get("named_model")
+        summary += (
+            f"Metadata names the generator as {generator['generator']}"
+            + (f" ({named})" if named else "")
+            + f" — {generator['confidence']} confidence, from {generator['evidence']}. "
+        )
+    if tile_report.get("available"):
+        summary += tile_report["summary"] + " "
     if hints:
         summary += f"Metadata contains generator hints: {', '.join(hints)}. "
     if metadata.get("c2pa_present"):
@@ -176,6 +231,8 @@ def analyze_image(path: Path, filename: str | None = None, source_url: str | Non
         "models": model_results,
         "model_errors": model_errors,
         "signals": signals,
+        "generator": generator,
+        "tiles": tile_report,
         "metadata": metadata,
         "limitations": IMAGE_LIMITATIONS,
         "recommended_action": (
@@ -234,10 +291,15 @@ async def fetch_image_from_url(url: str) -> tuple[Path, str]:
     raise ValueError("Too many redirects while fetching the image.")
 
 
-async def analyze_image_url(url: str) -> dict:
+async def analyze_image_url(url: str, tiles: bool = False) -> dict:
     path, final_url = await fetch_image_from_url(url)
     try:
-        return analyze_image(path, filename=final_url.rsplit("/", 1)[-1], source_url=final_url)
+        return analyze_image(
+            path,
+            filename=final_url.rsplit("/", 1)[-1],
+            source_url=final_url,
+            tiles=tiles,
+        )
     finally:
         try:
             path.unlink(missing_ok=True)

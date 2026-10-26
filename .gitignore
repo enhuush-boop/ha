@@ -1,0 +1,22 @@
+# The three paths the README says a fresh clone rebuilds rather than carries.
+# No trailing slash: in a git worktree these are often symlinks to the main
+# checkout's copies, and a directory-only pattern would not match a symlink.
+.venv
+backend/.env
+backend/.model_cache
+
+# Local agent worktrees are separate checkouts, not project source files.
+.claude/worktrees/
+
+# Python bytecode.
+__pycache__/
+*.py[cod]
+
+# Benchmark images are downloaded, not committed.
+benchmark/data/
+benchmark/samples/
+
+# OS / editor noise.
+.DS_Store
+Thumbs.db
+*.swp

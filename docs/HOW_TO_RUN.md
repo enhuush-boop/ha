@@ -156,8 +156,25 @@ If it says offline, start the backend and press **Retry**.
 ### Context-menu features
 
 - **Selected text → Fact-check selected text**
+- **Selected text → Analyze selected text for AI generation**
+- **Page → Analyze page text with TAYO**
 - **Link → Scan link for phishing risk**
 - **Image → Analyze image for AI generation**
+- **Video → Inspect video with TAYO**
+- **Page with a video → Inspect visible video with TAYO**
+
+Direct public video files are downloaded by the local backend and sampled with
+ffmpeg. A `blob:`/stream player has no directly downloadable file, so TAYO
+captures one visible frame and labels the result as a frame check. DRM,
+restricted iframes, and authenticated video hosts may require the original
+file for full-video analysis; failed direct downloads use the captured frame
+when available.
+
+Public image URLs use the original file. Blob images or failed downloads use a
+screenshot of the displayed image; the result clearly notes that original
+metadata and full resolution are unavailable. The page-text action reads the
+largest article, then `<main>`, then the page body. Select a specific passage
+when the page contains unrelated text.
 
 The user gesture is required by Chrome. The service worker stores the request
 in session storage and asks the side panel to open. If Chrome refuses to open
@@ -260,13 +277,15 @@ RDAP checks.
 1. **Start server** (`./scripts/run_backend.sh`) and confirm the green status
    dot in the panel.
 2. **Claim tab:** enter `Vaccines cause autism.` → show **False**, the short
-   explanation, and the CDC/WHO/PubMed/Cochrane links.
+   explanation, and the WHO link. Enter `Дэлхий хавтгай.` and `Delhii havtgai`;
+   both should show the same **False** claim with a NASA link.
 3. **Claim tab:** enter a claim not in the corpus → show **Not Sure** and the
    trusted search links. Explain that “not sure” means “no evidence in this
    build”, not “50/50”.
 4. **Text tab:** paste a paragraph full of “delve”, “tapestry”, “pivotal” →
    show the high AI-like score and the style statistics. Then paste a personal
-   paragraph and discuss false positives.
+   paragraph and discuss false positives. A Mongolian Cyrillic or galig
+   paragraph shows script and style statistics, without an AI score.
 5. **Image tab:** upload
    `benchmark/data/ai/ai_03_sdxl_astronaut.png` → show score, SHA-256, EXIF
    flags. Upload an AI image with a missing EXIF block and explain why that is
@@ -351,8 +370,9 @@ import; fix torchvision before debugging transformers.
 ### Image URL fails but upload works
 
 Hotlink protection, signed URLs, cookies, and `403` responses are common. The
-backend has no browser session. Download the image and upload it, or use a
-direct public image URL. Private/loopback hosts are intentionally blocked.
+backend has no browser session. Right-click the image to use the screenshot
+fallback, or upload the original file to retain metadata and full resolution.
+Private/loopback hosts are intentionally blocked.
 
 ### Fact-check always says “Not Sure”
 

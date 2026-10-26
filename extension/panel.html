@@ -48,7 +48,7 @@
       <section id="panel-factcheck" class="panel is-active" role="tabpanel" aria-labelledby="tab-factcheck">
         <div class="panel-intro">
           <h2>Check a claim</h2>
-          <p>Matches a small curated evidence corpus and optional Google Fact Check results. Every answer includes sources.</p>
+          <p>Checks English and Mongolian Cyrillic / Latin galig against a small sourced corpus and optional Google Fact Check results. Unknown claims stay “Not Sure”.</p>
         </div>
         <form id="factcheck-form" class="card form">
           <label for="claim-input">Claim or statement</label>
@@ -59,8 +59,15 @@
             minlength="3"
             maxlength="10000"
             required
-            placeholder="Example: Vaccines cause autism."
+            placeholder="Жишээ: Дэлхий хавтгай. / Delhii havtgai"
           ></textarea>
+          <label for="claim-language">Input language / Бичгийн хэлбэр</label>
+          <select id="claim-language" name="language">
+            <option value="auto">Auto detect / Автомат</option>
+            <option value="mn_cyrl">Монгол кирилл</option>
+            <option value="mn_latn">Монгол латин галиг</option>
+            <option value="en">English</option>
+          </select>
           <div class="form-actions">
             <span class="hint">Verdict + trusted links</span>
             <button class="button primary" type="submit">Check claim</button>
@@ -73,7 +80,7 @@
       <section id="panel-text" class="panel" role="tabpanel" aria-labelledby="tab-text">
         <div class="panel-intro">
           <h2>Inspect writing</h2>
-          <p>Runs a ModernBERT classifier plus transparent style statistics. Treat the score as a weak triage signal, never proof of authorship.</p>
+          <p>Right-click selected text or a page to analyze it here. English: ModernBERT + style statistics. Монгол кирилл / латин галиг: бичгийг таньж статистик харуулна; баталгаажсан AI текст илрүүлэгч байхгүй тул хувь гаргахгүй.</p>
         </div>
         <form id="text-form" class="card form">
           <div class="label-row">
@@ -87,8 +94,15 @@
             minlength="20"
             maxlength="100000"
             required
-            placeholder="Paste at least a paragraph. Short texts are unreliable."
+            placeholder="Paste a paragraph in English, монгол кирилл, эсвэл Mongol latin galig."
           ></textarea>
+          <label for="text-language">Input language / Бичгийн хэлбэр</label>
+          <select id="text-language" name="language">
+            <option value="auto">Auto detect / Автомат</option>
+            <option value="mn_cyrl">Монгол кирилл</option>
+            <option value="mn_latn">Монгол латин галиг</option>
+            <option value="en">English</option>
+          </select>
           <div class="form-actions">
             <span class="hint">Minimum 20 characters</span>
             <button class="button primary" type="submit">Analyze text</button>
@@ -101,7 +115,7 @@
       <section id="panel-image" class="panel" role="tabpanel" aria-labelledby="tab-image">
         <div class="panel-intro">
           <h2>Check an image</h2>
-          <p>Metadata, C2PA presence, and an AI-image classifier. Use it to decide what to investigate, not what to publish.</p>
+          <p>Right-click an image to inspect it here. Public image files include metadata checks; protected or blob images use a clearly marked screenshot fallback.</p>
         </div>
 
         <form id="image-url-form" class="card form">
@@ -142,8 +156,24 @@
       <section id="panel-video" class="panel" role="tabpanel" aria-labelledby="tab-video">
         <div class="panel-intro">
           <h2>Sample a video</h2>
-          <p>Extracts up to 8 frames with ffmpeg and scores each frame. This cannot detect every deepfake, lip-sync error, or audio manipulation.</p>
+          <p>Right-click a video and choose “Inspect video with TAYO”, or use “Inspect visible video” from the page menu. Direct files get frame sampling; blob/stream players get one clearly marked frame check.</p>
         </div>
+        <form id="video-url-form" class="card form">
+          <label for="video-url-input">Direct video URL</label>
+          <input
+            id="video-url-input"
+            name="url"
+            type="url"
+            placeholder="https://example.com/clip.mp4"
+          />
+          <div class="form-actions">
+            <span class="hint">Public file · up to 100 MB</span>
+            <button class="button secondary" type="submit">Analyze video URL</button>
+          </div>
+        </form>
+
+        <div class="divider"><span>or upload a file</span></div>
+
         <form id="video-form" class="card form">
           <label class="dropzone" id="video-dropzone" for="video-file">
             <input id="video-file" name="file" type="file" accept="video/*" />
