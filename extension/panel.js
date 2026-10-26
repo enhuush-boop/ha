@@ -2,6 +2,8 @@
  * All network calls go to the local backend. No third-party scripts.
  */
 
+const extensionApi = globalThis.browser || globalThis.chrome;
+
 const DEFAULT_BACKEND = "http://127.0.0.1:8000";
 const MAX_TIMEOUT = 1000 * 60 * 10;
 
@@ -12,9 +14,11 @@ const state = {
   imageObjectUrl: null,
   videoFile: null,
   lastHandled: 0,
+  lastClaim: "",
+  editorialSources: [],
 };
 
-const hasChrome = typeof chrome !== "undefined" && Boolean(chrome.storage);
+const hasExtensionApi = Boolean(extensionApi?.storage);
 
 /* ---------------- Tiny DOM helpers ---------------- */
 
@@ -254,8 +258,8 @@ async function checkHealth(announce = false) {
 
 async function loadSettings() {
   let stored = {};
-  if (hasChrome && chrome.storage.local) {
-    stored = await chrome.storage.local.get({ backendUrl: DEFAULT_BACKEND });
+  if (hasExtensionApi && extensionApi.storage.local) {
+    stored = await extensionApi.storage.local.get({ backendUrl: DEFAULT_BACKEND });
   } else {
     try {
       stored = { backendUrl: localStorage.getItem("tayoBackend") || DEFAULT_BACKEND };
@@ -269,8 +273,8 @@ async function loadSettings() {
 
 async function saveSettings(url) {
   state.backendUrl = url.replace(/\/+$/, "");
-  if (hasChrome && chrome.storage.local) {
-    await chrome.storage.local.set({ backendUrl: state.backendUrl });
+  if (hasExtensionApi && extensionApi.storage.local) {
+    await extensionApi.storage.local.set({ backendUrl: state.backendUrl });
   } else {
     try {
       localStorage.setItem("tayoBackend", state.backendUrl);
@@ -311,6 +315,17 @@ function renderEvidence(evidence) {
     node.append(el("span", "evidence-source", item.source || "Source"));
     node.append(el("span", "evidence-title", item.title || item.url || "Untitled evidence"));
     if (item.snippet) node.append(el("span", "evidence-snippet", item.snippet));
+    const reviewDate = item.review_date || item.published;
+    if (reviewDate) node.append(el("span", "evidence-snippet", `Published/reviewed: ${reviewDate}`));
+    if (item.published_verdict) {
+      node.append(el("span", "evidence-snippet", `This publisher's assessment: ${item.published_verdict}`));
+    }
+    if (item.matched_claim) {
+      node.append(el("span", "evidence-snippet", `Claim reviewed: ${item.matched_claim}`));
+    }
+    if (Number.isFinite(item.match_score)) {
+      node.append(el("span", "evidence-snippet", `Text similarity: ${pct(item.match_score)}`));
+    }
     if (item.relation && item.relation !== "supports") {
       const relation = el(
         "span",
@@ -319,6 +334,10 @@ function renderEvidence(evidence) {
           ? "Contradicts the claim"
           : item.relation === "search"
             ? "Search trusted fact-checkers"
+            : item.relation === "fact_check"
+              ? "Published fact-check; read the article"
+              : item.relation === "related"
+                ? "Related article; no verdict detected"
             : item.relation,
       );
       relation.style.fontStyle = "italic";
@@ -334,7 +353,14 @@ function renderFactcheck(container, data) {
   const card = resultCard();
   const head = el("div", "score-head");
   head.append(badgeFor(data.verdict || "Not Sure"));
-  head.append(el("span", "score-sub", `Confidence ${pct(data.confidence)}`));
+  const hasCuratedVerdict = String(data.method || "").startsWith("curated_corpus");
+  head.append(
+    el(
+      "span",
+      "score-sub",
+      hasCuratedVerdict ? `Corpus match confidence ${pct(data.confidence)}` : "No independent verdict",
+    ),
+  );
   card.append(head);
   card.append(el("p", "summary", data.summary || "No summary returned."));
   if (data.matched_claim) {
@@ -342,7 +368,7 @@ function renderFactcheck(container, data) {
       el(
         "p",
         "match-line",
-        `Matched corpus claim: “${data.matched_claim}” · match score ${pct(data.match_score)}`,
+        `${hasCuratedVerdict ? "Matched curated claim" : "Publisher-reviewed claim"}: “${data.matched_claim}” · text similarity ${pct(data.match_score)}`,
       ),
     );
   }
@@ -351,6 +377,9 @@ function renderFactcheck(container, data) {
     {
       curated_corpus: "Curated corpus",
       google_factcheck_tools: "Google Fact Check Tools",
+      indexed_evidence: "Mongolian publisher article index",
+      "curated_corpus+indexed_evidence": "Curated match + publisher articles",
+      "google_factcheck_tools+indexed_evidence": "Google Fact Check + publisher articles",
       no_match: "No confident match",
     }[data.method] || data.method || "unknown";
   meta.append(el("span", null, `Method: ${methodLabel}`));
@@ -358,6 +387,33 @@ function renderFactcheck(container, data) {
     meta.append(el("span", null, `Бичиг: ${languageLabel(data.language)}`));
   }
   if (data.topic) meta.append(el("span", null, `Topic: ${data.topic}`));
+  if (data.corpus_reviewed_at) {
+    meta.append(el("span", null, `Curated evidence reviewed: ${data.corpus_reviewed_at}`));
+  }
+  if (Number.isFinite(data.indexed_source_count)) {
+    meta.append(el("span", null, `Indexed publishers with related articles: ${data.indexed_source_count}`));
+  }
+  if (Number.isFinite(data.source_count)) {
+    meta.append(el("span", null, `Publishers reviewing this same claim text: ${data.source_count}`));
+  }
+  if (Number.isFinite(data.claimreview_index?.records) && data.claimreview_index.records > 0) {
+    meta.append(el("span", null, `Google ClaimReview local index: ${data.claimreview_index.records.toLocaleString()} records · imported ${data.claimreview_index.imported_at || "unknown"}`));
+  }
+  if (data.index_status?.available) {
+    const publisherCount = Number.isFinite(data.index_status.publisher_count)
+      ? ` across ${data.index_status.publisher_count} publishers`
+      : "";
+    meta.append(el("span", null, `Local article index: ${data.index_status.indexed_items} articles${publisherCount} · updated ${data.index_status.fetched_at || "unknown"}`));
+  }
+  if (data.index_status?.refreshing) {
+    meta.append(el("span", null, "Эх сурвалжийн нийтлэлийн сан шинэчлэгдэж байна. Шинэ нийтлэл хайх бол хэсэг хүлээгээд дахин шалгана уу."));
+  }
+  if (Array.isArray(data.search_variants) && data.search_variants.length) {
+    meta.append(el("span", null, `Google search spellings: ${data.search_variants.join(" · ")}`));
+  }
+  if (Array.isArray(data.index_search_variants) && data.index_search_variants.length) {
+    meta.append(el("span", null, `Article index spellings: ${data.index_search_variants.join(" · ")}`));
+  }
   if (data.summary_source) meta.append(el("span", null, `Summary: ${data.summary_source}`));
   card.append(meta);
   addActionRow(card, data);
@@ -365,13 +421,91 @@ function renderFactcheck(container, data) {
 
   if (Array.isArray(data.evidence) && data.evidence.length) {
     const evidenceCard = resultCard(
-      data.method === "curated_corpus" ? "Evidence & sources" : "Fact-checks & search links",
+      hasCuratedVerdict ? "Evidence & publisher articles" : "Publisher assessments & search leads",
     );
     evidenceCard.append(renderEvidence(data.evidence));
     container.append(evidenceCard);
   }
 
+  if (Array.isArray(data.health_literature?.evidence) && data.health_literature.evidence.length) {
+    const healthCard = resultCard("Biomedical literature leads");
+    if (data.health_literature.note) {
+      healthCard.append(el("p", "inline-note", data.health_literature.note));
+    }
+    if (Number.isFinite(data.health_literature.record_count)) {
+      healthCard.append(el("p", "meta-line", `Matching records in search database: ${data.health_literature.record_count}`));
+    }
+    healthCard.append(renderEvidence(data.health_literature.evidence));
+    container.append(healthCard);
+  }
+
+  if (Array.isArray(data.claimreview_evidence) && data.claimreview_evidence.length) {
+    const reviewCard = resultCard("International ClaimReview matches");
+    reviewCard.append(el("p", "inline-note", "These are assessments recorded by the named publishers in the Google ClaimReview feed. Ratings are not combined into TAYO's verdict; read each original article and confirm it checks the same claim."));
+    reviewCard.append(renderEvidence(data.claimreview_evidence));
+    container.append(reviewCard);
+  }
+
   addLimitations(container, data.limitations, data.recommended_action);
+  renderJournalistAssessments(
+    document.getElementById("journalist-assessments"),
+    data.journalist_assessments || [],
+    data.claim || state.lastClaim,
+  );
+}
+
+function safeLink(url, label) {
+  const node = el("a", null, label || url);
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return el("span", null, label || url);
+    node.href = parsed.href;
+  } catch {
+    return el("span", null, label || url);
+  }
+  node.target = "_blank";
+  node.rel = "noopener noreferrer";
+  return node;
+}
+
+function renderJournalistAssessments(container, reviews, claim) {
+  if (!container) return;
+  clear(container);
+  const card = resultCard("Journalist assessments");
+  card.append(el("p", "inline-note", "These are individual, self-attributed editorial assessments. TAYO does not verify reviewer identity or combine ratings into its own verdict."));
+  if (!reviews.length) {
+    card.append(el("p", "summary", "No saved journalist assessment matches this exact claim yet."));
+  } else {
+    const counts = new Map();
+    reviews.forEach((review) => counts.set(review.verdict, (counts.get(review.verdict) || 0) + 1));
+    const distribution = [...counts.entries()].map(([verdict, count]) => `${verdict}: ${count}`).join(" · ");
+    card.append(el("p", "match-line", `${reviews.length} saved assessment(s) · ${distribution}`));
+    const list = el("div", "editorial-list");
+    reviews.forEach((review) => {
+      const entry = el("article", "editorial-entry");
+      const head = el("div", "score-head");
+      head.append(badgeFor(review.verdict));
+      head.append(el("span", "score-sub", `${review.reviewer} · ${review.created_at || "date unknown"} · name not verified`));
+      entry.append(head);
+      entry.append(el("p", null, review.rationale));
+      (review.sources || []).forEach((source) => {
+        const href = source.homepage_url || `https://${source.domain}/`;
+        entry.append(safeLink(href, `${source.name} (${source.domain})`));
+      });
+      (review.evidence_urls || []).forEach((url) => entry.append(safeLink(url)));
+      list.append(entry);
+    });
+    card.append(list);
+  }
+  const add = el("button", "button secondary", "Add journalist assessment");
+  add.type = "button";
+  add.addEventListener("click", () => {
+    switchTab("editorial");
+    document.getElementById("editorial-claim").value = claim || "";
+    document.getElementById("reviewer-name").focus();
+  });
+  card.append(add);
+  container.append(card);
 }
 
 /* ---------------- Text ---------------- */
@@ -825,6 +959,7 @@ function wireFactcheck() {
       input.focus();
       return;
     }
+    state.lastClaim = claim;
     const button = form.querySelector("button[type=submit]");
     await runAnalysis({
       containerId: "factcheck-output",
@@ -833,6 +968,138 @@ function wireFactcheck() {
       task: () => api("/api/factcheck", { method: "POST", body: { claim, language: language.value }, timeout: 90000 }),
       render: renderFactcheck,
     });
+  });
+}
+
+const sourceTypeLabels = {
+  fact_check: "Fact-check publisher",
+  official: "Official / primary source",
+  research: "Research database / literature",
+  international: "International reference",
+  news: "News publisher",
+};
+
+function renderEditorialSources(sources) {
+  const container = document.getElementById("editorial-source-list");
+  const select = document.getElementById("editorial-sources");
+  if (!container || !select) return;
+  clear(container);
+  clear(select);
+  state.editorialSources = sources || [];
+  if (!state.editorialSources.length) {
+    container.append(el("p", "inline-note", "No sources are registered yet."));
+  }
+  state.editorialSources.forEach((source) => {
+    const option = el("option", null, `${source.name} — ${source.domain} (${sourceTypeLabels[source.tier] || source.tier})`);
+    option.value = source.id;
+    select.append(option);
+
+    const entry = el("article", "editorial-entry");
+    const heading = el("h4");
+    heading.append(safeLink(source.homepage_url || `https://${source.domain}/`, source.name));
+    entry.append(heading);
+    entry.append(el("span", "editorial-status", source.verification_status || "registered; review status unknown"));
+    entry.append(el("p", "meta-line", `${sourceTypeLabels[source.tier] || source.tier} · ${source.domain} · added by ${source.added_by || "unknown"}`));
+    if (source.note) entry.append(el("p", null, source.note));
+    if (source.verification_note) entry.append(el("p", null, `Review note: ${source.verification_note}`));
+    const reviewSource = el("button", "small-button", "Mark journalist-reviewed");
+    reviewSource.type = "button";
+    reviewSource.addEventListener("click", async () => {
+      const reviewer = window.prompt("Journalist who checked this website's scope, ownership, and corrections policy:");
+      if (!reviewer?.trim()) return;
+      const note = window.prompt("What did you verify? (optional)") || "";
+      try {
+        await api(`/api/editorial/sources/${encodeURIComponent(source.id)}/review`, {
+          method: "POST", body: { reviewer: reviewer.trim(), note },
+        });
+        await loadEditorialSources();
+      } catch (error) {
+        document.getElementById("source-form-status").textContent = error.message;
+      }
+    });
+    entry.append(reviewSource);
+    container.append(entry);
+  });
+}
+
+async function loadEditorialSources() {
+  const container = document.getElementById("editorial-source-list");
+  if (!container) return;
+  const query = document.getElementById("source-search").value.trim();
+  try {
+    const data = await api(`/api/editorial/sources?q=${encodeURIComponent(query)}&limit=100`);
+    renderEditorialSources(data.sources || []);
+    const count = document.getElementById("source-count");
+    count.textContent = data.total > 100
+      ? `Showing 100 of ${data.total.toLocaleString()} sources. Search to narrow the list.`
+      : `${data.total.toLocaleString()} saved sources.`;
+  } catch (error) {
+    clear(container).append(el("p", "error-card", error.message));
+  }
+}
+
+function wireEditorial() {
+  let searchTimer;
+  document.getElementById("source-search").addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(loadEditorialSources, 180);
+  });
+
+  document.getElementById("export-editorial-db").addEventListener("click", async () => {
+    try {
+      const data = await api("/api/editorial/export");
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const objectUrl = URL.createObjectURL(blob);
+      const link = el("a");
+      link.href = objectUrl;
+      link.download = "tayo-editorial-backup.json";
+      link.click();
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      document.getElementById("source-form-status").textContent = error.message;
+    }
+  });
+
+  const sourceForm = document.getElementById("source-form");
+  const sourceStatus = document.getElementById("source-form-status");
+  sourceForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    sourceStatus.textContent = "Saving source…";
+    const body = Object.fromEntries(new FormData(sourceForm).entries());
+    try {
+      await api("/api/editorial/sources", { method: "POST", body });
+      sourceStatus.textContent = "Saved. This source is pending editorial review.";
+      sourceForm.reset();
+      document.getElementById("source-search").value = "";
+      await loadEditorialSources();
+    } catch (error) {
+      sourceStatus.textContent = error.message;
+    }
+  });
+
+  const reviewForm = document.getElementById("editorial-review-form");
+  const reviewStatus = document.getElementById("review-form-status");
+  reviewForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    reviewStatus.textContent = "Saving assessment…";
+    const body = Object.fromEntries(new FormData(reviewForm).entries());
+    body.source_ids = [...document.getElementById("editorial-sources").selectedOptions].map((option) => option.value);
+    body.evidence_urls = body.evidence_urls.split(/\r?\n/).map((url) => url.trim()).filter(Boolean);
+    body.claim = body.claim.trim();
+    try {
+      const data = await api("/api/editorial/reviews", { method: "POST", body });
+      reviewStatus.textContent = "Assessment saved. It will appear as a journalist's opinion, not TAYO's verdict.";
+      const latest = await api(`/api/editorial/reviews?claim=${encodeURIComponent(body.claim)}`);
+      renderJournalistAssessments(document.getElementById("journalist-assessments"), latest.reviews || [], body.claim);
+      if (state.lastClaim && state.lastClaim === body.claim) {
+        document.getElementById("factcheck-form").requestSubmit();
+      }
+      reviewForm.reset();
+      document.getElementById("editorial-claim").value = body.claim;
+      return data;
+    } catch (error) {
+      reviewStatus.textContent = error.message;
+    }
   });
 }
 
@@ -1220,11 +1487,11 @@ async function handleExternalRequest(request) {
 }
 
 async function consumePending() {
-  if (!hasChrome || !chrome.storage.session) return;
+  if (!hasExtensionApi || !extensionApi.storage.session) return;
   try {
-    const stored = await chrome.storage.session.get("tayoPending");
+    const stored = await extensionApi.storage.session.get("tayoPending");
     if (stored?.tayoPending) {
-      await chrome.storage.session.remove("tayoPending");
+      await extensionApi.storage.session.remove("tayoPending");
       await handleExternalRequest(stored.tayoPending);
     }
   } catch (error) {
@@ -1268,9 +1535,9 @@ function wireSettings() {
   });
 
   document.getElementById("clear-data").addEventListener("click", async () => {
-    if (hasChrome && chrome.storage.local) {
-      await chrome.storage.local.clear();
-      if (chrome.storage.session) await chrome.storage.session.clear();
+    if (hasExtensionApi && extensionApi.storage.local) {
+      await extensionApi.storage.local.clear();
+      if (extensionApi.storage.session) await extensionApi.storage.session.clear();
     }
     try {
       localStorage.removeItem("tayoBackend");
@@ -1279,7 +1546,7 @@ function wireSettings() {
     }
     state.backendUrl = DEFAULT_BACKEND;
     urlInput.value = DEFAULT_BACKEND;
-    status.textContent = "Saved data cleared. Backend URL reset.";
+    status.textContent = "Extension settings cleared. Editorial database was kept.";
     checkHealth();
   });
 
@@ -1298,17 +1565,19 @@ async function init() {
   wireImage();
   wireVideo();
   wireUrl();
+  wireEditorial();
   wireSettings();
 
   await loadSettings();
   await checkHealth();
+  await loadEditorialSources();
   await consumePending();
 
-  if (hasChrome && chrome.storage.onChanged) {
-    chrome.storage.onChanged.addListener((changes, area) => {
+  if (hasExtensionApi && extensionApi.storage.onChanged) {
+    extensionApi.storage.onChanged.addListener((changes, area) => {
       if (area === "session" && changes.tayoPending?.newValue) {
         const pending = changes.tayoPending.newValue;
-        chrome.storage.session.remove("tayoPending").catch(() => {});
+        extensionApi.storage.session.remove("tayoPending").catch(() => {});
         handleExternalRequest(pending);
       }
     });

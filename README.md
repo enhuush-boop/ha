@@ -20,7 +20,8 @@ More screenshots: [text detection](docs/screenshots/text-check.png) ·
 
 | Tool | What you get |
 |---|---|
-| **Claim check** | English and Mongolian Cyrillic / informal Latin galig matched to a small sourced corpus; `True` / `False` / `Not Sure` with evidence links. |
+| **Claim check** | English and Mongolian Cyrillic / informal Latin galig checked against the curated corpus and an index of historical articles from Mongolian fact-checkers; source verdicts are shown as their published assessments, with links. |
+| **Source library & journalist assessments** | Save source websites and append attributed True/False/Mixed/Unproven reviews with reasoning and evidence links. The extension shows each review separately and never turns reviewer counts into an automatic verdict. |
 | **AI text check** | English ModernBERT classifier + style statistics. Mongolian text gets script recognition and Unicode-aware statistics, without an unvalidated AI score. |
 | **AI image check** | Smaug classifier (Nano Banana/Imagen-era coverage), EXIF/XMP inspection, generator-name hints, C2PA/JUMBF presence, and SHA-256. |
 | **Video check** | Right-click a video or supply a direct URL for ffmpeg frame sampling. Blob/stream players get a clearly marked check of the visible frame only. |
@@ -34,9 +35,11 @@ optional local LLM live in the backend, bound to `127.0.0.1` by default.
 The **Claim** tab accepts both `Дэлхий хавтгай.` and `Delhii havtgai`, or
 `Вакцин аутизм үүсгэдэг.` and `Vaksin autizm uusgedeg`. These are matched
 against the same curated claims. A negated variant such as `үүсгэдэггүй` does
-not inherit the opposite verdict. Unmatched claims return **Not Sure** with
-search links. Informal galig has many spellings, so some variants will not
-match; this is not general translation or fact-checking of arbitrary claims.
+not inherit the opposite verdict. The article index searches historical
+ratings from MFCC and FACTCHECK.mn and shows their exact article, date, and
+publisher rating. Mongolian galig inputs are compared across a bounded set of
+common spellings. A text-similarity match is a lead to inspect, not proof the
+claims are identical; unmatched claims remain **Not Sure** with search links.
 
 The **Text** tab recognizes Mongolian Cyrillic and common informal Latin galig,
 counts its words, and shows style statistics. The bundled AI-text model was
@@ -83,7 +86,7 @@ after the first model download, with no accounts or cloud inference costs.
 │ • Tabs & forms           │  ◀───────────────────────────  │ • Fact-check corpus + APIs  │
 │ • Context menus          │          JSON results          │ • Image / text / video      │
 │ • JSON copy              │                                │ • Passive URL scanner       │
-│ • No ML, no page scripts │                                │ • Optional Ollama summaries │
+│ • No ML, no page scripts │                                │ • Evidence-linked summaries │
 └──────────────────────────┘                                └──────────────┬──────────────┘
                                                                            │
                                      ┌─────────────────────────────────────┼──────────────────────┐
@@ -98,6 +101,9 @@ after the first model download, with no accounts or cloud inference costs.
   SSRF protection, temp-file cleanup.
 - **Fact-check data:** `backend/app/data/factchecks.json` — small curated demo
   corpus with trusted links.
+- **Editorial database:** `backend/.data/editorial.sqlite3` — local saved-source
+  registry and append-only journalist reviews; use the Sources tab to export a
+  JSON backup. Added websites start pending editorial review and are not crawled.
 - **Benchmark:** `benchmark/` — reproducible 10-image smoke test, 300-image
   Google-focused evaluation, 150-image recompression check, and results.
 - **Docs:** `docs/` — setup, architecture/security, models/training.
@@ -267,6 +273,13 @@ Base URL: `http://127.0.0.1:8000`. Interactive OpenAPI docs: `/docs`.
 | `GET` | `/api/health` | Status, device, loaded models, cache dir. |
 | `GET` | `/api/config` | Safe runtime config, enabled features, limits. |
 | `POST` | `/api/factcheck` | `{"claim": "...", "language": "auto"}` → verdict + evidence. |
+| `GET` | `/api/editorial/sources` | Curated and locally saved source registry. |
+| `POST` | `/api/editorial/sources` | Save an HTTPS source website for editorial review. |
+| `POST` | `/api/editorial/sources/{id}/review` | Record a self-attributed source review. |
+| `GET` | `/api/editorial/reviews?claim=...` | Journalist assessments matching the exact claim. |
+| `POST` | `/api/editorial/reviews` | Append a journalist assessment with reasoning and citations. |
+| `GET` | `/api/editorial/export` | Download saved sources and assessments as a JSON backup. |
+| `GET` | `/api/editorial/export` | Download saved sources and assessments as a JSON backup. |
 | `POST` | `/api/analyze/text` | `{"text": "...", "language": "auto"}` → English classifier + stats, or Mongolian stats with `ai_probability: null`. |
 | `POST` | `/api/analyze/image` | multipart `file` → metadata + classifier. |
 | `POST` | `/api/analyze/image-url` | `{"url": "..."}` → backend fetches and analyzes. |
@@ -501,10 +514,20 @@ production hardening checklist.
   verified.
 - **Video analysis is frame sampling.** It can miss short manipulations, audio
   deepfakes, and temporal artifacts. There is no dedicated video model here.
-- **Fact-check coverage is intentionally small.** The demo corpus has two
-  claims. "Not Sure" means the system lacks evidence, not that the claim is
-  genuinely undecided. Configure Google Fact Check Tools for broader coverage,
-  and still verify the linked fact-check's date and exact claim.
+- **Fact-check coverage is incomplete.** The local corpus and publisher index
+  cover a small number of Mongolian publishers. The registry now includes
+  Mongolian and international public-health agencies, medical references,
+  international newsrooms, and fact-checkers. The local Google ClaimReview
+  index currently contains 93,120 structured records; it stores claims,
+  publisher ratings, dates, and article links, not full articles. Each rating
+  stays attributed to the original publisher. English health claims also
+  search Europe PMC at request time, which exposes tens of millions of
+  biomedical records and PubMed citations. Those search results are research
+  leads, not verdicts: assess study design, date, retractions, and applicability.
+  Mongolian-to-English translation is not configured, so live literature
+  search currently requires an English query. "Not Sure" means the system
+  lacks a sufficiently similar fact-check, not that the claim is undecided.
+  Check the source's own rating and exact claim.
 - **URL risk scores are heuristics.** A valid TLS certificate and DNSSEC do not
   prove a site is honest. A low score does not prove safety.
 - **No editorial automation.** A human must review evidence, contact sources,
@@ -522,7 +545,7 @@ backend/
     schemas.py              # request models
     data/factchecks.json    # curated demo corpus
     services/
-      factcheck.py          # corpus matching, Google API, Ollama summary
+      factcheck.py          # corpus matching, Google API, publisher evidence
       image_analysis.py     # metadata + classifier + image URL fetch
       text_analysis.py      # ModernBERT + stylometry
       video_analysis.py     # frame sampling

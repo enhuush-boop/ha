@@ -9,20 +9,50 @@
         "Vaktsin autizm uusgedeg",
         "Vaccines cause autism."
       ],
-      "keywords": ["вакцин", "аутизм", "үүсгэдэг"],
+      "keywords": [
+        "вакцин",
+        "аутизм",
+        "үүсгэдэг"
+      ],
       "topic": "Эрүүл мэнд",
       "verdict": "False",
-      "confidence": 0.9,
-      "summary": "ДЭМБ-ын 2025 оны нотолгооны тоймоор вакцин ба аутизмын хооронд шалтгаант холбоо тогтоогдоогүй. Мэдэгдлийн агуулга, огноог эх сурвалжтай нь тулгаж шалгана уу.",
+      "confidence": 0.88,
+      "summary": "Одоогийн эх сурвалжууд вакцин аутизм үүсгэдэг гэсэн шалтгаант холбоог нотлоогүй. ДЭМБ-ын 2025 оны шинэчилсэн тойм 31 анхдагч судалгааг үнэлээд холбоо тогтоогоогүй гэж дүгнэсэн; 2019 оны Данийн 657,461 хүүхдийн судалгаагаар MMR вакцин аутизмын эрсдэлийг нэмэгдүүлээгүй. Гэхдээ АНУ-ын CDC 2026-07-22-нд зарим нярайн вакцины судалгааг шалтгаант холбоог хүлээн зөвшөөрөх, эсвэл үгүйсгэхэд хангалтгүй гэж тайлбарласан бөгөөд MMR-д холбоо байхгүйг тусад нь дурдсан. CDC-ийн энэ болгоомжлол нь вакцин аутизм үүсгэдэг гэдгийг нотлохгүй; тодорхой вакцин, тун, насны талаар асууж байгаа бол эх сурвалж бүрийн хамрах хүрээг тусад нь уншина уу.",
       "evidence": [
         {
           "title": "WHO expert group’s new analysis reaffirms there is no link between vaccines and autism",
-          "source": "World Health Organization",
+          "source": "World Health Organization — GACVS",
           "url": "https://www.who.int/news/item/11-12-2025-who-expert-group-s-new-analysis-reaffirms-there-is-no-link-between-vaccines-and-autism",
-          "snippet": "A review of primary studies found no causal link between childhood vaccines and autism spectrum disorders.",
+          "snippet": "2025-12-11: WHO reported that its global vaccine-safety committee reviewed 31 primary studies published from 2010 to August 2025 and found no causal link between vaccines and ASD.",
+          "published": "2025-12-11",
           "relation": "contradicts"
+        },
+        {
+          "title": "Vaccines, Thimerosal and Autism Spectrum Disorder: evidence review 2010–2025",
+          "source": "World Health Organization — technical review",
+          "url": "https://www.who.int/publications/m/item/update-vaccines-thimerosal-autism",
+          "snippet": "WHO technical review commissioned an updated overview of published scientific studies from 2010 to 2025. Read the full review and its vaccine-specific scope.",
+          "published": "2025-12-12",
+          "relation": "primary_source"
+        },
+        {
+          "title": "Autism and Vaccines",
+          "source": "U.S. Centers for Disease Control and Prevention (CDC)",
+          "url": "https://www.cdc.gov/vaccine-safety/about/autism.html",
+          "snippet": "Updated 2026-07-22: CDC says evidence for certain infant vaccines is insufficient to accept or reject a causal relationship; it separately says MMR reviews show no association. This is uncertainty about specified evidence, not evidence that vaccines cause autism.",
+          "published": "2026-07-22",
+          "relation": "context"
+        },
+        {
+          "title": "Measles, Mumps, Rubella Vaccination and Autism: A Nationwide Cohort Study",
+          "source": "Annals of Internal Medicine / PubMed",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/30831578/",
+          "snippet": "2019 nationwide Danish cohort of 657,461 children: adjusted hazard ratio 0.93 (95% CI 0.85–1.02); the study found no increased autism risk after MMR vaccination.",
+          "published": "2019-04-16",
+          "relation": "primary_study"
         }
-      ]
+      ],
+      "last_reviewed": "2026-10-26"
     },
     {
       "claim": "Дэлхий хавтгай.",
@@ -32,20 +62,39 @@
         "Delhii havtgai yum",
         "The Earth is flat."
       ],
-      "keywords": ["дэлхий", "хавтгай"],
+      "keywords": [
+        "дэлхий",
+        "хавтгай"
+      ],
       "topic": "Шинжлэх ухаан",
       "verdict": "False",
-      "confidence": 0.95,
-      "summary": "Дэлхий хавтгай биш. NASA-гийн тайлбарласнаар дэлхий бөөрөнхий боловч төгс бөмбөрцөг биш.",
+      "confidence": 0.98,
+      "summary": "Дэлхий хавтгай биш; эргэлтээсээ шалтгаалан туйл орчимдоо бага зэрэг хавтгайрсан хэлбэртэй. НАСА дэлхийг бөмбөрцөг хэлбэртэй гэж тайлбарлаж, USGS геодезийн тооцоонд дэлхийг oblate ellipsoid болон геоидоор загварчилдгийг тайлбарладаг.",
       "evidence": [
         {
-          "title": "What Is Earth?",
+          "title": "How Do We Know the Earth Isn’t Flat? We Asked a NASA Expert",
           "source": "NASA",
-          "url": "https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-earth-grades-k-4/",
-          "snippet": "Earth is round, though it is not a perfect sphere.",
+          "url": "https://www.nasa.gov/earth/how-do-we-know-the-earth-isnt-flat-we-asked-a-nasa-expert-episode-53/",
+          "snippet": "NASA explains that observations of Earth and space geodesy show Earth is round, not flat.",
+          "published": "2025-03-11",
           "relation": "contradicts"
+        },
+        {
+          "title": "The Datum and the Earth as an Ellipsoid",
+          "source": "U.S. Geological Survey (USGS)",
+          "url": "https://pubs.usgs.gov/pp/1395/report.pdf",
+          "snippet": "USGS describes Earth as approximately an oblate ellipsoid; the geoid is the irregular gravity-based surface used for elevations.",
+          "relation": "primary_source"
+        },
+        {
+          "title": "What Is a Geoid? Why do we use it and where does its shape come from?",
+          "source": "U.S. Geological Survey (USGS)",
+          "url": "https://www.usgs.gov/faqs/what-a-geoid-why-do-we-use-it-and-where-does-its-shape-come",
+          "snippet": "USGS explains the geoid and why it differs from a simple sphere or ellipsoid.",
+          "relation": "primary_source"
         }
-      ]
+      ],
+      "last_reviewed": "2026-10-26"
     }
   ]
 }

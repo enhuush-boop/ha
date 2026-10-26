@@ -14,6 +14,7 @@ ownership, for instance) rather than presenting every entry as neutral.
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from typing import Any
 from urllib.parse import urlparse
@@ -25,8 +26,9 @@ from ..config import settings
 TIER_RANK = {
     "fact_check": 0,
     "official": 1,
-    "international": 2,
-    "news": 3,
+    "research": 2,
+    "international": 3,
+    "news": 4,
 }
 
 
@@ -47,7 +49,14 @@ def load_registry() -> dict[str, Any]:
 
 
 def all_sources() -> list[dict]:
-    return load_registry().get("sources", [])
+    # The persistent editorial registry starts with this curated JSON file and
+    # can then grow through the extension's local source manager.
+    try:
+        from .editorial_store import list_sources
+
+        return list_sources()
+    except Exception:
+        return load_registry().get("sources", [])
 
 
 def _host_matches(host: str, domain: str) -> bool:
@@ -91,6 +100,7 @@ def describe_url(url: str) -> dict:
         "name": source["name"],
         "tier": source.get("tier"),
         "language": source.get("language"),
+        "verification_status": source.get("verification_status", "curated list; not independently rechecked"),
         "note": source.get("note"),
     }
 
@@ -104,18 +114,25 @@ def feeds() -> list[tuple[dict, str]]:
     return out
 
 
+def wordpress_sources() -> list[dict]:
+    """Sources with a public, read-only WordPress REST collection configured."""
+    return [source for source in all_sources() if source.get("wordpress_api")]
+
+
 def verdict_from_title(source: dict, title: str) -> str | None:
     """Read a fact-checker's own verdict out of its headline.
 
     Mongolian fact-check headlines put the verdict in capitals at the end
     ("… ТӨӨРӨГДҮҮЛСЭН"). The marker table per source is observed, not
-    exhaustive: a headline with no known marker returns None rather than a
-    guess, and the article still gets surfaced as related reading.
+    exhaustive. Only accept a label at the end of a headline; a word such as
+    "үнэн" in the middle of a sentence is not a rating. Unknown headlines
+    return None rather than a guess.
     """
     markers = source.get("verdict_markers") or {}
-    upper = title.upper()
-    for marker, verdict in markers.items():
-        if marker.upper() in upper:
+    upper = title.upper().strip()
+    for marker, verdict in sorted(markers.items(), key=lambda pair: -len(pair[0])):
+        label = re.escape(marker.upper())
+        if re.search(rf"(?:^|[^\w]){label}[^\w]*$", upper):
             return verdict
     return None
 

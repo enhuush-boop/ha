@@ -1,10 +1,11 @@
 {
-  "notice": "Sources a reader may reasonably start from, with what is known about each. Being listed here is not a guarantee that a particular article is correct, and a source's absence is not a mark against it. Every domain below was checked to resolve and answer over HTTPS on 2026-10-26; the feed URLs marked verified returned XML on that date.",
+  "notice": "This registry describes source organizations and databases; listing is not a guarantee that an individual claim or article is correct. Research citations are discovery leads and can be limited, retracted, contradicted, or inapplicable. Health citation search uses Europe PMC at request time (including PubMed records), a corpus of tens of millions, rather than copying all records into this extension. International ClaimReview ratings are imported from Google Data Commons and linked to the publisher articles; the feed is updated regularly and its metadata license is CC BY.",
   "tiers": {
     "fact_check": "Publishes verdicts on specific claims as its primary work.",
     "official": "Primary record holder: the body that produces the figure or the document.",
     "news": "General reporting. Useful for what was said and when, weaker as a verdict.",
-    "international": "Non-Mongolian reference used when a claim travels across languages."
+    "international": "Non-Mongolian reference used when a claim travels across languages.",
+    "research": "Biomedical research citation or literature database. A paper is evidence to assess, not a verdict or automatically reliable."
   },
   "sources": [
     {
@@ -13,7 +14,33 @@
       "domain": "factcheck.mn",
       "tier": "fact_check",
       "language": "mn",
-      "feeds": ["https://factcheck.mn/feed"],
+      "feeds": [
+        "https://factcheck.mn/feed"
+      ],
+      "wordpress_api": "https://factcheck.mn/wp-json/wp/v2/posts",
+      "wordpress_categories": [
+        {
+          "id": 29,
+          "verdict": "False"
+        },
+        {
+          "id": 32,
+          "verdict": "Misleading"
+        },
+        {
+          "id": 37,
+          "verdict": "Misleading"
+        },
+        {
+          "id": 38,
+          "verdict": "Unproven"
+        },
+        {
+          "id": 34,
+          "verdict": "True"
+        }
+      ],
+      "max_articles": 600,
       "feed_verified": true,
       "note": "Describes itself as Mongolia's first independent, professional, non-profit fact-checking newsroom. Its posts frequently check claims that circulated on Facebook, which is the case this project is built for.",
       "verdict_markers": {
@@ -26,6 +53,56 @@
         "ЗӨВ": "True",
         "БҮРЭН БИШ": "Partly true",
         "НОТЛОГДООГҮЙ": "Unproven"
+      }
+    },
+    {
+      "id": "mfcc-mn",
+      "name": "Mongolian Fact Checking Center (MFCC)",
+      "domain": "mfcc.mn",
+      "tier": "fact_check",
+      "language": "mn",
+      "feeds": [
+        "https://mfcc.mn/feed/"
+      ],
+      "wordpress_api": "https://mfcc.mn/wp-json/wp/v2/posts",
+      "wordpress_categories": [
+        {
+          "id": 8,
+          "verdict": "Misleading"
+        },
+        {
+          "id": 3,
+          "verdict": "False"
+        },
+        {
+          "id": 5,
+          "verdict": "Partly true"
+        },
+        {
+          "id": 4,
+          "verdict": "True"
+        },
+        {
+          "id": 7,
+          "verdict": "Manipulated"
+        },
+        {
+          "id": 6,
+          "verdict": "Satire"
+        }
+      ],
+      "max_articles": 1500,
+      "feed_verified": true,
+      "note": "Dedicated Mongolian fact-checking center. It publishes a fact-checking code, correction and appeal policies, and identifies itself as an IFCN signatory and Meta third-party fact-checking partner. Its published ratings remain the center's own assessment; inspect the article and cited evidence.",
+      "accountability_url": "https://mfcc.mn/factcheck-html/",
+      "verdict_markers": {
+        "ТӨӨРӨГДҮҮЛСЭН": "Misleading",
+        "ХУДАЛ": "False",
+        "ХУУРАМЧ": "Fabricated",
+        "БҮРЭН БУС": "Partly true",
+        "ҮНЭН": "True",
+        "ЭВЛҮҮЛЭГ": "Manipulated",
+        "ЕГӨӨДӨЛ": "Satire"
       }
     },
     {
@@ -74,7 +151,9 @@
       "domain": "ikon.mn",
       "tier": "news",
       "language": "mn",
-      "feeds": ["https://ikon.mn/rss"],
+      "feeds": [
+        "https://ikon.mn/rss"
+      ],
       "feed_verified": true,
       "note": "General Mongolian news. Useful for establishing what was reported and when."
     },
@@ -157,6 +236,1236 @@
       "feeds": [],
       "feed_verified": false,
       "note": "UK fact-checking charity."
+    },
+    {
+      "id": "pubmed",
+      "name": "PubMed",
+      "domain": "pubmed.ncbi.nlm.nih.gov",
+      "tier": "research",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Searchable biomedical citation database maintained by the US National Library of Medicine. Records vary in study quality; check publication type and corrections."
+    },
+    {
+      "id": "europe-pmc",
+      "name": "Europe PMC",
+      "domain": "europepmc.org",
+      "tier": "research",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Biomedical and life-sciences literature database with an API used for live claim-related citation search. Includes records from multiple sources; a citation is not a quality endorsement."
+    },
+    {
+      "id": "pubmed-central",
+      "name": "PubMed Central",
+      "domain": "pmc.ncbi.nlm.nih.gov",
+      "tier": "research",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Full-text archive for biomedical and life-sciences literature. Availability in the archive does not itself mean a paper is high quality or current."
+    },
+    {
+      "id": "medlineplus",
+      "name": "MedlinePlus",
+      "domain": "medlineplus.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Patient-facing health information from the US National Library of Medicine. Useful for reviewed health-topic explainers; not a substitute for a clinician or an original clinical guideline."
+    },
+    {
+      "id": "nih",
+      "name": "US National Institutes of Health",
+      "domain": "nih.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US biomedical research and health information agency. Follow through to the specific institute, study, or guidance and check its date."
+    },
+    {
+      "id": "cdc-us",
+      "name": "US Centers for Disease Control and Prevention",
+      "domain": "cdc.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US public-health agency. Guidance is jurisdiction- and date-specific; compare with WHO and relevant local health authorities."
+    },
+    {
+      "id": "fda-us",
+      "name": "US Food and Drug Administration",
+      "domain": "fda.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US regulator for medicines, vaccines, food, devices, and related products. Regulatory status may differ by country."
+    },
+    {
+      "id": "clinicaltrials",
+      "name": "ClinicalTrials.gov",
+      "domain": "clinicaltrials.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US-hosted clinical-trial registry. A registered or completed trial is not proof that an intervention works; examine results and study status."
+    },
+    {
+      "id": "nccih",
+      "name": "NIH National Center for Complementary and Integrative Health",
+      "domain": "nccih.nih.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "NIH center reviewing evidence and safety for complementary health approaches."
+    },
+    {
+      "id": "cancer-gov",
+      "name": "US National Cancer Institute",
+      "domain": "cancer.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "NIH cancer institute with patient and research information; check the page date and distinguish guidance from active research."
+    },
+    {
+      "id": "cdc-europe",
+      "name": "European Centre for Disease Prevention and Control",
+      "domain": "ecdc.europa.eu",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "EU agency for communicable-disease surveillance and guidance, principally for the European context."
+    },
+    {
+      "id": "ema",
+      "name": "European Medicines Agency",
+      "domain": "ema.europa.eu",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "EU medicines regulator. Authorization and safety information is specific to EU regulatory decisions."
+    },
+    {
+      "id": "nhs",
+      "name": "NHS health information",
+      "domain": "nhs.uk",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UK public health service patient information. Care pathways and eligibility reflect UK practice."
+    },
+    {
+      "id": "nice",
+      "name": "NICE guidelines",
+      "domain": "nice.org.uk",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UK health and care guidance and evidence reviews. Recommendations are jurisdiction-specific and should be read with publication and update dates."
+    },
+    {
+      "id": "cochrane",
+      "name": "Cochrane",
+      "domain": "cochrane.org",
+      "tier": "research",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Publishes systematic reviews of health evidence. Review methods and certainty ratings matter; findings can change as new evidence appears."
+    },
+    {
+      "id": "health-canada",
+      "name": "Health Canada",
+      "domain": "canada.ca",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Canadian federal health regulator and public-health information. Regulatory decisions and guidance are country-specific."
+    },
+    {
+      "id": "health-australia",
+      "name": "Australian Department of Health, Disability and Ageing",
+      "domain": "health.gov.au",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Australian national health department. Use as a primary source for Australian policy and health guidance."
+    },
+    {
+      "id": "tga",
+      "name": "Therapeutic Goods Administration Australia",
+      "domain": "tga.gov.au",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Australian regulator for therapeutic goods; its approvals and safety notices may differ from other jurisdictions."
+    },
+    {
+      "id": "healthdirect",
+      "name": "Healthdirect Australia",
+      "domain": "healthdirect.gov.au",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Australian government-funded consumer health information and service navigation."
+    },
+    {
+      "id": "nhs-inform",
+      "name": "NHS inform Scotland",
+      "domain": "nhsinform.scot",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Scotland public health service patient information; guidance is Scotland-specific."
+    },
+    {
+      "id": "govuk-health",
+      "name": "UK Government health publications",
+      "domain": "gov.uk",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UK government health policy, public-health notices, and official publications. Source entry matches the broad gov.uk domain; confirm that the specific page is an official health publication."
+    },
+    {
+      "id": "mayo-clinic",
+      "name": "Mayo Clinic",
+      "domain": "mayoclinic.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Clinician-reviewed patient health information from a US nonprofit medical center; secondary reference, not a public regulator."
+    },
+    {
+      "id": "cleveland-clinic",
+      "name": "Cleveland Clinic",
+      "domain": "clevelandclinic.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Patient health explainers from a US academic medical center; secondary reference, not an independent fact-check."
+    },
+    {
+      "id": "merck-manuals",
+      "name": "Merck Manuals",
+      "domain": "merckmanuals.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Clinician-authored medical reference with editorial review. Check version/date and use primary evidence for contested claims."
+    },
+    {
+      "id": "johns-hopkins",
+      "name": "Johns Hopkins Medicine",
+      "domain": "hopkinsmedicine.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Medical center patient and research information; secondary reference, not a regulator."
+    },
+    {
+      "id": "cdc-korea",
+      "name": "Korea Disease Control and Prevention Agency",
+      "domain": "kdca.go.kr",
+      "tier": "official",
+      "language": "ko",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "South Korean public-health authority. Source language and national context may limit direct applicability."
+    },
+    {
+      "id": "moh-singapore",
+      "name": "Singapore Ministry of Health",
+      "domain": "moh.gov.sg",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Singapore health ministry information and policy; jurisdiction-specific."
+    },
+    {
+      "id": "moh-nz",
+      "name": "New Zealand Ministry of Health",
+      "domain": "health.govt.nz",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "New Zealand health ministry guidance and public-health information; jurisdiction-specific."
+    },
+    {
+      "id": "health-japan",
+      "name": "Japan Ministry of Health, Labour and Welfare",
+      "domain": "mhlw.go.jp",
+      "tier": "official",
+      "language": "ja",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Japanese national health authority; source material may require translation and applies to Japanese policy."
+    },
+    {
+      "id": "who-irisdigital",
+      "name": "WHO IRIS",
+      "domain": "iris.who.int",
+      "tier": "research",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "WHO institutional repository for reports and publications. Reports are not all clinical guidance; check document type and date."
+    },
+    {
+      "id": "moh-mongolia",
+      "name": "Монгол Улсын Эрүүл мэндийн яам",
+      "domain": "moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монгол Улсын эрүүл мэндийн бодлого, тушаал, статистик, сэрэмжлүүлгийн анхдагч эх сурвалж. Албан тушаал/зөвлөмжийн огноо, хүчинтэй эсэхийг шалга."
+    },
+    {
+      "id": "ncph-mongolia",
+      "name": "Нийгмийн эрүүл мэндийн үндэсний төв",
+      "domain": "ncph.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын нийгмийн эрүүл мэндийн судалгаа, тандалт, зөвлөмж гаргадаг үндэсний байгууллага. Тайлангийн аргачлал, огноог шалга."
+    },
+    {
+      "id": "nccd-mongolia",
+      "name": "Халдварт өвчин судлалын үндэсний төв",
+      "domain": "nccd.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын халдварт өвчин, тандалт, дархлаажуулалтын чиглэлийн үндэсний мэргэшсэн төв. Шуурхай зөвлөгөөний огноог шалга."
+    },
+    {
+      "id": "nczd-mongolia",
+      "name": "Зоонозын өвчин судлалын үндэсний төв",
+      "domain": "nczd.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын зоонозын өвчний тандалт, мэргэжлийн мэдээллийн үндэсний төв."
+    },
+    {
+      "id": "ncc-mongolia",
+      "name": "Хавдар судлалын үндэсний төв",
+      "domain": "cancer-center.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын үндэсний лавлагаа шатлалын хавдрын төв. Өвчтөнд зориулсан материал болон судалгааг эмчилгээний албан ёсны удирдамжаас ялгаж унш."
+    },
+    {
+      "id": "ncmch-mongolia",
+      "name": "Эх хүүхдийн эрүүл мэндийн үндэсний төв",
+      "domain": "ehemut.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Эх, хүүхдийн төрөлжсөн тусламж болон эрүүл мэндийн боловсролын үндэсний төв."
+    },
+    {
+      "id": "hdc-mongolia",
+      "name": "Эрүүл мэндийн хөгжлийн төв",
+      "domain": "hdc.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Эрүүл мэндийн салбарын мэдээлэл, статистик, хүний нөөц, хөгжилтэй холбоотой төрийн байгууллага."
+    },
+    {
+      "id": "pmd-mongolia",
+      "name": "Эм, эмнэлгийн хэрэгслийн хяналт, зохицуулалтын нэгдсэн систем",
+      "domain": "pmd.hdc.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголд бүртгэлтэй эм, эмнэлгийн хэрэгсэл, нэмэлт бүтээгдэхүүний улсын бүртгэл ба зохицуулалтын мэдээлэл. Бүртгэлтэй байх нь тухайн эм танд тохирно гэсэн эмчилгээний зөвлөгөө биш."
+    },
+    {
+      "id": "mmra-mongolia",
+      "name": "Монгол Улсын эм, эмнэлгийн хэрэгслийн зохицуулалтын газар",
+      "domain": "mmra.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Эм, эмнэлгийн хэрэгслийн зохицуулалтын байгууллагын албан эх сурвалж; бүтээгдэхүүний бүртгэл, зохицуулалтын мэдээг эх баримтаар нягтал."
+    },
+    {
+      "id": "emd-mongolia",
+      "name": "Эрүүл мэндийн даатгалын ерөнхий газар",
+      "domain": "emd.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Эрүүл мэндийн даатгал, санхүүжилт, гэрээт байгууллагын талаарх анхдагч төрийн мэдээлэл; эмнэлзүйн үр нөлөөг дангаар тогтоохгүй."
+    },
+    {
+      "id": "ub-health",
+      "name": "Нийслэлийн Эрүүл мэндийн газар",
+      "domain": "emg.ub.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Улаанбаатар хотын тусгай зөвшөөрөл, эрүүл мэндийн үйлчилгээний орон нутгийн мэдээлэл."
+    },
+    {
+      "id": "unte-mongolia",
+      "name": "Улсын Нэгдүгээр Төв Эмнэлэг",
+      "domain": "unte.moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын лавлагаа шатлалын улсын эмнэлэг; өвчтөний мэдээлэл болон эмнэлгийн мэдээг эх сурвалж болгон ашиглаж, эмчилгээний үр нөлөөг тусдаа клиник судалгаагаар шалга."
+    },
+    {
+      "id": "ssch-mongolia",
+      "name": "Улсын Хоёрдугаар Төв Эмнэлэг",
+      "domain": "ssch.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын улсын төв эмнэлэг; өөрийн үйлчилгээ, мэдээ, эмнэлзүйн ажлын мэдээллийн анхдагч эх сурвалж."
+    },
+    {
+      "id": "shastin-mongolia",
+      "name": "Улсын Гуравдугаар Төв Эмнэлэг",
+      "domain": "shastinhospital.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын зүрх судасны чиглэлийн улсын төв эмнэлэг; байгууллагын мэдээ нь бие даасан үнэлгээ биш."
+    },
+    {
+      "id": "gemtel-mongolia",
+      "name": "Гэмтэл согог судлалын үндэсний төв",
+      "domain": "gemtel.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын улсын гэмтэл, согогийн лавлагаа төв; үйлчилгээ болон байгууллагын мэдээлэлд эх сурвалжлана."
+    },
+    {
+      "id": "derma-mongolia",
+      "name": "Арьсны өвчин судлалын үндэсний төв",
+      "domain": "derma.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Монголын улсын арьс, харшлын өвчний лавлагаа төв; зөвлөмжийн огноо, зориулалтыг шалга."
+    },
+    {
+      "id": "ncmh",
+      "name": "Сэтгэцийн эрүүл мэндийн үндэсний төв",
+      "domain": "ncmh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "National specialist center; its own service and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "blood-center",
+      "name": "Цус сэлбэлт судлалын үндэсний төв",
+      "domain": "donor.mohs.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "National transfusion service; use for donor, blood service, and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "gerontology",
+      "name": "Геронтологийн үндэсний төв",
+      "domain": "gerontology.mohs.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "National specialist center for older-adult health services and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "pathology-center",
+      "name": "Эмгэг судлалын үндэсний төв",
+      "domain": "pathology-center.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "National pathology service and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "child-sanatorium",
+      "name": "Хүүхдийн төв сувилал",
+      "domain": "pnc.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Public child health facility; source is primary only for its own services and notices. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "arkhangai-hospital",
+      "name": "Архангай аймгийн Нэгдсэн эмнэлэг",
+      "domain": "emneleg.ar.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "khentii-hospital",
+      "name": "Хэнтий аймгийн Нэгдсэн эмнэлэг",
+      "domain": "khentii.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "khovsgol-hospital",
+      "name": "Хөвсгөл аймгийн Нэгдсэн эмнэлэг",
+      "domain": "hospital.khs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "uvs-hospital",
+      "name": "Увс аймгийн Нэгдсэн эмнэлэг",
+      "domain": "uvsne.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "zavkhan-hospital",
+      "name": "Завхан аймгийн Нэгдсэн эмнэлэг",
+      "domain": "zavkhan-ne.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "dornogovi-hospital",
+      "name": "Дорноговь аймгийн Нэгдсэн эмнэлэг",
+      "domain": "dornogovi-ne.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "govisumber-hospital",
+      "name": "Говьсүмбэр аймгийн Нэгдсэн эмнэлэг",
+      "domain": "govisumberne.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "bayankhongor-hospital",
+      "name": "Баянхонгор аймгийн Нэгдсэн эмнэлэг",
+      "domain": "bkh.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital; clinical or service information for its own facility. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "sukhbaatar-hospital",
+      "name": "Сүхбаатар аймгийн Нэгдсэн эмнэлэг",
+      "domain": "sukhbaatar-ane.com",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial hospital linked by the Ministry of Health; independently confirm ownership before relying on medical advice. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "dornod-boet",
+      "name": "Дорнод аймгийн Бүсийн оношилгоо, эмчилгээний төв",
+      "domain": "dornodboet.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Regional diagnostic and treatment center; own services and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "uvurkhangai-boet",
+      "name": "Өвөрхангай аймгийн Бүсийн оношилгоо, эмчилгээний төв",
+      "domain": "boet.ov.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Regional diagnostic and treatment center; own services and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "khovd-boet",
+      "name": "Ховд аймгийн Бүсийн оношилгоо, эмчилгээний төв",
+      "domain": "khovdboet.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Regional diagnostic and treatment center; own services and institutional information. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-bayanolgii",
+      "name": "Баян-Өлгий аймгийн Эрүүл мэндийн газар",
+      "domain": "health.bo.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-uvs",
+      "name": "Увс аймгийн Эрүүл мэндийн газар",
+      "domain": "uv.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-sukhbaatar",
+      "name": "Сүхбаатар аймгийн Эрүүл мэндийн газар",
+      "domain": "sukhbaataremg.com",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority linked from the Ministry directory; confirm current official ownership. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-arkhangai",
+      "name": "Архангай аймгийн Эрүүл мэндийн газар",
+      "domain": "ar.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-bayankhongor",
+      "name": "Баянхонгор аймгийн Эрүүл мэндийн газар",
+      "domain": "bayankhongor.moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-bulgan",
+      "name": "Булган аймгийн Эрүүл мэндийн газар",
+      "domain": "bu.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-govisumber",
+      "name": "Говьсүмбэр аймгийн Эрүүл мэндийн газар",
+      "domain": "mohs.gs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-darkhan",
+      "name": "Дархан-Уул аймгийн Эрүүл мэндийн газар",
+      "domain": "da.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-dornogovi",
+      "name": "Дорноговь аймгийн Эрүүл мэндийн газар",
+      "domain": "do.moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-dornod",
+      "name": "Дорнод аймгийн Эрүүл мэндийн газар",
+      "domain": "dornod.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-zavkhan",
+      "name": "Завхан аймгийн Эрүүл мэндийн газар",
+      "domain": "zavkhanemg.med.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority linked from the Ministry directory; confirm current official ownership. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-orkhon",
+      "name": "Орхон аймгийн Эрүүл мэндийн газар",
+      "domain": "or.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-uvurkhangai",
+      "name": "Өвөрхангай аймгийн Эрүүл мэндийн газар",
+      "domain": "ov.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-omnogovi",
+      "name": "Өмнөговь аймгийн Эрүүл мэндийн газар",
+      "domain": "om.moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-selenge",
+      "name": "Сэлэнгэ аймгийн Эрүүл мэндийн газар",
+      "domain": "emg.se.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-tuv",
+      "name": "Төв аймгийн Эрүүл мэндийн газар",
+      "domain": "emg.to.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-khovd",
+      "name": "Ховд аймгийн Эрүүл мэндийн газар",
+      "domain": "khovd.moh.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-khovsgol",
+      "name": "Хөвсгөл аймгийн Эрүүл мэндийн газар",
+      "domain": "khs.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-khentii",
+      "name": "Хэнтий аймгийн Эрүүл мэндийн газар",
+      "domain": "mohs.khe.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "health-dundgovi",
+      "name": "Дундговь аймгийн Эрүүл мэндийн газар",
+      "domain": "du.mohs.gov.mn",
+      "tier": "official",
+      "language": "mn",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Provincial health authority; local health notices and services. The Ministry of Health lists this site in its central directory; this classification identifies the institution, not the correctness of every claim."
+    },
+    {
+      "id": "unesco",
+      "name": "UNESCO",
+      "domain": "unesco.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for education, science, culture, and heritage; primary for its own data, conventions, and program records."
+    },
+    {
+      "id": "unesco-data",
+      "name": "UNESCO DataHub",
+      "domain": "data.unesco.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UNESCO statistical datasets. Check dataset definitions, coverage, and update date."
+    },
+    {
+      "id": "unicef",
+      "name": "UNICEF",
+      "domain": "unicef.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for children; primary for its program data and publications, not a universal health regulator."
+    },
+    {
+      "id": "undp",
+      "name": "United Nations Development Programme",
+      "domain": "undp.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN development agency; primary for its project records and published development data."
+    },
+    {
+      "id": "unfpa",
+      "name": "United Nations Population Fund",
+      "domain": "unfpa.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for sexual and reproductive health and population data."
+    },
+    {
+      "id": "fao",
+      "name": "Food and Agriculture Organization",
+      "domain": "fao.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for food, agriculture, and food-security data."
+    },
+    {
+      "id": "wfp",
+      "name": "World Food Programme",
+      "domain": "wfp.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for food assistance and food-security operations."
+    },
+    {
+      "id": "unhcr",
+      "name": "UN Refugee Agency",
+      "domain": "unhcr.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN refugee agency; primary for its protection and displacement data."
+    },
+    {
+      "id": "unodc",
+      "name": "United Nations Office on Drugs and Crime",
+      "domain": "unodc.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for crime, drugs, and justice statistics and reports."
+    },
+    {
+      "id": "ilo",
+      "name": "International Labour Organization",
+      "domain": "ilo.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN agency for labour standards and labour statistics."
+    },
+    {
+      "id": "wmo",
+      "name": "World Meteorological Organization",
+      "domain": "wmo.int",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN authority for meteorological and climate-service standards and data."
+    },
+    {
+      "id": "world-bank",
+      "name": "World Bank",
+      "domain": "worldbank.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Development data and project records; review definitions, coverage, and data vintage."
+    },
+    {
+      "id": "imf",
+      "name": "International Monetary Fund",
+      "domain": "imf.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Macroeconomic datasets and country reports; check methods, assumptions, and date."
+    },
+    {
+      "id": "oecd",
+      "name": "OECD",
+      "domain": "oecd.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International statistics and policy research; figures depend on definitions and member coverage."
+    },
+    {
+      "id": "iaea",
+      "name": "International Atomic Energy Agency",
+      "domain": "iaea.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International agency for nuclear safety and safeguards information."
+    },
+    {
+      "id": "ipcc",
+      "name": "Intergovernmental Panel on Climate Change",
+      "domain": "ipcc.ch",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Intergovernmental climate assessment reports; distinguish assessment findings from individual studies."
+    },
+    {
+      "id": "nasa",
+      "name": "NASA",
+      "domain": "nasa.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US civilian space agency; primary for its missions, observations, and datasets."
+    },
+    {
+      "id": "noaa",
+      "name": "US National Oceanic and Atmospheric Administration",
+      "domain": "noaa.gov",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US climate, weather, and ocean observations; check dataset and geographic scope."
+    },
+    {
+      "id": "un",
+      "name": "United Nations",
+      "domain": "un.org",
+      "tier": "official",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UN documents, resolutions, and institutional reporting; a primary source for its own actions."
+    },
+    {
+      "id": "ap-news",
+      "name": "Associated Press",
+      "domain": "apnews.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International news agency; reporting is a source lead, not an official record or automatic fact-check."
+    },
+    {
+      "id": "bbc",
+      "name": "BBC News",
+      "domain": "bbc.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International public-service news publisher; articles are reporting, not primary records."
+    },
+    {
+      "id": "npr",
+      "name": "NPR",
+      "domain": "npr.org",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US public-service news organization; use its reporting with the linked primary sources."
+    },
+    {
+      "id": "guardian",
+      "name": "The Guardian",
+      "domain": "theguardian.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International news publisher; story and byline should be assessed individually."
+    },
+    {
+      "id": "new-york-times",
+      "name": "The New York Times",
+      "domain": "nytimes.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International news publisher; story and byline should be assessed individually."
+    },
+    {
+      "id": "aljazeera",
+      "name": "Al Jazeera",
+      "domain": "aljazeera.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "International news publisher; reporting should be checked against primary records and local context."
+    },
+    {
+      "id": "dw",
+      "name": "Deutsche Welle",
+      "domain": "dw.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "German international public broadcaster; reporting is a lead, not a claim verdict."
+    },
+    {
+      "id": "france24-observers",
+      "name": "France 24 Observers",
+      "domain": "observers.france24.com",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Visual verification and fact-check reporting by France 24; read methodology and source links."
+    },
+    {
+      "id": "politifact",
+      "name": "PolitiFact",
+      "domain": "politifact.com",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US fact-checking publisher. Ratings are its own judgments on the specific wording and context."
+    },
+    {
+      "id": "factcheck-org",
+      "name": "FactCheck.org",
+      "domain": "factcheck.org",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US nonpartisan fact-check publisher; read the linked evidence and correction policy."
+    },
+    {
+      "id": "africa-check",
+      "name": "Africa Check",
+      "domain": "africacheck.org",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Africa-focused fact-check publisher; geographic and claim context matters."
+    },
+    {
+      "id": "chequeado",
+      "name": "Chequeado",
+      "domain": "chequeado.com",
+      "tier": "fact_check",
+      "language": "es",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Argentine fact-checking publisher; Spanish-language and regional context."
+    },
+    {
+      "id": "aap-factcheck",
+      "name": "AAP FactCheck",
+      "domain": "aap.com.au",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Australian Associated Press fact-checking; ratings remain publisher-attributed."
+    },
+    {
+      "id": "correctiv",
+      "name": "CORRECTIV.Faktencheck",
+      "domain": "correctiv.org",
+      "tier": "fact_check",
+      "language": "de",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "German investigative journalism and fact-check publisher; check original sources and context."
+    },
+    {
+      "id": "efe-verifica",
+      "name": "EFE Verifica",
+      "domain": "efe.com",
+      "tier": "fact_check",
+      "language": "es",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Spanish-language fact-checking desk of EFE news agency; ratings remain publisher-attributed."
+    },
+    {
+      "id": "teyit",
+      "name": "Teyit",
+      "domain": "teyit.org",
+      "tier": "fact_check",
+      "language": "tr",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Turkish fact-checking publisher; use the article’s cited sources and current methodology."
+    },
+    {
+      "id": "myth-detector",
+      "name": "Myth Detector",
+      "domain": "mythdetector.com",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Georgia-based fact-checking publisher; check its specific claim and cited evidence."
+    },
+    {
+      "id": "factly",
+      "name": "Factly",
+      "domain": "factly.in",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "India-focused fact-checking publisher; context and geography matter."
+    },
+    {
+      "id": "science-feedback",
+      "name": "Science Feedback",
+      "domain": "sciencefeedback.co",
+      "tier": "fact_check",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Science-focused fact-checking network; examine its article, cited studies, and claim scope."
+    },
+    {
+      "id": "dpa-factcheck",
+      "name": "dpa factchecking",
+      "domain": "dpa-factchecking.com",
+      "tier": "fact_check",
+      "language": "de",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "German news agency fact-check desk; its ratings apply to the claim it reviewed."
+    },
+    {
+      "id": "google-claimreview",
+      "name": "Google Fact Check Data Feed / Data Commons",
+      "domain": "datacommons.org",
+      "tier": "international",
+      "language": "multi",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Public structured ClaimReview metadata feed with publisher, claim, rating, date, and original article link. Structured compilation is CC BY; it does not contain the article itself. Ratings stay attributed to each publisher and are not combined into TAYO verdicts. The local SQLite index is refreshed with scripts/refresh_claimreview.py."
     }
   ]
 }

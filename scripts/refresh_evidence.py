@@ -48,12 +48,19 @@ async def main() -> int:
 
     print(f"  fetched_at   : {report['fetched_at']}")
     print(f"  indexed items: {report['total_items']}")
+    print(f"  1,000 article target: {'met' if report.get('target_met') else 'not met'}")
     print(f"  with a published verdict: {report['with_verdict']}")
     for source_id, info in report["sources"].items():
         if info.get("error"):
             print(f"    {source_id}: ERROR {info['error']}")
         else:
-            print(f"    {source_id}: {info['items']} item(s)")
+            archive_count = info.get("article_api_items")
+            archive_note = f", {archive_count} from article archive" if archive_count is not None else ""
+            print(f"    {source_id}: {info['items']} unique article(s){archive_note}")
+            if info.get("article_api_error"):
+                print(f"      archive API error: {info['article_api_error']}")
+            if info.get("article_api_page_errors"):
+                print(f"      failed archive pages: {info['article_api_page_errors']}")
     print(f"  written to   : {report['path']}")
 
     if args.show:

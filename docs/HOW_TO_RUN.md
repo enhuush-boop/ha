@@ -14,7 +14,6 @@ configuration, a demo script, and troubleshooting.
 | ~4 GB free disk | venv, models (~1.2 GB), benchmark samples, caches. |
 | 8 GB RAM minimum; 16 GB recommended | Smaug is a 439M-parameter model (~2 GB in float32) plus ModernBERT. Close other apps on 8 GB. |
 | Optional: NVIDIA GPU + CUDA PyTorch | Faster image inference. CPU works. |
-| Optional: Ollama | Local summary rewriting only. |
 
 `ffmpeg` does **not** need to be installed system-wide. The backend uses the
 binary bundled with `imageio-ffmpeg`. `ffprobe` is optional; if absent, video
@@ -214,6 +213,63 @@ internet without authentication.
 
 ## 4. Optional integrations
 
+### Refresh the Mongolian fact-check article index
+
+The source registry includes the dedicated Mongolian fact-check publishers
+FACTCHECK.mn and MFCC. Their public RSS feeds keep recent items visible; their
+read-only WordPress API categories provide historical articles and the
+publisher's own rating labels. The refresh script deduplicates by article URL
+and aims to index at least 1,000 distinct articles. It reports the actual
+article count and whether the target was met.
+
+```bash
+.venv/bin/python scripts/refresh_evidence.py --show 10
+```
+
+The index is stored locally in `backend/.evidence_cache/` and is not committed.
+When a claim is checked, the backend refreshes a missing or older-than-24-hour
+cache in the background. Failed refreshes keep the previous index, and partial
+updates preserve older articles. Results are source-authored evaluations,
+not TAYO's independent conclusions; the extension shows publisher, article,
+rating, date, and text-similarity score so a reader can inspect the exact item.
+The two publishers are not 1,000 different organizations.
+
+### Source library and journalist reviews
+
+Open the **Sources** tab in the extension to browse the curated registry, add
+a public HTTPS website, or record a journalist's assessment of one specific
+claim. New sites are saved in `backend/.data/editorial.sqlite3` as pending
+review; adding a site does not crawl it or make it a trusted source. A
+journalist can mark a site's ownership, scope, and correction policy as
+reviewed and leave a note.
+
+Assessments are append-only and include the self-entered journalist name,
+rating, rationale, saved sources, and evidence links. The Claim tab retrieves
+assessments only for an exact claim match and displays each one separately.
+TAYO does not verify the reviewer's identity or compute a majority verdict.
+Use **Download backup** in the Sources tab to export the local registry and
+reviews as JSON. This database is local to this computer; it is not a shared
+multi-user newsroom service.
+
+### Refresh the international ClaimReview database
+
+Run `.venv/bin/python scripts/refresh_claimreview.py` to download the public
+Google Data Commons ClaimReview feed and rebuild the local SQLite full-text
+index. The feed was approximately 200 MB and yielded 93,120 records on
+2026-10-26. Downloaded feed and index files live under `backend/.data/` and are
+not committed. The CC BY structured feed stores each publisher's claim, rating,
+date, and source article URL; it does not include article text. A source's rating
+is displayed as theirs and does not change TAYO's verdict.
+
+The registry includes Mongolian and international health agencies, medical
+references, and literature databases. For English health claims, the Claim tab
+also queries Europe PMC, which includes PubMed citations. It returns matching
+publication records as research leads and never converts a citation into a
+true/false rating. Records may be low quality, outdated, corrected, or
+irrelevant to the exact claim. The search is live against the API rather than
+100,000 locally mirrored articles; Europe PMC provides access to tens of
+millions of records. Mongolian-to-English translation is not configured.
+
 ### Google Fact Check Tools (broader claim coverage)
 
 1. In Google Cloud Console, create/select a project.
@@ -227,32 +283,11 @@ GOOGLE_FACTCHECK_API_KEY=...
 
 5. Restart the backend.
 
-TAYO first checks the local curated corpus, then queries this API for
-published fact-checks. Results are aggregated by publisher rating, always with
+TAYO checks the local curated corpus and the local article index, then queries
+this API for published fact-checks. Results include the source's rating and
 links. The API does not answer arbitrary questions; it returns existing
-fact-checks.
-
-### Ollama (optional local summary)
-
-The fact-check summary is normally a deterministic template built from the
-matched evidence. Ollama can rewrite it in 2–3 sentences **using only the
-retrieved evidence**; it never supplies new sources.
-
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama pull qwen3:4b
-```
-
-`backend/.env`:
-
-```dotenv
-OLLAMA_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=qwen3:4b
-```
-
-Restart the backend. If Ollama is unavailable, the app silently falls back to
-the template summary. On a 6 GB GPU, 3–4B quantized models are the practical
-limit; see [`TRAINING_AND_MODELS.md`](TRAINING_AND_MODELS.md).
+fact-checks. Cyrillic and likely galig spellings are submitted as separate
+bounded searches; the source's exact reviewed claim remains visible.
 
 ### Threat-intel keys (all optional)
 

@@ -56,7 +56,7 @@ change for production.
 │  config.py          env-driven settings                                  │
 │  schemas.py         request validation                                   │
 │                                                                          │
-│  services/factcheck.py       corpus + Google Fact Check + Ollama         │
+│  services/factcheck.py       corpus + Google Fact Check + local index         │
 │  services/text_analysis.py   ModernBERT + stylometry                     │
 │  services/image_analysis.py  metadata + Smaug + URL fetch                │
 │  services/video_analysis.py  ffmpeg frames + image model                 │
@@ -103,7 +103,6 @@ panel.js ──POST /api/factcheck {claim}──▶ factcheck_claim()
                                            ├─ normalize + fuzzy match curated corpus
                                            │    └─ confidence = corpus confidence × match score
                                            ├─ optional Google Fact Check Tools API
-                                           ├─ optional Ollama summary (evidence only)
                                            └─ fallback: "Not Sure" + search links
         ◀── {verdict, summary, evidence[], limitations[]} ──
 ```
@@ -116,8 +115,6 @@ panel.js ──POST /api/factcheck {claim}──▶ factcheck_claim()
   comparable Latin key; negated variants cannot inherit a corpus verdict.
 - Google ratings are normalized: “false/misleading/hoax/…” → `False`;
   “true/correct/…” → `True`; “half/partly/mixed” or unknown → `Not Sure`.
-- Ollama receives only the claim, verdict, and retrieved evidence. The prompt
-  forbids adding facts. If it fails, the template summary remains.
 - “Not Sure” always includes search links so a journalist can continue
   manually.
 
@@ -231,7 +228,8 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 | `schemas.py` | Pydantic request models and length constraints. |
 | `services/model_registry.py` | Lazy image/text model loading, Smaug adapter and automatic fallback, label mapping, temperature scaling, singleton caches, status. |
 | `services/smaug_image_detect.py` | Vendored Apache-2.0 wrapper for Smaug so no hub-downloaded Python executes at runtime. |
-| `services/factcheck.py` | Corpus matching, Google API, rating normalization, Ollama summaries, no-match search links. |
+| `services/factcheck.py` | Corpus matching, Google API, publisher ratings, no-match search links. |
+| `services/editorial_store.py` | SQLite source registry and append-only journalist assessments. |
 | `services/text_analysis.py` | Chunking, ModernBERT inference, stylometry, labels, limitations. |
 | `services/image_analysis.py` | Metadata + classifiers ensemble, labels/confidence, image URL fetch with SSRF checks. |
 | `services/video_analysis.py` | Frame scoring, aggregation, video-specific uncertainty. |
@@ -319,7 +317,6 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 | Video URL | Target public host (fetched by backend, no browser cookies) | User enters a video URL or right-clicks a video. |
 | Video frame | localhost only | User right-clicks a blob/stream player or direct download fails. |
 | URL scan | Google DoH (host), RDAP (domain), TLS target; threat intel only with keys | User submits URL. |
-| Ollama summary | localhost Ollama | Fact-check with `OLLAMA_URL` set. |
 
 No analytics, crash reporting, accounts, or cloud model calls are built in.
 Hugging Face is contacted only to download model weights.
@@ -361,7 +358,10 @@ add authentication.
 - The backend logs method, path, status, latency, and request ID — not claim
   text or media contents.
 - Model cache and `chrome.storage` settings persist locally until deleted.
-- No database. Fact-check corpus is a JSON file.
+- Curated fact-check examples remain in JSON. The local editorial registry and
+  journalist assessments persist in `backend/.data/editorial.sqlite3`, which
+  is ignored by git and exportable from the extension. Reviewer identities are
+  self-reported; do not expose this local demo on a network.
 
 ---
 

@@ -4,6 +4,7 @@
 .venv
 backend/.env
 backend/.model_cache
+/build/
 
 # Local agent worktrees are separate checkouts, not project source files.
 .claude/worktrees/
@@ -19,6 +20,7 @@ benchmark/samples/
 # Cached headlines pulled from the registered feeds; rebuilt by
 # scripts/refresh_evidence.py, and other people's text besides.
 backend/.evidence_cache/
+backend/.data/
 
 # OS / editor noise.
 .DS_Store

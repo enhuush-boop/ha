@@ -41,6 +41,7 @@
       <button class="tab" data-tab="image" id="tab-image" role="tab" aria-selected="false" type="button">Image</button>
       <button class="tab" data-tab="video" id="tab-video" role="tab" aria-selected="false" type="button">Video</button>
       <button class="tab" data-tab="url" id="tab-url" role="tab" aria-selected="false" type="button">Link</button>
+      <button class="tab" data-tab="editorial" id="tab-editorial" role="tab" aria-selected="false" type="button">Sources</button>
     </nav>
 
     <main class="panels">
@@ -48,7 +49,7 @@
       <section id="panel-factcheck" class="panel is-active" role="tabpanel" aria-labelledby="tab-factcheck">
         <div class="panel-intro">
           <h2>Check a claim</h2>
-          <p>Checks English and Mongolian Cyrillic / Latin galig against a small sourced corpus and optional Google Fact Check results. Unknown claims stay “Not Sure”.</p>
+          <p>Checks English and Mongolian Cyrillic / Latin galig against the curated corpus and indexed publisher articles. A similar article is evidence to inspect, not proof of the same claim; unknown claims stay “Not Sure”.</p>
         </div>
         <form id="factcheck-form" class="card form">
           <label for="claim-input">Claim or statement</label>
@@ -74,6 +75,7 @@
           </div>
         </form>
         <div id="factcheck-output" class="result" aria-live="polite"></div>
+        <div id="journalist-assessments" class="result" aria-live="polite"></div>
       </section>
 
       <!-- TEXT -->
@@ -215,6 +217,82 @@
         </div>
         <div id="url-output" class="result" aria-live="polite"></div>
       </section>
+
+      <!-- LOCAL EDITORIAL SOURCE REGISTRY -->
+      <section id="panel-editorial" class="panel" role="tabpanel" aria-labelledby="tab-editorial">
+        <div class="panel-intro">
+          <h2>Source library & journalist reviews</h2>
+          <p>Sources and reviews are saved in a local SQLite database. A saved site is not automatically trustworthy; a journalist must inspect it. Reviewer names are self-reported, and opinions are shown individually without an automatic majority verdict.</p>
+        </div>
+
+        <section class="card">
+          <h3>Saved sources</h3>
+          <label for="source-search">Find a source</label>
+          <input id="source-search" type="search" placeholder="Search by name, website, or notes" />
+          <p id="source-count" class="inline-note" aria-live="polite"></p>
+          <div class="form-actions">
+            <span class="hint">Local database · saved sources and assessments stay on this computer.</span>
+            <button id="export-editorial-db" class="button secondary" type="button">Download backup</button>
+          </div>
+          <div id="editorial-source-list" class="editorial-list" aria-live="polite"></div>
+        </section>
+
+        <form id="source-form" class="card form">
+          <h3>Add a source website</h3>
+          <label for="source-name">Source name</label>
+          <input id="source-name" name="name" required maxlength="120" placeholder="Example: National Statistics Office" />
+          <label for="source-url">Public HTTPS website</label>
+          <input id="source-url" name="url" type="url" required placeholder="https://example.mn" />
+          <label for="source-tier">Source type</label>
+          <select id="source-tier" name="tier" required>
+            <option value="fact_check">Fact-check publisher</option>
+            <option value="official">Official / primary source</option>
+            <option value="research">Research database / literature</option>
+            <option value="international">International reference</option>
+            <option value="news">News publisher</option>
+          </select>
+          <label for="source-note">What it is useful for / known limitations</label>
+          <textarea id="source-note" name="note" rows="3" maxlength="600" placeholder="Describe scope, ownership, corrections policy, and limitations."></textarea>
+          <label for="source-added-by">Added by</label>
+          <input id="source-added-by" name="added_by" maxlength="100" placeholder="Journalist name (optional)" />
+          <div class="form-actions">
+            <span class="hint">New entries start pending review; this does not crawl the website.</span>
+            <button class="button primary" type="submit">Save source</button>
+          </div>
+          <div id="source-form-status" class="settings-status" role="status"></div>
+        </form>
+
+        <form id="editorial-review-form" class="card form">
+          <h3>Record a journalist assessment</h3>
+          <label for="editorial-claim">Exact claim checked</label>
+          <textarea id="editorial-claim" name="claim" rows="3" required minlength="3" maxlength="10000" placeholder="Paste one specific factual claim, not a whole post."></textarea>
+          <label for="reviewer-name">Journalist name</label>
+          <input id="reviewer-name" name="reviewer" required maxlength="100" />
+          <label for="editorial-verdict">Assessment</label>
+          <select id="editorial-verdict" name="verdict" required>
+            <option value="Unproven">Unproven / not enough evidence</option>
+            <option value="True">True</option>
+            <option value="False">False</option>
+            <option value="Partly true">Partly true</option>
+            <option value="Misleading">Misleading</option>
+            <option value="Satire">Satire</option>
+            <option value="Fabricated">Fabricated</option>
+            <option value="Other">Other</option>
+          </select>
+          <label for="editorial-rationale">Reasoning and checked facts</label>
+          <textarea id="editorial-rationale" name="rationale" rows="5" required minlength="10" maxlength="4000" placeholder="Explain the evidence, context, date, and why this rating follows."></textarea>
+          <label for="editorial-sources">Saved sources used</label>
+          <select id="editorial-sources" name="source_ids" multiple size="6" aria-describedby="source-select-help"></select>
+          <span id="source-select-help" class="hint">Select one or more sources; use Ctrl/Command to select several.</span>
+          <label for="editorial-evidence-urls">Specific evidence links (one HTTPS URL per line)</label>
+          <textarea id="editorial-evidence-urls" name="evidence_urls" rows="3" placeholder="https://...&#10;https://..."></textarea>
+          <div class="form-actions">
+            <span class="hint">Saved as an attributed, append-only editorial record.</span>
+            <button class="button primary" type="submit">Save assessment</button>
+          </div>
+          <div id="review-form-status" class="settings-status" role="status"></div>
+        </form>
+      </section>
     </main>
 
     <footer class="app-footer">
@@ -234,7 +312,7 @@
         </p>
         <div class="settings-status" id="settings-status"></div>
         <div class="dialog-actions">
-          <button id="clear-data" class="button ghost" type="button">Clear saved data</button>
+          <button id="clear-data" class="button ghost" type="button">Clear extension settings</button>
           <div class="spacer"></div>
           <button class="button ghost" type="button" data-close-dialog>Cancel</button>
           <button class="button primary" type="submit" value="save">Save</button>

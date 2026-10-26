@@ -1,8 +1,12 @@
-/* TAYO MV3 service worker.
+/* TAYO MV3 background script / service worker.
  *
  * The extension never loads ML models itself. It forwards user-initiated
  * requests to the local FastAPI backend, which owns the heavy dependencies.
  */
+
+const extensionApi = globalThis.browser || globalThis.chrome;
+const isFirefox = Boolean(globalThis.browser);
+const menusApi = isFirefox ? extensionApi.menus : extensionApi.contextMenus;
 
 const MENU_SELECTION = "tayo-factcheck-selection";
 const MENU_TEXT = "tayo-analyze-selection";
@@ -12,68 +16,83 @@ const MENU_IMAGE = "tayo-analyze-image";
 const MENU_VIDEO = "tayo-analyze-video";
 const MENU_VISIBLE_VIDEO = "tayo-inspect-visible-video";
 
-function createMenus() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
+async function createMenus() {
+  if (isFirefox) {
+    await menusApi.removeAll();
+  } else {
+    await new Promise((resolve) => menusApi.removeAll(resolve));
+  }
+  [
+    {
       id: MENU_SELECTION,
       title: "Fact-check selected text",
       contexts: ["selection"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_TEXT,
       title: "Analyze selected text for AI generation",
       contexts: ["selection"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_PAGE_TEXT,
       title: "Analyze page text with TAYO",
       contexts: ["page"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_LINK,
       title: "Scan link for phishing risk",
       contexts: ["link"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_IMAGE,
       title: "Analyze image for AI generation",
       contexts: ["image"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_VIDEO,
       title: "Inspect video with TAYO",
       contexts: ["video"],
-    });
-    chrome.contextMenus.create({
+    },
+    {
       id: MENU_VISIBLE_VIDEO,
       title: "Inspect visible video with TAYO",
       contexts: ["page"],
-    });
+    },
+  ].forEach((item) => menusApi.create(item));
+}
+
+extensionApi.runtime.onInstalled.addListener(createMenus);
+extensionApi.runtime.onStartup.addListener(createMenus);
+
+if (extensionApi.sidePanel) {
+  extensionApi.sidePanel
+    .setPanelBehavior({ openPanelOnActionClick: true })
+    .catch((error) => console.warn("sidePanel behavior:", error));
+} else {
+  extensionApi.action.onClicked.addListener(() => {
+    extensionApi.sidebarAction.open().catch((error) =>
+      console.warn("sidebar open:", error),
+    );
   });
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  createMenus();
-  chrome.sidePanel
-    .setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => console.warn("sidePanel behavior:", error));
-});
-
-// Also set this on browser startup, not only on install.
-chrome.sidePanel
-  .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.warn("sidePanel behavior:", error));
+function openExtensionPanel(tab) {
+  if (extensionApi.sidePanel) {
+    return extensionApi.sidePanel.open({ tabId: tab.id });
+  }
+  return extensionApi.sidebarAction.open();
+}
 
 async function queueRequest(request, tab, openPanel = true) {
   const pending = { ...request, createdAt: Date.now() };
   // Session storage survives the panel being closed and reopened, and keeps
   // selections out of long-term storage.
-  await chrome.storage.session.set({ tayoPending: pending });
+  await extensionApi.storage.session.set({ tayoPending: pending });
   if (openPanel && tab?.id != null) {
     try {
-      await chrome.sidePanel.open({ tabId: tab.id });
+      await openExtensionPanel(tab);
     } catch (error) {
-      // Chrome may reject programmatic opening on some versions. The pending
+  // The browser may reject programmatic opening on some versions. The pending
       // request is still stored, so it appears when the user opens the panel.
       console.warn("Could not open side panel automatically:", error);
     }
@@ -82,9 +101,8 @@ async function queueRequest(request, tab, openPanel = true) {
 
 function openPanelFromGesture(tab) {
   if (tab?.id != null) {
-    chrome.sidePanel.open({ tabId: tab.id }).catch((error) =>
-      console.warn("Could not open side panel automatically:", error),
-    );
+    openExtensionPanel(tab).catch((error) =>
+      console.warn("Could not open TAYO panel automatically:", error));
   }
 }
 
@@ -93,7 +111,7 @@ async function captureMediaFrame(info, tab, selector) {
     throw new Error("This media element cannot be captured from the page frame.");
   }
   const src = info.srcUrl || "";
-  const [injection] = await chrome.scripting.executeScript({
+  const [injection] = await extensionApi.scripting.executeScript({
     target: { tabId: tab.id, frameIds: [0] },
     args: [src, selector],
     func: (sourceUrl, mediaSelector) => {
@@ -127,11 +145,11 @@ async function captureMediaFrame(info, tab, selector) {
   });
   const rect = injection?.result;
   if (!rect) throw new Error(`No matching visible ${selector} was found.`);
-  const activeTab = await chrome.tabs.get(tab.id);
+  const activeTab = await extensionApi.tabs.get(tab.id);
   if (!activeTab.active || activeTab.windowId !== tab.windowId) {
     throw new Error("The video tab is no longer active.");
   }
-  const screenshot = await chrome.tabs.captureVisibleTab(tab.windowId, {
+  const screenshot = await extensionApi.tabs.captureVisibleTab(tab.windowId, {
     format: "jpeg",
     quality: 72,
   });
@@ -214,7 +232,7 @@ async function queuePageText(tab) {
   openPanelFromGesture(tab);
   try {
     if (tab?.id == null) throw new Error("No page tab is available.");
-    const [injection] = await chrome.scripting.executeScript({
+    const [injection] = await extensionApi.scripting.executeScript({
       target: { tabId: tab.id, frameIds: [0] },
       func: () => {
         const article = [...document.querySelectorAll("article")]
@@ -231,7 +249,7 @@ async function queuePageText(tab) {
   }
 }
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+menusApi.onClicked.addListener((info, tab) => {
   if (info.menuItemId === MENU_SELECTION) {
     openPanelFromGesture(tab);
     queueRequest(

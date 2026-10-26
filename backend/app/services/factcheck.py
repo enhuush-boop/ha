@@ -1,16 +1,23 @@
 from __future__ import annotations
 
 import json
+import asyncio
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlencode
 
 import httpx
 from rapidfuzz import fuzz
 
 from ..config import settings
-from .evidence_index import search as evidence_search
-from .mongolian import detect_language, has_negation, match_key
+from .evidence_index import (
+    PUBLISHED_RATING_MIN_SCORE,
+    ensure_index_refresh_if_stale,
+    search as evidence_search,
+)
+from .health_literature import search_health_literature
+from .claimreview_store import search as search_claimreviews, status as claimreview_status
+from .mongolian import detect_language, has_negation, match_key, search_variants
 
 
 def _load_corpus() -> dict:
@@ -23,40 +30,28 @@ def _load_corpus() -> dict:
 
 
 CORPUS = _load_corpus()
-
-FALSE_TERMS = (
-    "false",
-    "fake",
-    "incorrect",
-    "wrong",
-    "misleading",
-    "not true",
-    "hoax",
-    "scam",
-    "fabricated",
-    "altered",
-    "miscaptioned",
-    "manipulated",
-    "unsubstantiated",
-    "no evidence",
-    "худал",
-    "худлаа",
-    "хуурамч",
-    "ташаа",
-    "үнэн биш",
-    "hudal",
-    "hudlaa",
-)
-TRUE_TERMS = ("true", "correct", "accurate", "supported", "confirmed", "үнэн", "зөв", "unen")
-MIXED_TERMS = ("half", "partly", "mixed", "хэсэгчлэн", "хагас үнэн", "зарим нь")
-
+_CLAIM_STOPWORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "by", "for", "from",
+    "in", "is", "it", "of", "on", "or", "the", "to", "was", "were",
+    "ba", "buyu", "gej", "ni", "n", "uu", "ve", "yum",
+}
 
 def _normalize(text: str) -> str:
     return match_key(text)
 
 
 def _tokens(text: str) -> set[str]:
-    return {t for t in _normalize(text).split() if len(t) > 1}
+    return {
+        t for t in _normalize(text).split()
+        if len(t) > 1 and t not in _CLAIM_STOPWORDS
+    }
+
+
+def _ordered_tokens(text: str) -> list[str]:
+    return [
+        t for t in _normalize(text).split()
+        if len(t) > 1 and t not in _CLAIM_STOPWORDS
+    ]
 
 
 def _score(claim: str, candidate: str, keywords: list[str] | None = None) -> float:
@@ -68,6 +63,12 @@ def _score(claim: str, candidate: str, keywords: list[str] | None = None) -> flo
     if has_negation(claim) != has_negation(candidate):
         return 0.0
     token_a, token_b = _tokens(claim), _tokens(candidate)
+    # Fuzzy token-set similarity can score an unrelated longer statement as
+    # identical when it merely contains the same short phrase. Curated
+    # verdicts require the same substantive terms after language filler is
+    # removed; paraphrases remain available as search leads instead.
+    if token_a != token_b or _ordered_tokens(claim) != _ordered_tokens(candidate):
+        return 0.0
     jaccard = (
         len(token_a & token_b) / max(1, len(token_a | token_b))
         if token_a and token_b
@@ -99,27 +100,30 @@ def find_local_match(claim: str, language: str | None = None) -> tuple[dict | No
     return best_entry, best_score
 
 
-def _search_evidence(claim: str) -> list[dict]:
-    q = quote_plus(claim)
-    return [
+def _search_evidence(claim: str, language: str = "auto") -> list[dict]:
+    variants = search_variants(claim, limit=6, force_mongolian=language == "mn_latn")
+    links = [
         {
-            "title": "Search Google Fact Check Explorer",
+            "title": f"Search Google Fact Check Explorer — {variant}",
             "source": "Google Fact Check Tools",
-            "url": f"https://toolbox.google.com/factcheck/explorer/search/{q}",
-            "snippet": "Search published fact-checks that may already address this claim.",
+            "url": f"https://toolbox.google.com/factcheck/explorer/search/{quote_plus(variant)}",
+            "snippet": "Search indexed fact-check articles. A search result is a lead to read, not an automatic verdict.",
             "relation": "search",
-        },
+        }
+        for variant in variants
+    ]
+    links.extend([
         {
             "title": "Search Snopes",
             "source": "Snopes",
-            "url": f"https://www.snopes.com/?s={q}",
+            "url": f"https://www.snopes.com/?s={quote_plus(claim)}",
             "snippet": "Snopes fact-checks and investigations.",
             "relation": "search",
         },
         {
             "title": "Search Full Fact",
             "source": "Full Fact",
-            "url": f"https://fullfact.org/search/?q={q}",
+            "url": f"https://fullfact.org/search/?q={quote_plus(claim)}",
             "snippet": "UK-based independent fact-checking charity.",
             "relation": "search",
         },
@@ -130,26 +134,38 @@ def _search_evidence(claim: str) -> list[dict]:
             "snippet": "Reuters fact-check reporting.",
             "relation": "search",
         },
-    ]
+    ])
+    for domain, name in (("mfcc.mn", "MFCC — Монголын баримт шалгах төв"),
+                         ("factcheck.mn", "FACTCHECK Mongolia")):
+        links.extend(
+            {
+                "title": f"Search {name} — {variant}",
+                "source": name,
+                "url": "https://www.google.com/search?" + urlencode({"q": f"site:{domain} {variant}"}),
+                "snippet": "Site-restricted search lead. Read the article and its cited sources before drawing a conclusion.",
+                "relation": "search",
+            }
+            for variant in variants[:2]
+        )
+    return links
 
 
 # Above this similarity, a fact-checker's own headline verdict is worth putting
 # in front of the reader. It is still reported as theirs, not adopted as ours:
 # matching wording is not the same claim, and only a human can judge that.
 #
-# Calibrated against the live factcheck.mn feed: six posts that genuinely
-# restated an indexed claim scored 0.46 to 0.81, three unrelated posts scored
-# 0.00, and the best wrong-article candidate for an ambiguous post reached
-# 0.54. 0.60 clears that distractor while still surfacing the clear cases. It
-# is nine examples, so treat it as a starting point, not a tuned parameter.
-REPORTED_VERDICT_MIN = 0.60
+# A small initial hand-check found one irrelevant article at 0.54. The current
+# 0.70 floor hides its rating; it is a conservative retrieval gate, not a
+# statistically validated confidence threshold. Exact reviewed wording scores
+# 1.0; borderline paraphrases should be searched manually via the source links.
+REPORTED_VERDICT_MIN = PUBLISHED_RATING_MIN_SCORE
 
 
 def _no_match(claim: str, reason: str | None = None, language: str | None = None) -> dict:
     language = language or detect_language(claim)
     mongolian = language in {"mn_cyrl", "mn_latn"}
 
-    indexed = evidence_search(claim)
+    indexed = evidence_search(claim, language_hint=language)
     found = indexed.get("results") or []
 
     reported = next(
@@ -178,7 +194,7 @@ def _no_match(claim: str, reason: str | None = None, language: str | None = None
         )
     elif found:
         summary = (
-            f"Корпуст таарах бичлэг алга. Батлагаат эх сурвалжаас үүнтэй холбоотой "
+            f"Корпуст таарах бичлэг алга. Бүртгэсэн нийтлэгчдээс үүнтэй холбоотой "
             f"{len(found)} нийтлэл олдлоо — доороос уншина уу."
             if mongolian else
             f"No corpus entry matches. {len(found)} related piece(s) from registered "
@@ -200,8 +216,8 @@ def _no_match(claim: str, reason: str | None = None, language: str | None = None
     ]
     if indexed.get("available"):
         limitations.append(
-            "Indexed evidence is matched by text similarity over recent feed items only; "
-            "an older fact-check on the same claim will be missed."
+            "The index covers only the registered publishers and their retrieved archive; "
+            "it is not a search of the whole web and can miss older or unindexed articles."
         )
     else:
         limitations.append(
@@ -214,7 +230,7 @@ def _no_match(claim: str, reason: str | None = None, language: str | None = None
         "verdict": "Not Sure",
         "confidence": 0.15,
         "summary": summary + (f" ({reason})" if reason else ""),
-        "evidence": found + _search_evidence(claim),
+        "evidence": found + _search_evidence(claim, language),
         "reported_verdict": (
             {
                 "verdict": reported["published_verdict"],
@@ -230,8 +246,11 @@ def _no_match(claim: str, reason: str | None = None, language: str | None = None
             "available": indexed.get("available", False),
             "fetched_at": indexed.get("fetched_at"),
             "indexed_items": indexed.get("indexed_items", 0),
+            "publisher_count": indexed.get("publisher_count", 0),
             "hits": len(found),
         },
+        "indexed_source_count": len({item.get("source") for item in found}),
+        "index_search_variants": indexed.get("search_variants", []),
         "matched_claim": None,
         "match_score": 0.0,
         "method": "indexed_evidence" if found else "no_match",
@@ -240,135 +259,199 @@ def _no_match(claim: str, reason: str | None = None, language: str | None = None
     }
 
 
-def _rating_to_verdict(rating: str) -> str:
-    value = (rating or "").lower()
-    if any(term in value for term in MIXED_TERMS):
-        return "Not Sure"
-    if any(term in value for term in FALSE_TERMS):
-        return "False"
-    if any(term in value for term in TRUE_TERMS):
-        return "True"
-    return "Not Sure"
+def _merge_indexed_evidence(
+    result: dict, claim: str, language_hint: str = "auto"
+) -> dict:
+    """Attach local publisher articles without changing another source's verdict."""
+    indexed = evidence_search(claim, language_hint=language_hint)
+    found = indexed.get("results") or []
+    current_urls = {item.get("url") for item in result.get("evidence", [])}
+    result.setdefault("evidence", []).extend(
+        item for item in found
+        if item.get("url") and item.get("url") not in current_urls
+    )
+    result["index_status"] = {
+        "available": indexed.get("available", False),
+        "fetched_at": indexed.get("fetched_at"),
+        "indexed_items": indexed.get("indexed_items", 0),
+        "publisher_count": indexed.get("publisher_count", 0),
+        "hits": len(found),
+    }
+    result["indexed_source_count"] = len({item.get("source") for item in found})
+    if found:
+        result["index_search_variants"] = indexed.get("search_variants", [])
+        result.setdefault("limitations", []).append(
+            "Additional local publisher articles are matched by text similarity; read each linked article to verify it addresses the same claim."
+        )
+        if result.get("method") in {"curated_corpus", "google_factcheck_tools"}:
+            result["method"] += "+indexed_evidence"
+    return result
 
 
-async def google_factcheck(claim: str) -> dict | None:
+async def google_factcheck(
+    claim: str, language_hint: str = "auto"
+) -> dict | None:
     key = settings.google_factcheck_api_key
     if not key:
         return None
     url = "https://factchecktools.googleapis.com/v1alpha1/claims:search"
-    params = {"query": claim, "key": key, "pageSize": 10}
+    variants = search_variants(
+        claim, limit=8, force_mongolian=language_hint == "mn_latn"
+    )
     try:
         async with httpx.AsyncClient(timeout=settings.request_timeout) as client:
-            response = await client.get(url, params=params)
-            response.raise_for_status()
-            data = response.json()
+            async def search(query: str) -> tuple[str, dict]:
+                response = await client.get(
+                    url,
+                    params={"query": query, "key": key, "pageSize": 10},
+                )
+                response.raise_for_status()
+                return query, response.json()
+
+            responses = await asyncio.gather(
+                *(search(query) for query in variants), return_exceptions=True
+            )
     except Exception as exc:
         return {"error": f"Google Fact Check API failed: {exc}"}
 
-    claims = data.get("claims", [])
+    claims: list[tuple[str, dict, dict]] = []
+    seen: set[tuple[str, str]] = set()
+    errors: list[str] = []
+    for response in responses:
+        if isinstance(response, Exception):
+            errors.append(str(response))
+            continue
+        query, data = response
+        for item in data.get("claims", []):
+            for review in item.get("claimReview", []):
+                identity = (str(review.get("url", "")), str(item.get("text", "")))
+                if identity in seen:
+                    continue
+                seen.add(identity)
+                claims.append((query, item, review))
     if not claims:
+        if errors and len(errors) == len(responses):
+            return {"error": f"Google Fact Check API failed: {errors[0]}"}
+        return None
+
+    # Only ratings attached to the same ClaimReview claim text vote together.
+    groups: dict[str, list[tuple[str, dict, dict]]] = {}
+    for query, item, review in claims:
+        claim_key = " ".join((item.get("text") or "").casefold().split())
+        if claim_key:
+            groups.setdefault(claim_key, []).append((query, item, review))
+    if not groups:
+        return None
+    matched_group = max(
+        groups.values(),
+        key=lambda group: (
+            max(
+                (_score(query, item.get("text", "")) for query, item, _ in group),
+                default=0.0,
+            ),
+            len({
+                review.get("publisher", {}).get("name", "Fact-checker")
+                for _, _, review in group
+            }),
+        ),
+    )
+
+    group_match_score = max(
+        (_score(query, item.get("text", "")) for query, item, _ in matched_group),
+        default=0.0,
+    )
+    if group_match_score < PUBLISHED_RATING_MIN_SCORE:
+        # The API can return thematically related claims. Keep the system at
+        # Not Sure unless the reviewed wording itself is a strong match.
         return None
 
     evidence: list[dict] = []
-    verdicts: list[str] = []
     ratings: list[str] = []
-    for item in claims:
-        for review in item.get("claimReview", []):
-            rating = review.get("textualRating", "")
-            verdict = _rating_to_verdict(rating)
-            verdicts.append(verdict)
-            ratings.append(rating)
-            evidence.append(
-                {
-                    "title": review.get("title") or item.get("text", "Fact-check"),
-                    "source": review.get("publisher", {}).get("name", "Fact-checker"),
-                    "url": review.get("url", ""),
-                    "snippet": f"Published rating: {rating or 'not stated'}. Claim reviewed: {item.get('text', claim)}",
-                    "relation": "contradicts" if verdict == "False" else "supports" if verdict == "True" else "neutral",
-                    "review_date": review.get("reviewDate"),
-                }
-            )
+    publishers: set[str] = set()
+    for query, item, review in matched_group:
+        rating = review.get("textualRating", "")
+        ratings.append(rating)
+        publisher = review.get("publisher", {}).get("name", "Fact-checker")
+        publishers.add(publisher)
+        evidence.append(
+            {
+                "title": review.get("title") or item.get("text", "Fact-check"),
+                "source": publisher,
+                "url": review.get("url", ""),
+                "snippet": f"Published rating: {rating or 'not stated'}. Claim reviewed: {item.get('text', claim)}",
+                "relation": "fact_check",
+                "published_verdict": rating or None,
+                "review_date": review.get("reviewDate"),
+                "matched_claim": item.get("text", ""),
+                "search_variant": query,
+                "match_score": _score(query, item.get("text", "")),
+            }
+        )
 
     if not evidence:
         return None
 
-    false_count = verdicts.count("False")
-    true_count = verdicts.count("True")
-    unsure_count = verdicts.count("Not Sure")
-    if false_count > true_count and false_count >= unsure_count:
-        verdict = "False"
-    elif true_count > false_count and true_count >= unsure_count:
-        verdict = "True"
-    else:
-        verdict = "Not Sure"
-
     summary = (
-        f"Existing fact-checks were found for this claim. Ratings include: "
-        f"{'; '.join(ratings[:5])}. The aggregate verdict is {verdict}. "
-        "Read the linked fact-checks for the exact claim and context."
+        f"Found {len(evidence)} published review(s) from {len(publishers)} publisher(s) "
+        f"about a claim with {group_match_score:.0%} text similarity. Their ratings "
+        f"include: {'; '.join(ratings[:5])}. This tool does not combine those ratings "
+        "into its own verdict; read the linked reviews to confirm the exact claim and context."
     )
     return {
         "claim": claim,
-        "verdict": verdict,
-        "confidence": 0.8 if len(evidence) >= 2 else 0.62,
+        "verdict": "Not Sure",
+        "confidence": 0.15,
         "summary": summary,
         "evidence": evidence[:8],
-        "matched_claim": claims[0].get("text"),
-        "match_score": 0.8,
+        "matched_claim": matched_group[0][1].get("text"),
+        "match_score": group_match_score,
         "method": "google_factcheck_tools",
+        "source_count": len(publishers),
+        "search_variants": variants,
         "summary_source": "template",
         "limitations": [
             "Fact-check ratings are for the specific claim and context reviewed by each publisher; wording may differ from the user's claim.",
-            "Google Fact Check Tools returns publisher reviews, not an independent judgment by this app.",
+            f"Found {len(evidence)} indexed review(s) from {len(publishers)} distinct publisher(s); each rating belongs to its publisher, not TAYO.",
+            "Google Fact Check Tools returns publisher reviews, not an independent judgment by this app. Its index is not exhaustive.",
             "Check publication dates: a fact-check may be outdated or may not address a new variant of the claim.",
         ],
     }
 
 
-async def ollama_summary(claim: str, verdict: str, evidence: list[dict]) -> str | None:
-    if not settings.ollama_url:
-        return None
-    lines = []
-    for index, item in enumerate(evidence[:6], start=1):
-        lines.append(
-            f"[{index}] {item.get('source', 'source')} — {item.get('title', '')}: "
-            f"{item.get('snippet', '')} ({item.get('url', '')})"
-        )
-    prompt = (
-        "You are a careful fact-checking editor. Using ONLY the evidence below, write "
-        "2-3 sentences for a journalist explaining the conclusion. Do not add facts that "
-        "are not in the evidence. State the verdict explicitly. If the evidence is weak, "
-        "say so.\n\n"
-        f"Claim: {claim}\nVerdict: {verdict}\n\nEvidence:\n" + "\n".join(lines)
-    )
-    try:
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(
-                f"{settings.ollama_url}/api/chat",
-                json={
-                    "model": settings.ollama_model,
-                    "stream": False,
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": "You summarize retrieved evidence. You never invent sources or facts.",
-                        },
-                        {"role": "user", "content": prompt},
-                    ],
-                    "options": {"temperature": 0.1, "num_ctx": 4096},
-                },
-            )
-            response.raise_for_status()
-            data = response.json()
-            content = (data.get("message") or {}).get("content", "").strip()
-            return content or None
-    except Exception:
-        return None
-
-
 async def factcheck_claim(claim: str, language_hint: str = "auto") -> dict:
     claim = claim.strip()
     language = detect_language(claim) if language_hint == "auto" else language_hint
+    # A large, live biomedical index supplements the small local corpus. Its
+    # citations are displayed as research leads and never change the verdict.
+    health_search = await search_health_literature(claim)
+    claimreview_results = await asyncio.to_thread(search_claimreviews, claim)
+    claimreview_index = claimreview_status()
+
+    def attach_health_search(result: dict) -> dict:
+        result["health_literature"] = {
+            "available": health_search.get("available", False),
+            "database": health_search.get("database"),
+            "record_count": health_search.get("record_count", 0),
+            "note": health_search.get("note") or health_search.get("reason"),
+            "evidence": health_search.get("results", []),
+        }
+        result["claimreview_evidence"] = claimreview_results
+        result["claimreview_index"] = {
+            "available": claimreview_index.get("available", False),
+            "records": claimreview_index.get("records", 0),
+            "imported_at": claimreview_index.get("imported_at"),
+        }
+        if health_search.get("results"):
+            result.setdefault("limitations", []).append(
+                "Biomedical papers below are research leads from Europe PMC / PubMed, not claim ratings. Assess study methods, publication status, date, and relevance before relying on them."
+            )
+        elif "English query" in str(health_search.get("reason", "")):
+            result.setdefault("limitations", []).append(
+                "Live biomedical literature search needs an English query; Mongolian-to-English translation is not configured."
+            )
+        return result
+
+    refresh_scheduled = await ensure_index_refresh_if_stale()
     entry, score = find_local_match(claim, language)
 
     if entry:
@@ -385,6 +468,7 @@ async def factcheck_claim(claim: str, language_hint: str = "auto") -> dict:
             "match_score": score,
             "method": "curated_corpus",
             "topic": entry.get("topic"),
+            "corpus_reviewed_at": entry.get("last_reviewed"),
             "summary_source": "template",
             "limitations": [
                 "This answer comes from a small curated demo corpus, not a live web search.",
@@ -392,28 +476,22 @@ async def factcheck_claim(claim: str, language_hint: str = "auto") -> dict:
                 "The corpus is small and may become stale; check publication dates.",
             ],
         }
-        if settings.ollama_url:
-            summary = await ollama_summary(claim, result["verdict"], result["evidence"])
-            if summary:
-                result["summary"] = summary
-                result["summary_source"] = f"ollama:{settings.ollama_model}"
-        return result
+        result = _merge_indexed_evidence(result, claim, language)
+        result["index_status"]["refreshing"] = refresh_scheduled
+        return attach_health_search(result)
 
-    google = await google_factcheck(claim)
+    google = await google_factcheck(claim, language)
     if google and not google.get("error"):
         google["language"] = language
-        if settings.ollama_url:
-            summary = await ollama_summary(
-                claim, google["verdict"], google.get("evidence", [])
-            )
-            if summary:
-                google["summary"] = summary
-                google["summary_source"] = f"ollama:{settings.ollama_model}"
-        return google
+        google = _merge_indexed_evidence(google, claim, language)
+        google["index_status"]["refreshing"] = refresh_scheduled
+        return attach_health_search(google)
 
     reason = None
     if google and google.get("error"):
         reason = google["error"]
     elif not settings.google_factcheck_api_key:
         reason = "Google Fact Check API key not configured."
-    return _no_match(claim, reason, language)
+    result = _no_match(claim, reason, language)
+    result["index_status"]["refreshing"] = refresh_scheduled
+    return attach_health_search(result)

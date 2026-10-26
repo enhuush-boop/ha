@@ -1,18 +1,31 @@
 from __future__ import annotations
 
 import logging
+import ipaddress
 import tempfile
 import time
 import uuid
 from pathlib import Path
+from urllib.parse import urlsplit
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
-from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest, VideoUrlRequest
+from .schemas import (
+    EditorialReviewRequest,
+    EditorialSourceRequest,
+    EditorialSourceReviewRequest,
+    FactCheckRequest,
+    ImageUrlRequest,
+    TextRequest,
+    UrlRequest,
+    VideoUrlRequest,
+)
+from .services import editorial_store
+from .services.claimreview_store import status as claimreview_status
 from .services.factcheck import factcheck_claim
 from .services.image_analysis import analyze_image, analyze_image_url
 from .services.model_registry import model_status
@@ -111,7 +124,12 @@ async def config() -> dict:
         "features": {
             "factcheck_corpus": True,
             "google_factcheck": bool(settings.google_factcheck_api_key),
-            "ollama_summary": bool(settings.ollama_url),
+            "editorial_source_library": True,
+            "journalist_assessments": True,
+            "health_literature_search": True,
+            "claimreview_local_index": claimreview_status().get("available", False),
+            "claimreview_records": claimreview_status().get("records", 0),
+            "ollama_summary": False,
             "image_model": True,
             "text_model": settings.enable_text_model,
             "video": True,
@@ -134,6 +152,7 @@ async def config() -> dict:
         "limitations": [
             "AI detectors are probabilistic and can be fooled or produce false positives.",
             "The curated fact-check corpus is small; connect the Google Fact Check Tools API for broader coverage.",
+            "English health claims can retrieve related citations from Europe PMC / PubMed; citations are research leads, not verdicts. Mongolian-to-English translation is not configured.",
             "URL scanning is passive and never fetches the page body or runs JavaScript.",
             "This is a demonstration, not a forensic or editorial decision system.",
         ],
@@ -143,10 +162,106 @@ async def config() -> dict:
 @app.post("/api/factcheck")
 async def api_factcheck(payload: FactCheckRequest) -> dict:
     try:
-        return await factcheck_claim(payload.claim, payload.language)
+        result = await factcheck_claim(payload.claim, payload.language)
+        result["journalist_assessments"] = editorial_store.reviews_for_claim(payload.claim)
+        return result
     except Exception as exc:  # pragma: no cover - defensive
         logger.exception("factcheck failed")
         raise HTTPException(status_code=500, detail=f"Fact-check failed: {exc}") from exc
+
+
+def _require_local_editorial_request(request: Request) -> None:
+    """Keep editorial reads/writes on loopback and out of arbitrary web pages."""
+    host = request.client.host if request.client else ""
+    try:
+        if not ipaddress.ip_address(host).is_loopback:
+            raise HTTPException(status_code=403, detail="Editorial database is local only.")
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Editorial database is local only.")
+    origin = request.headers.get("origin")
+    if not origin:
+        return
+    parsed = urlsplit(origin)
+    if parsed.scheme in {"moz-extension", "chrome-extension"}:
+        return
+    if parsed.scheme in {"http", "https"} and parsed.hostname in {"127.0.0.1", "localhost", "[::1]", "::1"}:
+        return
+    raise HTTPException(status_code=403, detail="Open the local extension to access editorial records.")
+
+
+@app.get("/api/editorial/sources")
+async def api_editorial_sources(
+    request: Request,
+    q: str = "",
+    limit: int = Query(100, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+) -> dict:
+    _require_local_editorial_request(request)
+    sources = editorial_store.list_sources(q)
+    return {
+        "sources": sources[offset:offset + limit],
+        "total": len(sources),
+        "limit": limit,
+        "offset": offset,
+    }
+
+
+@app.get("/api/editorial/export")
+async def api_export_editorial_database(request: Request) -> JSONResponse:
+    _require_local_editorial_request(request)
+    return JSONResponse(
+        content=editorial_store.export_bundle(),
+        headers={"Content-Disposition": 'attachment; filename="tayo-editorial-backup.json"'},
+    )
+
+
+@app.post("/api/editorial/sources")
+async def api_add_editorial_source(payload: EditorialSourceRequest, request: Request) -> dict:
+    _require_local_editorial_request(request)
+    try:
+        source = editorial_store.add_source(**payload.model_dump())
+    except ValueError as exc:
+        status = 409 if "already" in str(exc).lower() else 400
+        raise HTTPException(status_code=status, detail=str(exc)) from exc
+    return {"source": source}
+
+
+@app.post("/api/editorial/sources/{source_id}/review")
+async def api_review_editorial_source(
+    source_id: str,
+    payload: EditorialSourceReviewRequest,
+    request: Request,
+) -> dict:
+    _require_local_editorial_request(request)
+    try:
+        source = editorial_store.mark_source_reviewed(source_id, **payload.model_dump())
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"source": source}
+
+
+@app.get("/api/editorial/reviews")
+async def api_editorial_reviews(
+    request: Request,
+    claim: str = "",
+    limit: int = 50,
+) -> dict:
+    _require_local_editorial_request(request)
+    if claim.strip():
+        return {"reviews": editorial_store.reviews_for_claim(claim, limit)}
+    return {"reviews": editorial_store.recent_reviews(limit)}
+
+
+@app.post("/api/editorial/reviews")
+async def api_add_editorial_review(payload: EditorialReviewRequest, request: Request) -> dict:
+    _require_local_editorial_request(request)
+    try:
+        review = editorial_store.add_review(**payload.model_dump())
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"review": review}
 
 
 @app.post("/api/analyze/text")
