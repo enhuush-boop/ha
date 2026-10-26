@@ -1,1 +1,51 @@
-
+{
+  "notice": "Small demonstration corpus. Review the linked primary sources before publishing.",
+  "entries": [
+    {
+      "claim": "Вакцин аутизм үүсгэдэг.",
+      "aliases": [
+        "Вакцин аутизм үүсгэдэг үү?",
+        "Vaksin autizm uusgedeg",
+        "Vaktsin autizm uusgedeg",
+        "Vaccines cause autism."
+      ],
+      "keywords": ["вакцин", "аутизм", "үүсгэдэг"],
+      "topic": "Эрүүл мэнд",
+      "verdict": "False",
+      "confidence": 0.9,
+      "summary": "ДЭМБ-ын 2025 оны нотолгооны тоймоор вакцин ба аутизмын хооронд шалтгаант холбоо тогтоогдоогүй. Мэдэгдлийн агуулга, огноог эх сурвалжтай нь тулгаж шалгана уу.",
+      "evidence": [
+        {
+          "title": "WHO expert group’s new analysis reaffirms there is no link between vaccines and autism",
+          "source": "World Health Organization",
+          "url": "https://www.who.int/news/item/11-12-2025-who-expert-group-s-new-analysis-reaffirms-there-is-no-link-between-vaccines-and-autism",
+          "snippet": "A review of primary studies found no causal link between childhood vaccines and autism spectrum disorders.",
+          "relation": "contradicts"
+        }
+      ]
+    },
+    {
+      "claim": "Дэлхий хавтгай.",
+      "aliases": [
+        "Дэлхий хавтгай гэж үү?",
+        "Delhii havtgai",
+        "Delhii havtgai yum",
+        "The Earth is flat."
+      ],
+      "keywords": ["дэлхий", "хавтгай"],
+      "topic": "Шинжлэх ухаан",
+      "verdict": "False",
+      "confidence": 0.95,
+      "summary": "Дэлхий хавтгай биш. NASA-гийн тайлбарласнаар дэлхий бөөрөнхий боловч төгс бөмбөрцөг биш.",
+      "evidence": [
+        {
+          "title": "What Is Earth?",
+          "source": "NASA",
+          "url": "https://www.nasa.gov/learning-resources/for-kids-and-students/what-is-earth-grades-k-4/",
+          "snippet": "Earth is round, though it is not a perfect sphere.",
+          "relation": "contradicts"
+        }
+      ]
+    }
+  ]
+}

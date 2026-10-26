@@ -109,7 +109,9 @@ panel.js ──POST /api/factcheck {claim}──▶ factcheck_claim()
 - The corpus (`backend/app/data/factchecks.json`) contains aliases, keywords,
   verdict, explanation, and evidence with source/URL/snippet/relation.
 - Matching combines RapidFuzz token-set similarity (45%), Jaccard token overlap
-  (35%), and keyword coverage (20%); below 0.58 it returns no match.
+  (35%), and keyword coverage (20%). The threshold is 0.58 for English and
+  0.75 for detected Mongolian. Cyrillic and informal galig are folded to a
+  comparable Latin key; negated variants cannot inherit a corpus verdict.
 - Google ratings are normalized: “false/misleading/hoax/…” → `False`;
   “true/correct/…” → `True`; “half/partly/mixed” or unknown → `Not Sure`.
 - Ollama receives only the claim, verdict, and retrieved evidence. The prompt
@@ -134,6 +136,11 @@ panel.js ──POST /api/analyze/text {text}──▶ threadpool ──▶ Moder
 - Stylometry (sentence-length variation, type–token ratio, trigram repetition,
   phrase hits) is displayed for explanation, not combined into a fake
   “certainty”.
+- For Mongolian Cyrillic or recognized informal Latin galig, Unicode-aware
+  statistics are returned without invoking the English ModernBERT detector.
+  `ai_probability` is null because no Mongolian AI-text model has been
+  validated for this build. Users can select `mn_latn` manually when informal
+  spelling defeats automatic detection.
 
 ### 3.3 Image
 
@@ -368,7 +375,7 @@ If this moves beyond a local demo:
 
 ## 8. Known limitations by design
 
-- Curated fact-check corpus: four claims. “Not Sure” is common.
+- Curated fact-check corpus: two claims. “Not Sure” is common.
 - No unrestricted web search or live news retrieval.
 - Image/video classifiers are trained for specific data; they do not generalize
   to all generators or editing pipelines. Smaug is strong on current Google

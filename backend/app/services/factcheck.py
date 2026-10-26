@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
@@ -10,6 +9,7 @@ import httpx
 from rapidfuzz import fuzz
 
 from ..config import settings
+from .mongolian import detect_language, has_negation, match_key
 
 
 def _load_corpus() -> dict:
@@ -38,14 +38,20 @@ FALSE_TERMS = (
     "manipulated",
     "unsubstantiated",
     "no evidence",
+    "худал",
+    "худлаа",
+    "хуурамч",
+    "ташаа",
+    "үнэн биш",
+    "hudal",
+    "hudlaa",
 )
-TRUE_TERMS = ("true", "correct", "accurate", "supported", "confirmed")
+TRUE_TERMS = ("true", "correct", "accurate", "supported", "confirmed", "үнэн", "зөв", "unen")
+MIXED_TERMS = ("half", "partly", "mixed", "хэсэгчлэн", "хагас үнэн", "зарим нь")
 
 
 def _normalize(text: str) -> str:
-    text = text.lower().replace("’", "'")
-    text = re.sub(r"[^a-z0-9\s']", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+    return match_key(text)
 
 
 def _tokens(text: str) -> set[str]:
@@ -56,6 +62,10 @@ def _score(claim: str, candidate: str, keywords: list[str] | None = None) -> flo
     a, b = _normalize(claim), _normalize(candidate)
     if not a or not b:
         return 0.0
+    # A near-identical sentence with reversed polarity must not inherit a
+    # corpus verdict. This matters especially for -гүй / -gui suffixes.
+    if has_negation(claim) != has_negation(candidate):
+        return 0.0
     token_a, token_b = _tokens(claim), _tokens(candidate)
     jaccard = (
         len(token_a & token_b) / max(1, len(token_a | token_b))
@@ -65,12 +75,12 @@ def _score(claim: str, candidate: str, keywords: list[str] | None = None) -> flo
     fuzzy = fuzz.token_set_ratio(a, b) / 100.0
     keyword_hits = 0
     if keywords:
-        kw = {k.lower() for k in keywords}
+        kw = {_normalize(k) for k in keywords}
         keyword_hits = len(token_a & kw) / max(1, len(kw))
     return round(0.45 * fuzzy + 0.35 * jaccard + 0.20 * keyword_hits, 3)
 
 
-def find_local_match(claim: str) -> tuple[dict | None, float]:
+def find_local_match(claim: str, language: str | None = None) -> tuple[dict | None, float]:
     best_entry = None
     best_score = 0.0
     for entry in CORPUS.get("entries", []):
@@ -82,7 +92,8 @@ def find_local_match(claim: str) -> tuple[dict | None, float]:
         if score > best_score:
             best_score = score
             best_entry = entry
-    if best_score < 0.58:
+    threshold = 0.75 if (language or detect_language(claim)) in {"mn_cyrl", "mn_latn"} else 0.58
+    if best_score < threshold:
         return None, best_score
     return best_entry, best_score
 
@@ -121,18 +132,22 @@ def _search_evidence(claim: str) -> list[dict]:
     ]
 
 
-def _no_match(claim: str, reason: str | None = None) -> dict:
+def _no_match(claim: str, reason: str | None = None, language: str | None = None) -> dict:
+    language = language or detect_language(claim)
+    mongolian = language in {"mn_cyrl", "mn_latn"}
     return {
         "claim": claim,
+        "language": language,
         "verdict": "Not Sure",
         "confidence": 0.15,
         "summary": (
+            "Энэ мэдэгдэлтэй баттай таарах баримт шалгалт олдсонгүй. "
+            "Энэ нь үнэн эсвэл худал гэсэн дүгнэлт биш. Доорх эх сурвалжаас үргэлжлүүлэн шалгана уу."
+            if mongolian else
             "I could not find a confident match in the local demo corpus. "
-            "This does not mean the claim is true or false; it means there is not enough "
-            "trusted evidence in this build to decide. Use the search links below or connect "
-            "a fact-check API key."
-            + (f" ({reason})" if reason else "")
-        ),
+            "This does not mean the claim is true or false. Use the search links below "
+            "or connect a fact-check API key."
+        ) + (f" ({reason})" if reason else ""),
         "evidence": _search_evidence(claim),
         "matched_claim": None,
         "match_score": 0.0,
@@ -148,7 +163,7 @@ def _no_match(claim: str, reason: str | None = None) -> dict:
 
 def _rating_to_verdict(rating: str) -> str:
     value = (rating or "").lower()
-    if "half" in value or "partly" in value or "mixed" in value:
+    if any(term in value for term in MIXED_TERMS):
         return "Not Sure"
     if any(term in value for term in FALSE_TERMS):
         return "False"
@@ -272,13 +287,15 @@ async def ollama_summary(claim: str, verdict: str, evidence: list[dict]) -> str 
         return None
 
 
-async def factcheck_claim(claim: str) -> dict:
+async def factcheck_claim(claim: str, language_hint: str = "auto") -> dict:
     claim = claim.strip()
-    entry, score = find_local_match(claim)
+    language = detect_language(claim) if language_hint == "auto" else language_hint
+    entry, score = find_local_match(claim, language)
 
     if entry:
         result: dict[str, Any] = {
             "claim": claim,
+            "language": language,
             "verdict": entry.get("verdict", "Not Sure"),
             "confidence": round(
                 float(entry.get("confidence", 0.9)) * min(1.0, score + 0.1), 3
@@ -293,7 +310,7 @@ async def factcheck_claim(claim: str) -> dict:
             "limitations": [
                 "This answer comes from a small curated demo corpus, not a live web search.",
                 "Evidence links are provided so you can verify the original sources.",
-                "The corpus is dated 2026-10-24 and may become stale; check publication dates.",
+                "The corpus is small and may become stale; check publication dates.",
             ],
         }
         if settings.ollama_url:
@@ -305,6 +322,7 @@ async def factcheck_claim(claim: str) -> dict:
 
     google = await google_factcheck(claim)
     if google and not google.get("error"):
+        google["language"] = language
         if settings.ollama_url:
             summary = await ollama_summary(
                 claim, google["verdict"], google.get("evidence", [])
@@ -319,4 +337,4 @@ async def factcheck_claim(claim: str) -> dict:
         reason = google["error"]
     elif not settings.google_factcheck_api_key:
         reason = "Google Fact Check API key not configured."
-    return _no_match(claim, reason)
+    return _no_match(claim, reason, language)

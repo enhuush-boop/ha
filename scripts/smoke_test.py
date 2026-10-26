@@ -114,6 +114,46 @@ class Checker:
         self.check("unknown claim returns 200", response.status_code == 200)
         self.check("unknown claim is Not Sure", data.get("verdict") == "Not Sure", str(data)[:200])
 
+        for claim, language in (
+            ("Дэлхий хавтгай.", "mn_cyrl"),
+            ("Delhii havtgai", "mn_latn"),
+        ):
+            response = self.post("/api/factcheck", json={"claim": claim})
+            data = response.json()
+            self.check(
+                f"Mongolian {language} claim matches sourced corpus",
+                response.status_code == 200
+                and data.get("language") == language
+                and data.get("verdict") == "False"
+                and bool(data.get("evidence")),
+                str(data)[:200],
+            )
+
+        response = self.post(
+            "/api/factcheck", json={"claim": "Вакцин аутизм үүсгэдэггүй."}
+        )
+        self.check(
+            "negated Mongolian claim does not inherit False",
+            response.status_code == 200 and response.json().get("verdict") == "Not Sure",
+        )
+
+        response = self.post(
+            "/api/analyze/text",
+            json={
+                "text": "Ene bol mongol heleer bichsen uguulber yum. "
+                "Delhii havtgai gesen medee shalgana."
+            },
+        )
+        data = response.json()
+        self.check(
+            "Mongolian galig text abstains from AI score",
+            response.status_code == 200
+            and data.get("language") == "mn_latn"
+            and data.get("ai_probability") is None
+            and data.get("text_stats", {}).get("words", 0) > 5,
+            str(data)[:200],
+        )
+
         print("\n[URL scanning]")
         response = self.post("/api/scan/url", json={"url": "https://example.com"})
         data = response.json()

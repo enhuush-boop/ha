@@ -4,6 +4,7 @@ import re
 from statistics import mean, pstdev
 
 from .model_registry import get_text_model
+from .mongolian import detect_language
 
 AI_PHRASES = [
     "delve into",
@@ -36,6 +37,12 @@ TEXT_LIMITATIONS = [
     "A detector score is not evidence of authorship or misconduct. Never use it as the sole basis for an accusation.",
 ]
 
+MONGOLIAN_TEXT_LIMITATIONS = [
+    "The bundled ModernBERT detector was trained on English text and has not been validated for Mongolian Cyrillic or informal Latin galig.",
+    "Style statistics describe the text but cannot establish whether a person or an AI wrote it.",
+    "Informal galig has variable spelling; short or mixed-language passages may not be recognized as Mongolian.",
+]
+
 
 def _sentences(text: str) -> list[str]:
     parts = re.split(r"(?<=[.!?])\s+|\n{2,}", text.strip())
@@ -43,7 +50,7 @@ def _sentences(text: str) -> list[str]:
 
 
 def _words(text: str) -> list[str]:
-    return re.findall(r"[A-Za-z][A-Za-z'-]*", text.lower())
+    return re.findall(r"[^\W\d_]+(?:['’-][^\W\d_]+)*", text.lower())
 
 
 def _stats(text: str) -> dict:
@@ -137,8 +144,43 @@ def _label(probability: float | None) -> str:
     return "Uncertain"
 
 
-def analyze_text(text: str) -> dict:
+def analyze_text(text: str, language_hint: str = "auto") -> dict:
+    language = detect_language(text) if language_hint == "auto" else language_hint
     stats = _stats(text)
+    if language != "other":
+        script = "кирилл" if language == "mn_cyrl" else "латин галиг"
+        return {
+            "kind": "text",
+            "language": language,
+            "label": "Uncertain",
+            "ai_probability": None,
+            "heuristic_score": None,
+            "confidence": 0.0,
+            "model_used": "not_validated_for_mongolian",
+            "model_error": None,
+            "text_stats": stats,
+            "chunks": [],
+            "signals": [
+                {
+                    "name": "language_detection",
+                    "value": language,
+                    "direction": "neutral",
+                    "weight": "language",
+                    "explanation": f"Монгол {script} бичвэр гэж танив. AI зохиогчийг энэ үзүүлэлтээр тогтоохгүй.",
+                }
+            ],
+            "summary": (
+                f"Монгол {script} бичвэр гэж танив. Энэ хувилбарт монгол хэлээр "
+                "баталгаажсан AI текст илрүүлэгч байхгүй тул AI эсэх хувь гаргахгүй. "
+                "Доор зөвхөн бичвэрийн статистик байна."
+            ),
+            "limitations": MONGOLIAN_TEXT_LIMITATIONS,
+            "recommended_action": (
+                "Эх сурвалж, ноорог, нийтэлсэн цаг, өмнөх хувилбаруудыг шалга. "
+                "Зөвхөн бичвэрийн хэв маягаар AI ашигласан гэж дүгнэхгүй."
+            ),
+        }
+
     heuristic = _heuristic_score(stats)
     model, model_error = get_text_model()
 
@@ -218,6 +260,7 @@ def analyze_text(text: str) -> dict:
 
     return {
         "kind": "text",
+        "language": language,
         "label": label,
         "ai_probability": ai_probability,
         "heuristic_score": heuristic,

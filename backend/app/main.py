@@ -16,6 +16,7 @@ from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest
 from .services.factcheck import factcheck_claim
 from .services.image_analysis import analyze_image, analyze_image_url
 from .services.model_registry import model_status
+from .services.mongolian import detect_language
 from .services.net_utils import UnsafeUrlError
 from .services.text_analysis import analyze_text
 from .services.url_scan import scan_url
@@ -141,7 +142,7 @@ async def config() -> dict:
 @app.post("/api/factcheck")
 async def api_factcheck(payload: FactCheckRequest) -> dict:
     try:
-        return await factcheck_claim(payload.claim)
+        return await factcheck_claim(payload.claim, payload.language)
     except Exception as exc:  # pragma: no cover - defensive
         logger.exception("factcheck failed")
         raise HTTPException(status_code=500, detail=f"Fact-check failed: {exc}") from exc
@@ -150,7 +151,14 @@ async def api_factcheck(payload: FactCheckRequest) -> dict:
 @app.post("/api/analyze/text")
 async def api_analyze_text(payload: TextRequest) -> dict:
     try:
-        result = await run_in_threadpool(analyze_text, payload.text)
+        # Mongolian returns lightweight statistics without loading a model.
+        language = (
+            detect_language(payload.text)
+            if payload.language == "auto" else payload.language
+        )
+        if language in {"mn_cyrl", "mn_latn"}:
+            return analyze_text(payload.text, payload.language)
+        result = await run_in_threadpool(analyze_text, payload.text, payload.language)
         return result
     except Exception as exc:
         logger.exception("text analysis failed")

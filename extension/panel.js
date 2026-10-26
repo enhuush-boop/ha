@@ -37,6 +37,13 @@ function pct(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
 }
 
+function languageLabel(language) {
+  return {
+    mn_cyrl: "Монгол кирилл",
+    mn_latn: "Монгол латин галиг",
+  }[language] || null;
+}
+
 function fmtBytes(bytes) {
   if (!bytes && bytes !== 0) return "n/a";
   const units = ["B", "KB", "MB", "GB"];
@@ -347,6 +354,9 @@ function renderFactcheck(container, data) {
       no_match: "No confident match",
     }[data.method] || data.method || "unknown";
   meta.append(el("span", null, `Method: ${methodLabel}`));
+  if (languageLabel(data.language)) {
+    meta.append(el("span", null, `Бичиг: ${languageLabel(data.language)}`));
+  }
   if (data.topic) meta.append(el("span", null, `Topic: ${data.topic}`));
   if (data.summary_source) meta.append(el("span", null, `Summary: ${data.summary_source}`));
   card.append(meta);
@@ -366,7 +376,7 @@ function renderFactcheck(container, data) {
 
 /* ---------------- Text ---------------- */
 
-function statGrid(stats) {
+function statGrid(stats, language) {
   const grid = el("div", "stat-grid");
   const entries = [
     ["Words", stats.words],
@@ -375,9 +385,9 @@ function statGrid(stats) {
     ["Avg sentence", `${stats.avg_sentence_words ?? "n/a"} words`],
     ["Sentence CV", stats.sentence_length_cv],
     ["Type–token ratio", stats.type_token_ratio],
-    ["AI-style phrases", stats.ai_phrase_hits],
     ["Trigram repetition", stats.trigram_repetition],
   ];
+  if (!languageLabel(language)) entries.push(["AI-style phrases", stats.ai_phrase_hits]);
   entries.forEach(([label, value]) => {
     const stat = el("div", "stat");
     stat.append(el("span", "stat-label", label));
@@ -404,6 +414,7 @@ function signalList(signals) {
 function renderText(container, data) {
   clear(container);
   const probability = data.ai_probability ?? data.heuristic_score;
+  const hasScore = probability !== null && probability !== undefined;
   const card = resultCard();
   const head = el("div", "score-head");
   head.append(badgeFor(data.label));
@@ -413,31 +424,38 @@ function renderText(container, data) {
       "score-sub",
       data.ai_probability !== null && data.ai_probability !== undefined
         ? `AI-like ${pct(data.ai_probability)}`
-        : `Heuristic ${pct(data.heuristic_score)}`,
+        : hasScore ? `Heuristic ${pct(data.heuristic_score)}` : "AI score unavailable",
     ),
   );
   card.append(head);
 
-  const meter = el("div", "meter");
-  const bar = el("span");
-  bar.style.width = `${Math.round((probability || 0) * 100)}%`;
-  meter.append(bar);
-  card.append(meter);
-  const labels = el("div", "meter-label");
-  labels.append(el("span", null, "Human-like"), el("span", null, "AI-like"));
-  card.append(labels);
+  if (hasScore) {
+    const meter = el("div", "meter");
+    const bar = el("span");
+    bar.style.width = `${Math.round(probability * 100)}%`;
+    meter.append(bar);
+    card.append(meter);
+    const labels = el("div", "meter-label");
+    labels.append(el("span", null, "Human-like"), el("span", null, "AI-like"));
+    card.append(labels);
+  }
   card.append(el("p", "summary", data.summary || ""));
 
   const meta = el("div", "meta-line");
-  meta.append(el("span", null, `Model: ${data.model_used || "heuristic"}`));
-  meta.append(el("span", null, `Confidence: ${pct(data.confidence)}`));
+  if (hasScore) {
+    meta.append(el("span", null, `Model: ${data.model_used || "heuristic"}`));
+    meta.append(el("span", null, `Confidence: ${pct(data.confidence)}`));
+  }
+  if (languageLabel(data.language)) {
+    meta.append(el("span", null, `Бичиг: ${languageLabel(data.language)}`));
+  }
   if (data.chunks?.length) meta.append(el("span", null, `${data.chunks.length} chunk(s)`));
   card.append(meta);
   addActionRow(card, data);
   container.append(card);
 
   const statsCard = resultCard("Style statistics");
-  statsCard.append(statGrid(data.text_stats || {}));
+  statsCard.append(statGrid(data.text_stats || {}, data.language));
   if (data.text_stats?.ai_phrases_found?.length) {
     statsCard.append(
       el("p", "inline-note", `Phrases found: ${data.text_stats.ai_phrases_found.join(", ")}`),
@@ -799,6 +817,7 @@ async function runAnalysis({ containerId, button, loadingText, task, render }) {
 function wireFactcheck() {
   const form = document.getElementById("factcheck-form");
   const input = document.getElementById("claim-input");
+  const language = document.getElementById("claim-language");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const claim = input.value.trim();
@@ -811,7 +830,7 @@ function wireFactcheck() {
       containerId: "factcheck-output",
       button,
       loadingText: "Matching claim against trusted sources…",
-      task: () => api("/api/factcheck", { method: "POST", body: { claim }, timeout: 90000 }),
+      task: () => api("/api/factcheck", { method: "POST", body: { claim, language: language.value }, timeout: 90000 }),
       render: renderFactcheck,
     });
   });
@@ -820,6 +839,7 @@ function wireFactcheck() {
 function wireText() {
   const form = document.getElementById("text-form");
   const input = document.getElementById("text-input");
+  const language = document.getElementById("text-language");
   const counter = document.getElementById("text-count");
   const updateCount = () => {
     counter.textContent = `${input.value.length.toLocaleString()} characters`;
@@ -839,7 +859,7 @@ function wireText() {
       containerId: "text-output",
       button,
       loadingText: "Running text classifier… first run may download ~300 MB.",
-      task: () => api("/api/analyze/text", { method: "POST", body: { text }, timeout: 600000 }),
+      task: () => api("/api/analyze/text", { method: "POST", body: { text, language: language.value }, timeout: 600000 }),
       render: renderText,
     });
   });

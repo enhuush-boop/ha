@@ -260,13 +260,15 @@ RDAP checks.
 1. **Start server** (`./scripts/run_backend.sh`) and confirm the green status
    dot in the panel.
 2. **Claim tab:** enter `Vaccines cause autism.` → show **False**, the short
-   explanation, and the CDC/WHO/PubMed/Cochrane links.
+   explanation, and the WHO link. Enter `Дэлхий хавтгай.` and `Delhii havtgai`;
+   both should show the same **False** claim with a NASA link.
 3. **Claim tab:** enter a claim not in the corpus → show **Not Sure** and the
    trusted search links. Explain that “not sure” means “no evidence in this
    build”, not “50/50”.
 4. **Text tab:** paste a paragraph full of “delve”, “tapestry”, “pivotal” →
    show the high AI-like score and the style statistics. Then paste a personal
-   paragraph and discuss false positives.
+   paragraph and discuss false positives. A Mongolian Cyrillic or galig
+   paragraph shows script and style statistics, without an AI score.
 5. **Image tab:** upload
    `benchmark/data/ai/ai_03_sdxl_astronaut.png` → show score, SHA-256, EXIF
    flags. Upload an AI image with a missing EXIF block and explain why that is

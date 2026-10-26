@@ -20,14 +20,31 @@ More screenshots: [text detection](docs/screenshots/text-check.png) ·
 
 | Tool | What you get |
 |---|---|
-| **Claim check** | `True` / `False` / `Not Sure`, a short explanation, and clickable evidence from trusted sources. |
-| **AI text check** | ModernBERT classifier + transparent style statistics, with explicit warnings about false positives. |
+| **Claim check** | English and Mongolian Cyrillic / informal Latin galig matched to a small sourced corpus; `True` / `False` / `Not Sure` with evidence links. |
+| **AI text check** | English ModernBERT classifier + style statistics. Mongolian text gets script recognition and Unicode-aware statistics, without an unvalidated AI score. |
 | **AI image check** | Smaug classifier (Nano Banana/Imagen-era coverage), EXIF/XMP inspection, generator-name hints, C2PA/JUMBF presence, and SHA-256. |
 | **Video check** | ffmpeg frame sampling scored frame-by-frame. Flags uncertainty instead of pretending it is a deepfake detector. |
 | **Suspicious link** | Passive DNS/DNSSEC, TLS certificate, RDAP domain age, typosquatting heuristics, and optional threat intel. **The page body is never fetched.** |
 
 The extension is a thin UI. Heavy models, ffmpeg, DNS/TLS/RDAP lookups, and the
 optional local LLM live in the backend, bound to `127.0.0.1` by default.
+
+### Mongolian input
+
+The **Claim** tab accepts both `Дэлхий хавтгай.` and `Delhii havtgai`, or
+`Вакцин аутизм үүсгэдэг.` and `Vaksin autizm uusgedeg`. These are matched
+against the same curated claims. A negated variant such as `үүсгэдэггүй` does
+not inherit the opposite verdict. Unmatched claims return **Not Sure** with
+search links. Informal galig has many spellings, so some variants will not
+match; this is not general translation or fact-checking of arbitrary claims.
+
+The **Text** tab recognizes Mongolian Cyrillic and common informal Latin galig,
+counts its words, and shows style statistics. The bundled AI-text model was
+trained for English; no Mongolian AI-authorship percentage is displayed.
+Both text forms have an **Input language** selector. Leave it on Auto for
+ordinary input, or choose Монгол латин галиг when an unusual spelling is not
+recognized automatically.
+Image, video, and URL checks are language-independent.
 
 ---
 
@@ -150,7 +167,9 @@ reachable. If it is offline, start `./scripts/run_backend.sh` and press
 
 | Try | Where |
 |---|---|
-| `Vaccines cause autism.` | **Claim** tab → expect **False** with CDC/WHO/PubMed links. |
+| `Vaccines cause autism.` | **Claim** tab → expect **False** with a WHO link. |
+| `Дэлхий хавтгай.` / `Delhii havtgai` | **Claim** tab → both return **False** with a NASA link. |
+| A Mongolian Cyrillic or galig paragraph | **Text** tab → script and style statistics, with no AI-authorship score. |
 | `The moon is made of a very specific type of cheese.` | **Claim** tab → expect **Not Sure** plus trusted search links. |
 | Any long AI-sounding paragraph | **Text** tab → classifier score and style stats. |
 | `benchmark/data/ai/ai_03_sdxl_astronaut.png` | **Image** tab → upload; metadata + classifier. |
@@ -223,8 +242,8 @@ Base URL: `http://127.0.0.1:8000`. Interactive OpenAPI docs: `/docs`.
 |---|---|---|
 | `GET` | `/api/health` | Status, device, loaded models, cache dir. |
 | `GET` | `/api/config` | Safe runtime config, enabled features, limits. |
-| `POST` | `/api/factcheck` | `{"claim": "..."}` → verdict + evidence. |
-| `POST` | `/api/analyze/text` | `{"text": "..."}` → classifier + stats. |
+| `POST` | `/api/factcheck` | `{"claim": "...", "language": "auto"}` → verdict + evidence. |
+| `POST` | `/api/analyze/text` | `{"text": "...", "language": "auto"}` → English classifier + stats, or Mongolian stats with `ai_probability: null`. |
 | `POST` | `/api/analyze/image` | multipart `file` → metadata + classifier. |
 | `POST` | `/api/analyze/image-url` | `{"url": "..."}` → backend fetches and analyzes. |
 | `POST` | `/api/analyze/video` | multipart `file` → sampled frame scores. |
@@ -248,6 +267,7 @@ curl -s -X POST http://127.0.0.1:8000/api/scan/url \
 Errors: `400` for blocked/unsafe URLs or bad input, `413` for oversized
 uploads, `415` for unsupported media types, `422` for schema validation, `5xx`
 for model/server failures. Upload limit defaults to 100 MB (`MAX_UPLOAD_MB`).
+The optional `language` field accepts `auto`, `mn_cyrl`, `mn_latn`, or `en`.
 
 ### Smoke test
 
@@ -442,6 +462,9 @@ production hardening checklist.
   translation, editing, compression, screenshots, and mixed human/AI text.
   False positives disproportionately affect formal writing and non-native
   English speakers. Never accuse someone based on a score.
+- **Mongolian AI-text detection is unavailable.** The app recognizes Cyrillic
+  and common galig inputs but has no model validated for AI authorship in either.
+  Ambiguous Latin galig may not be recognized. A missing score is intentional.
 - **Image classifiers are not provenance.** Smaug is much better on current
   Google models, but it still missed 3/100 Nano Banana images in our test and
   can fail on compression, screenshots, crops, and edits. Metadata can be edited
@@ -449,7 +472,7 @@ production hardening checklist.
   verified.
 - **Video analysis is frame sampling.** It can miss short manipulations, audio
   deepfakes, and temporal artifacts. There is no dedicated video model here.
-- **Fact-check coverage is intentionally small.** The demo corpus has four
+- **Fact-check coverage is intentionally small.** The demo corpus has two
   claims. "Not Sure" means the system lacks evidence, not that the claim is
   genuinely undecided. Configure Google Fact Check Tools for broader coverage,
   and still verify the linked fact-check's date and exact claim.
