@@ -23,3 +23,5 @@ class UrlRequest(BaseModel):
 
 class ImageUrlRequest(BaseModel):
     url: str = Field(min_length=8, max_length=4_000)
+    # Off by default: tiling runs one model inference per region.
+    tiles: bool = False

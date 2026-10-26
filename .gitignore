@@ -1,0 +1,17 @@
+# The three paths the README says a fresh clone rebuilds rather than carries.
+.venv/
+backend/.env
+backend/.model_cache/
+
+# Python bytecode.
+__pycache__/
+*.py[cod]
+
+# Benchmark images are downloaded, not committed.
+benchmark/data/
+benchmark/samples/
+
+# OS / editor noise.
+.DS_Store
+Thumbs.db
+*.swp

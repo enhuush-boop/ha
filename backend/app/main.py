@@ -196,7 +196,10 @@ async def _save_upload(upload: UploadFile, max_mb: int) -> tuple[Path, str, int]
 
 
 @app.post("/api/analyze/image")
-async def api_analyze_image(file: UploadFile = File(...)) -> dict:
+async def api_analyze_image(
+    file: UploadFile = File(...),
+    tiles: bool = False,
+) -> dict:
     content_type = (file.content_type or "").split(";")[0].lower()
     if content_type and content_type not in IMAGE_CONTENT_TYPES:
         raise HTTPException(
@@ -205,7 +208,7 @@ async def api_analyze_image(file: UploadFile = File(...)) -> dict:
         )
     path, name, _ = await _save_upload(file, settings.max_upload_mb)
     try:
-        result = await run_in_threadpool(analyze_image, path, name)
+        result = await run_in_threadpool(analyze_image, path, name, None, tiles)
         return result
     except Exception as exc:
         logger.exception("image analysis failed")
@@ -217,7 +220,7 @@ async def api_analyze_image(file: UploadFile = File(...)) -> dict:
 @app.post("/api/analyze/image-url")
 async def api_analyze_image_url(payload: ImageUrlRequest) -> dict:
     try:
-        return await analyze_image_url(payload.url)
+        return await analyze_image_url(payload.url, tiles=payload.tiles)
     except UnsafeUrlError:
         raise
     except ValueError as exc:
