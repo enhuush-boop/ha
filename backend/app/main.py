@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from .config import settings
-from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest
+from .schemas import FactCheckRequest, ImageUrlRequest, TextRequest, UrlRequest, VideoUrlRequest
 from .services.factcheck import factcheck_claim
 from .services.image_analysis import analyze_image, analyze_image_url
 from .services.model_registry import model_status
@@ -21,6 +21,7 @@ from .services.net_utils import UnsafeUrlError
 from .services.text_analysis import analyze_text
 from .services.url_scan import scan_url
 from .services.video_analysis import analyze_video
+from .services.video_url_fetch import VideoFetchError, fetch_video_url
 
 logging.basicConfig(
     level=logging.INFO,
@@ -252,6 +253,27 @@ async def api_analyze_video(file: UploadFile = File(...)) -> dict:
         raise HTTPException(status_code=500, detail=f"Video analysis failed: {exc}") from exc
     finally:
         path.unlink(missing_ok=True)
+
+
+@app.post("/api/analyze/video-url")
+async def api_analyze_video_url(payload: VideoUrlRequest) -> dict:
+    try:
+        with tempfile.TemporaryDirectory(prefix="tayo_video_url_") as workdir:
+            path, final_url, filename = await run_in_threadpool(
+                fetch_video_url, payload.url, Path(workdir)
+            )
+            result = await run_in_threadpool(analyze_video, path, filename)
+            result["source_url"] = final_url
+            return result
+    except UnsafeUrlError:
+        raise
+    except VideoFetchError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("video URL analysis failed")
+        raise HTTPException(status_code=502, detail=f"Could not analyze video URL: {exc}") from exc
 
 
 @app.post("/api/scan/url")

@@ -189,6 +189,15 @@ class Checker:
             f"got {response.status_code}",
         )
 
+        response = self.post(
+            "/api/analyze/video-url", json={"url": "http://169.254.169.254/video.mp4"}
+        )
+        self.check(
+            "video URL cloud metadata target blocked",
+            response.status_code == 400,
+            f"got {response.status_code}",
+        )
+
         if skip_models:
             print("\n[models skipped with --skip-models]")
         else:

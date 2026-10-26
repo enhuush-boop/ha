@@ -40,6 +40,7 @@ change for production.
 │  extension/background.js  (MV3 service worker)                           │
 │    • creates context menus                                               │
 │    • stores a pending request in chrome.storage.session                  │
+│    • reads page text or captures visible media after a right-click       │
 │    • opens the side panel                                                │
 │                                                                          │
 │  extension/panel.html + panel.js + panel.css                             │
@@ -59,6 +60,7 @@ change for production.
 │  services/text_analysis.py   ModernBERT + stylometry                     │
 │  services/image_analysis.py  metadata + Smaug + URL fetch                │
 │  services/video_analysis.py  ffmpeg frames + image model                 │
+│  services/video_url_fetch.py  public video download with pinned IP       │
 │  services/url_scan.py        offline heuristics + DNS/TLS/RDAP + intel   │
 │  services/metadata.py        EXIF/XMP/C2PA hints, ffmpeg helpers         │
 │  services/model_registry.py  lazy load, device, fallback, inference      │
@@ -151,6 +153,9 @@ panel.js ──multipart file──▶ temp file ──▶ EXIF/XMP/C2PA hints
 
 panel.js ──POST image URL──▶ SSRF checks ──▶ backend fetch (size/type caps)
                                           └──▶ same analysis
+
+right-click blob/protected image ──▶ visible-image screenshot crop
+                                  └─▶ image analysis (metadata unavailable)
 ```
 
 - Images are converted to RGB and passed to the configured model(s). The
@@ -166,6 +171,8 @@ panel.js ──POST image URL──▶ SSRF checks ──▶ backend fetch (size
   A malicious file can contain the string “c2pa”. For real provenance, use the
   `c2pa-python` SDK, validate the manifest, and check the signer certificate.
 - SHA-256 is computed for record-keeping and duplicate detection.
+- Screenshot fallback checks the displayed pixels only. It cannot recover the
+  original image's resolution, EXIF, or C2PA manifest.
 
 ### 3.4 Video
 
@@ -175,11 +182,21 @@ panel.js ──multipart file──▶ per-request temp dir
                               ├─ 8 evenly spaced frames
                               └─ image model per frame
         ◀── {mean/max probability, per-frame scores, metadata, limitations} ──
+
+right-click public video URL ──▶ resolve + pin public IP per redirect
+                              └─▶ size-limited temporary file ──▶ same analysis
+
+right-click blob/stream video ──▶ activeTab visible-frame capture
+                               └─▶ image analysis (single frame only)
 ```
 
 - This is frame sampling, not a video deepfake model. It can miss short
   manipulations, temporal artifacts, audio fakes, and lip-sync errors.
 - Frames are deleted with the per-request temporary directory.
+- Video URL downloads have the same 100 MB default cap as uploads. Browser
+  cookies are not forwarded. Playlists, DRM, and authenticated sources may not
+  be available to the backend.
+- A captured player frame is an image result, explicitly labelled as one frame.
 - A mean is reported alongside the max and the count above 80%, because one
   manipulated frame is easy to hide in an average.
 
@@ -218,6 +235,7 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 | `services/text_analysis.py` | Chunking, ModernBERT inference, stylometry, labels, limitations. |
 | `services/image_analysis.py` | Metadata + classifiers ensemble, labels/confidence, image URL fetch with SSRF checks. |
 | `services/video_analysis.py` | Frame scoring, aggregation, video-specific uncertainty. |
+| `services/video_url_fetch.py` | Download a direct public video, recheck redirects, pin public IPs, and enforce size/type limits. |
 | `services/url_scan.py` | Offline signals, DoH, TLS certificate inspection, RDAP, threat intel, scoring. |
 | `services/metadata.py` | Pillow EXIF/info, C2PA/software markers, ffmpeg/ffprobe metadata, frame extraction. |
 | `services/net_utils.py` | URL parsing and private/loopback/reserved address blocking. |
@@ -239,12 +257,16 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 
 ### Manifest V3
 
-- **Permissions:** `contextMenus`, `storage`, `sidePanel`.
+- **Permissions:** `activeTab`, `contextMenus`, `scripting`, `storage`,
+  `sidePanel`.
 - **Host permissions:** `http://127.0.0.1:8000/*` and
   `http://localhost:8000/*`.
-- **No `scripting`, `tabs`, or `<all_urls>`.** The extension does not read page
-  content. Text comes from `selectionText`; image/link URLs come from the
-  context-menu payload.
+- **Page access:** an image, video, or page-text context-menu click grants
+  temporary `activeTab` access. The service worker injects a one-time function
+  into the main frame to locate visible media or read article text. Media
+  screenshot fallbacks use the visible tab. Selected text and links use the
+  context-menu payload. There is no persistent content script or `<all_urls>`
+  permission.
 - **Side panel** is declared statically and opened on toolbar click via
   `setPanelBehavior`.
 - **Pending requests** use `chrome.storage.session`, so a request is not lost
@@ -276,8 +298,8 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 
 | Threat | Mitigation |
 |---|---|
-| Malicious page injects content into the panel | No content scripts; textContent rendering; no HTML injection. |
-| SSRF via image URL / URL input | Reject non-HTTP(S), block private/loopback/link-local/reserved IPs, revalidate redirects, cap redirects, size, and content type. |
+| Malicious page injects content into the panel | One-shot page reads after user action; textContent rendering; no HTML injection. |
+| SSRF via image/video URL input | Reject non-HTTP(S), block private/loopback/link-local/reserved IPs, revalidate redirects, cap redirects, size, and content type. Video downloads pin the checked public IP. |
 | DoS via huge upload | Streamed upload with `MAX_UPLOAD_MB` cap and 413 response. |
 | Path traversal via filename | Server-generated temp names; only a short sanitized suffix is reused. |
 | XSS via claim/evidence | Safe DOM APIs; links allow only http(s). |
@@ -291,8 +313,11 @@ panel.js ──POST /api/scan/url──▶ parse + resolve host (SSRF guard)
 |---|---|---|
 | Health/config | localhost | Panel open/retry. |
 | Claim check | localhost; Google Fact Check only with key | User submits claim. |
-| Text/image/video | localhost only | User submits media. |
-| Image URL | Target public host (fetched by backend) | User explicitly submits an image URL. |
+| Text/image/video | localhost only | User submits content or chooses a context-menu action. |
+| Image URL | Target public host (fetched by backend) | User enters or right-clicks a public image URL. |
+| Image screenshot | localhost only | User right-clicks a blob image or its direct download fails. |
+| Video URL | Target public host (fetched by backend, no browser cookies) | User enters a video URL or right-clicks a video. |
+| Video frame | localhost only | User right-clicks a blob/stream player or direct download fails. |
 | URL scan | Google DoH (host), RDAP (domain), TLS target; threat intel only with keys | User submits URL. |
 | Ollama summary | localhost Ollama | Fact-check with `OLLAMA_URL` set. |
 
@@ -304,14 +329,15 @@ Hugging Face is contacted only to download model weights.
 `resolve_public_host()` rejects hostnames ending in `.local`, `.internal`,
 `.localhost`, `.home.arpa`, and any resolved address that is private, loopback,
 link-local, multicast, reserved, unspecified, or not global. Redirects in
-`fetch_image_from_url()` are followed manually, max 5, and each hop is
-revalidated. The URL scanner itself never fetches the URL.
+`fetch_image_from_url()` and `fetch_video_url()` follow at most five redirects,
+revalidating each hop. Video downloads connect to the checked public IP while
+preserving Host and TLS SNI. The URL scanner itself never fetches the URL.
 
 Residual risks:
 
-- **DNS rebinding / TOCTOU:** resolution is checked first, then httpx resolves
-  again when connecting. A production system must pin the validated IP in the
-  transport (or use an egress proxy).
+- **Image DNS rebinding / TOCTOU:** image URL resolution is checked first,
+  then httpx resolves again when connecting. Its transport still needs IP
+  pinning or an egress proxy before production use.
 - **Proxy environment variables:** httpx may honor proxies; a production
   deployment should disable or control them.
 - **IPv4-mapped IPv6 and unusual encodings:** Python's `ipaddress` covers the

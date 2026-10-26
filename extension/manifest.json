@@ -5,7 +5,9 @@
   "description": "Fact-check claims, triage AI-generated media, and inspect suspicious links using a local trusted backend.",
   "minimum_chrome_version": "116",
   "permissions": [
+    "activeTab",
     "contextMenus",
+    "scripting",
     "storage",
     "sidePanel"
   ],
