@@ -1,5 +1,5 @@
 {
-  "notice": "Sources a reader may reasonably start from, with what is known about each. Being listed here is not a guarantee that a particular article is correct, and a source's absence is not a mark against it. Every domain below was checked to resolve and answer over HTTPS on 2026-10-26; the feed URLs marked verified returned XML on that date.",
+  "notice": "Sources a reader may reasonably start from, with what is known about each. Being listed here is not a guarantee that a particular article is correct, and a source's absence is not a mark against it. Every domain below was checked to resolve and answer over HTTPS on 2026-10-26; the feed URLs marked verified returned XML on that date. The international fact-checkers were taken from the publishers Google Fact Check actually returned across a sample of claims on 2026-10-26, not chosen by hand, so the registry recognises the sources Google surfaces instead of marking them unlisted.",
   "tiers": {
     "fact_check": "Publishes verdicts on specific claims as its primary work.",
     "official": "Primary record holder: the body that produces the figure or the document.",
@@ -157,6 +157,176 @@
       "feeds": [],
       "feed_verified": false,
       "note": "UK fact-checking charity."
+    },
+    {
+      "id": "factcheck-org",
+      "name": "FactCheck.org",
+      "domain": "factcheck.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US fact-checker run by the Annenberg Public Policy Center. The single most frequent publisher in Google Fact Check results sampled on 2026-10-26."
+    },
+    {
+      "id": "politifact",
+      "name": "PolitiFact",
+      "domain": "politifact.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US political fact-checker (Poynter Institute). Known for its Truth-O-Meter ratings."
+    },
+    {
+      "id": "apnews",
+      "name": "AP News",
+      "domain": "apnews.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Associated Press wire service and its fact-check desk. A news wire, not solely a fact-checker."
+    },
+    {
+      "id": "leadstories",
+      "name": "Lead Stories",
+      "domain": "leadstories.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US fact-checker, IFCN signatory, focused on viral hoaxes and social-media claims."
+    },
+    {
+      "id": "science-feedback",
+      "name": "Science Feedback",
+      "domain": "science.feedback.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Network of scientists reviewing health and climate claims (Health Feedback, Climate Feedback)."
+    },
+    {
+      "id": "aap-factcheck",
+      "name": "AAP FactCheck",
+      "domain": "aap.com.au",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Australian Associated Press fact-check desk, IFCN signatory."
+    },
+    {
+      "id": "africacheck",
+      "name": "Africa Check",
+      "domain": "africacheck.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Independent fact-checker covering African claims, IFCN signatory."
+    },
+    {
+      "id": "altnews",
+      "name": "Alt News",
+      "domain": "altnews.in",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Indian fact-checker, IFCN signatory."
+    },
+    {
+      "id": "boomlive",
+      "name": "BOOM",
+      "domain": "boomlive.in",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Indian fact-checker, IFCN signatory."
+    },
+    {
+      "id": "factly",
+      "name": "FACTLY",
+      "domain": "factly.in",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Indian data-journalism and fact-check site, IFCN signatory."
+    },
+    {
+      "id": "rappler",
+      "name": "Rappler",
+      "domain": "rappler.com",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Philippine news site with a fact-check desk, IFCN signatory."
+    },
+    {
+      "id": "annielab",
+      "name": "Annie Lab",
+      "domain": "annielab.org",
+      "tier": "international",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Fact-checking lab at the University of Hong Kong, IFCN signatory. Covers Asian claims."
+    },
+    {
+      "id": "usatoday",
+      "name": "USA Today",
+      "domain": "usatoday.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US national newspaper with a fact-check section. A general news outlet, listed as news rather than a dedicated fact-checker."
+    },
+    {
+      "id": "washingtonpost",
+      "name": "The Washington Post",
+      "domain": "washingtonpost.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US national newspaper; its Fact Checker column rates political claims. General news outlet."
+    },
+    {
+      "id": "bbc",
+      "name": "BBC",
+      "domain": "bbc.co.uk",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "UK public broadcaster, including BBC Verify. General news outlet."
+    },
+    {
+      "id": "dw",
+      "name": "DW",
+      "domain": "dw.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "Germany's international broadcaster, with a fact-check desk. General news outlet."
+    },
+    {
+      "id": "voanews",
+      "name": "VOA",
+      "domain": "voanews.com",
+      "tier": "news",
+      "language": "en",
+      "feeds": [],
+      "feed_verified": false,
+      "note": "US government-funded international broadcaster. State-funded, so weigh it as an official-position source rather than independent."
     }
   ]
 }
