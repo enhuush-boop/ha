@@ -1,0 +1,6 @@
+.venv/
+.env
+.model_cache/
+__pycache__/
+*.pyc
+work-temp/

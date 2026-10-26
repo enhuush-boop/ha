@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "TAYO — Human & AI Checker",
+  "version": "1.0.0",
+  "description": "Local text analysis with a Python backend on 127.0.0.1:8010.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8010/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open TAYO Text"
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  }
+}

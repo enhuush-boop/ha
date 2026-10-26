@@ -1,0 +1,8 @@
+fastapi==0.161.1
+uvicorn==0.54.0
+python-dotenv==1.2.4
+torch==2.14.1
+transformers==5.20.2
+huggingface-hub==2.3.0
+safetensors==0.8.0
+numpy==2.5.4
